@@ -1,0 +1,3 @@
+### opencode
+
+* https://opencode.school/
