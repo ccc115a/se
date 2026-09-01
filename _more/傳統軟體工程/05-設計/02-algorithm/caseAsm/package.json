@@ -1,0 +1,14 @@
+{
+  "name": "asmh",
+  "version": "0.0.1",
+  "description": "Hack Assembler (nand2tetris exercise)",
+  "main": "js/ash.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "ccc",
+  "license": "MIT"
+}

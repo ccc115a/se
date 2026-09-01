@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= post.title %></title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    a { text-decoration: none; color: #0066cc; }
+    .btn { display: inline-block; padding: 8px 15px; background: #0066cc; color: white; text-decoration: none; border-radius: 5px; }
+    .content { white-space: pre-wrap; line-height: 1.6; }
+    .date { color: #666; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <a href="/">← 返回首页</a>
+  <h1><%= post.title %></h1>
+  <p class="date">📅 <%= post.created_at %></p>
+  <hr>
+  <div class="content"><%= post.content %></div>
+  <br>
+  <a href="/" class="btn">返回首页</a>
+</body>
+</html>

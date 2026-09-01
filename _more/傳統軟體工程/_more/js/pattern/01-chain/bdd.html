@@ -1,0 +1,11 @@
+<html>
+  <body>
+<script src="bdd.js"></script>
+<script>
+var text = '<html><body>hello!<body></html>'
+console.log(expect(text).to.be.a.html())
+console.log(expect(text).to.include('hello'))
+console.log(expect(text).to.include('world'))
+</script>
+</body>
+</html>

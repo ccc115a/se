@@ -1,0 +1,37 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Deno
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh
+    - uses: actions/checkout@v1
+    - name: Run the formatter
+      run: |
+        shopt -s globstar failglob
+        /home/runner/.deno/bin/deno fmt --check
+    - name: Build SQLite
+      id: build
+      run: |
+        export DENO_INSTALL="/home/runner/.deno"
+        export PATH="$DENO_INSTALL/bin:$PATH"
+        sudo apt-get -y install --no-install-recommends tclsh gcc brotli
+        cd build
+        make setup amalgamation release
+    - name: Set Timezone to Non-UTC
+      run: sudo timedatectl set-timezone America/New_York
+    - name: Generate Test Database
+      run: |
+        cd build
+        make testdb
+    - name: Remove any non tracked build artifacts
+      run: |
+        cd build
+        make clean
+    - name: Run tests
+      run: /home/runner/.deno/bin/deno test --allow-read --allow-write test.ts
+    - name: Run benchmarks
+      run: /home/runner/.deno/bin/deno run bench.ts

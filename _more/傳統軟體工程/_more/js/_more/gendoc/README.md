@@ -1,0 +1,4 @@
+# GenDoc
+
+* https://typedoc.org/
+
