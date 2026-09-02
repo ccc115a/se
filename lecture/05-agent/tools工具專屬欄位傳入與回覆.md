@@ -1,0 +1,3 @@
+* https://bojieli.github.io/ai-agent-book/book/chapter2/#%E5%B7%A5%E5%85%B7%E5%AE%9A%E4%B9%89%E7%9A%84%E8%AE%BE%E8%AE%A1
+
+“工具定义与系统提示词一起构成静态前缀”描述的是基础模式，也是多数 LLM API 的默认行为——tools 字段随请求发送，由服务商随前缀一起缓存。但 2026 年以来，工具定义本身也在向本章 Skills 式的“渐进式披露”演进，且已经是 API 层的原生能力而非框架补丁：OpenAI Responses API 提供 tool_search 工具和 defer_loading: true 标记4，模型通过 tool_search_call → tool_search_output 按需加载工具的完整 schema；Anthropic 侧的对应机制是 Tool Search（tool_reference blocks），Claude Code 对 MCP 工具默认延迟加载——会话启动时只注入工具名称和服务器说明，完整 schema 待模型搜索到之后才注入5；Codex CLI 的 tool_search（BM25 检索）则不是可选特性，而是默认开启的架构6。这些机制的共同之处在于，它们都遵循 Skills 的渐进式披露思路：静态前缀里只保留工具的名称和简述，完整 schema 在模型按需请求后追加到上下文末尾，成为轨迹的一部分。

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nn0 — 神經網路互動學習</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+
+  <!-- ════ Header ════ -->
+  <header>
+    <div class="badge">AUTO-GRAD ENGINE</div>
+    <h1>nn0 - 梯度引擎 應用展示</h1>
+    <p class="subtitle">從頭實作的自動微分引擎與 Adam 優化器，可視化神經網路訓練過程。</p>
+  </header>
+
+  <!-- ════ Tabs ════ -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('train')">訓練實驗室</button>
+    <button class="tab" onclick="switchTab('backprop')">反向傳播動畫</button>
+    <button class="tab" onclick="switchTab('code')">程式碼解析</button>
+    <button class="tab" onclick="switchTab('apps')">應用展示</button>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 1: 訓練實驗室
+       ════════════════════════════════════════ -->
+  <div class="panel active" id="panel-train">
+
+    <div class="card">
+      <div class="card-title">實驗設定</div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <span class="ctrl-label">任務</span>
+          <select id="taskSel" onchange="resetTrain()">
+            <option value="xor">XOR 分類</option>
+            <option value="circle">圓形分類</option>
+            <option value="spiral">螺旋分類</option>
+            <option value="regression">正弦迴歸</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">隱藏層大小</span>
+          <input type="range" id="hiddenSize" min="2" max="16" value="8"
+                 oninput="updateSlider(this,'hiddenVal')">
+          <span class="val-display" id="hiddenVal">8</span>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">學習率</span>
+          <input type="range" id="lrSlider" min="1" max="50" value="10"
+                 oninput="updateSlider(this,'lrVal',0.001)">
+          <span class="val-display" id="lrVal">0.010</span>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">批次大小</span>
+          <input type="range" id="batchSlider" min="1" max="20" value="8"
+                 oninput="updateSlider(this,'batchVal')">
+          <span class="val-display" id="batchVal">8</span>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">優化器</span>
+          <select id="optSel">
+            <option value="adam">Adam</option>
+            <option value="sgd">SGD</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-primary" id="btnTrain" onclick="startTrain()">▶ 開始訓練</button>
+        <button class="btn btn-danger"  id="btnStop"  onclick="stopTrain()" disabled>■ 停止</button>
+        <button class="btn" style="border-color:var(--muted);color:var(--muted)"
+                onclick="resetTrain()">↺ 重置</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progBar"></div>
+      </div>
+      <div class="log" id="trainLog">
+        <span class="info">// 選擇設定後點擊開始訓練</span>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-label">EPOCH</div>
+        <div class="stat-val" id="statEpoch">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">LOSS</div>
+        <div class="stat-val red" id="statLoss">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">ACCURACY</div>
+        <div class="stat-val blue" id="statAcc">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">GRAD NORM</div>
+        <div class="stat-val" id="statGrad">—</div>
+      </div>
+    </div>
+
+    <div class="canvas-row">
+      <div>
+        <div class="section-title">// 決策邊界</div>
+        <canvas id="decCanvas" height="300"></canvas>
+      </div>
+      <div>
+        <div class="section-title">// 損失曲線</div>
+        <canvas id="lossCanvas" height="300"></canvas>
+      </div>
+    </div>
+
+  </div><!-- /panel-train -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 2: 反向傳播動畫
+       ════════════════════════════════════════ -->
+  <div class="panel" id="panel-backprop">
+
+    <div class="card">
+      <div class="card-title">計算圖 — 反向傳播視覺化</div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.6">
+        輸入一個簡單運算式，觀察 Value 節點如何建立計算圖，以及梯度如何沿鏈式法則傳播。
+      </p>
+      <div class="controls">
+        <div class="ctrl-group">
+          <span class="ctrl-label">預設範例</span>
+          <select id="exprSel" onchange="loadExpr()">
+            <option value="0">z = (x * w + b).relu()</option>
+            <option value="1">loss = -(y * log(p))</option>
+            <option value="2">y = ((x**2) + x).relu()</option>
+            <option value="3">z = (a * b) + (c * d)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="runBackprop()">▶ 執行反向傳播</button>
+        <button class="btn" style="border-color:var(--muted);color:var(--muted)"
+                onclick="resetBackprop()">↺ 重置</button>
+      </div>
+    </div>
+
+    <canvas id="bpCanvas" height="420"
+            style="background:var(--code-bg);border:1px solid var(--border);width:100%;display:block;">
+    </canvas>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">節點資訊</div>
+      <div id="nodeInfo"
+           style="font-family:'Syne Mono',monospace;font-size:12px;color:var(--muted);line-height:2">
+        點擊畫布上的節點查看詳細資訊...
+      </div>
+    </div>
+
+  </div><!-- /panel-backprop -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 3: 程式碼解析
+       ════════════════════════════════════════ -->
+  <div class="panel" id="panel-code">
+
+    <!-- Value 節點 -->
+    <div class="card">
+      <div class="card-title">Value 節點 — 自動微分核心</div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.6">
+        每個 <code style="color:var(--accent)">Value</code> 節點儲存：
+        前向值 <code style="color:var(--accent3)">data</code>、
+        梯度 <code style="color:var(--accent2)">grad</code>、子節點與局部梯度。
+      </p>
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="switchLang('value','py',this)">Python</button>
+        <button class="lang-btn"        onclick="switchLang('value','js',this)">JavaScript</button>
+      </div>
+
+      <pre class="code-block active" id="value-py"><span class="kw">class</span> <span class="cls">Value</span>:
+    <span class="cm"># __slots__ 省記憶體，固定屬性名稱</span>
+    __slots__ = (<span class="str">'data'</span>, <span class="str">'grad'</span>, <span class="str">'_children'</span>, <span class="str">'_local_grads'</span>)
+
+    <span class="kw">def</span> <span class="fn">__mul__</span>(<span class="kw">self</span>, other):
+        <span class="cm"># z = x * y  →  ∂z/∂x = y,  ∂z/∂y = x</span>
+        <span class="kw">return</span> <span class="cls">Value</span>(
+            <span class="kw">self</span>.data * other.data,
+            children=(<span class="kw">self</span>, other),
+            local_grads=(other.data, <span class="kw">self</span>.data)  <span class="cm"># 局部梯度</span>
+        )
+
+    <span class="kw">def</span> <span class="fn">backward</span>(<span class="kw">self</span>):
+        <span class="cm"># 1. 拓樸排序建立計算圖</span>
+        topo = []; visited = <span class="fn">set</span>()
+        <span class="kw">def</span> <span class="fn">build_topo</span>(v):
+            <span class="kw">if</span> v <span class="kw">not in</span> visited:
+                visited.<span class="fn">add</span>(v)
+                <span class="kw">for</span> child <span class="kw">in</span> v._children: <span class="fn">build_topo</span>(child)
+                topo.<span class="fn">append</span>(v)
+        <span class="fn">build_topo</span>(<span class="kw">self</span>)
+        <span class="cm"># 2. 反向傳播：鏈式法則</span>
+        <span class="kw">self</span>.grad = <span class="num">1</span>
+        <span class="kw">for</span> v <span class="kw">in</span> <span class="fn">reversed</span>(topo):
+            <span class="kw">for</span> child, lg <span class="kw">in</span> <span class="fn">zip</span>(v._children, v._local_grads):
+                child.grad += lg * v.grad  <span class="cm"># 梯度累積</span></pre>
+
+      <pre class="code-block" id="value-js"><span class="kw">class</span> <span class="cls">Value</span> {
+  <span class="fn">constructor</span>(data, children=[], localGrads=[]) {
+    <span class="kw">this</span>.data = data;
+    <span class="kw">this</span>.grad = <span class="num">0</span>;
+    <span class="kw">this</span>._children = children;     <span class="cm">// 依賴的子節點</span>
+    <span class="kw">this</span>._localGrads = localGrads;  <span class="cm">// 對應的局部梯度</span>
+  }
+
+  <span class="fn">mul</span>(other) {
+    <span class="cm">// z = x * y  →  ∂z/∂x = y,  ∂z/∂y = x</span>
+    <span class="kw">const</span> out = <span class="kw">new</span> <span class="cls">Value</span>(
+      <span class="kw">this</span>.data * other.data,
+      [<span class="kw">this</span>, other],
+      [other.data, <span class="kw">this</span>.data]  <span class="cm">// 局部梯度</span>
+    );
+    out._op = <span class="str">'×'</span>; <span class="kw">return</span> out;
+  }
+
+  <span class="fn">backward</span>() {
+    <span class="kw">const</span> topo = [], visited = <span class="kw">new</span> <span class="cls">Set</span>();
+    <span class="kw">const</span> build = v => {
+      <span class="kw">if</span> (!visited.<span class="fn">has</span>(v)) {
+        visited.<span class="fn">add</span>(v);
+        v._children.<span class="fn">forEach</span>(build);
+        topo.<span class="fn">push</span>(v);
+      }
+    };
+    <span class="fn">build</span>(<span class="kw">this</span>);
+    <span class="kw">this</span>.grad = <span class="num">1</span>;
+    <span class="cm">// 反向傳播：鏈式法則累積梯度</span>
+    <span class="kw">for</span> (<span class="kw">const</span> v <span class="kw">of</span> [...topo].<span class="fn">reverse</span>()) {
+      v._children.<span class="fn">forEach</span>((child, i) => {
+        child.grad += v._localGrads[i] * v.grad;
+      });
+    }
+  }
+}</pre>
+    </div>
+
+    <!-- Adam 優化器 -->
+    <div class="card">
+      <div class="card-title">Adam 優化器 — 動量 + 自適應學習率</div>
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="switchLang('adam','py',this)">Python</button>
+        <button class="lang-btn"        onclick="switchLang('adam','js',this)">JavaScript</button>
+      </div>
+
+      <pre class="code-block active" id="adam-py"><span class="kw">class</span> <span class="cls">Adam</span>:
+    <span class="kw">def</span> <span class="fn">step</span>(<span class="kw">self</span>, lr_override=<span class="kw">None</span>):
+        <span class="kw">self</span>.step_count += <span class="num">1</span>
+        <span class="kw">for</span> i, p <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="kw">self</span>.params):
+            <span class="cm"># 一階矩（動量）：平滑梯度方向</span>
+            <span class="kw">self</span>.m[i] = β1 * <span class="kw">self</span>.m[i] + (<span class="num">1</span>-β1) * p.grad
+
+            <span class="cm"># 二階矩（速度）：自適應步長縮放</span>
+            <span class="kw">self</span>.v[i] = β2 * <span class="kw">self</span>.v[i] + (<span class="num">1</span>-β2) * p.grad**<span class="num">2</span>
+
+            <span class="cm"># 偏差校正（早期步驟補償）</span>
+            m_hat = <span class="kw">self</span>.m[i] / (<span class="num">1</span> - β1**t)
+            v_hat = <span class="kw">self</span>.v[i] / (<span class="num">1</span> - β2**t)
+
+            <span class="cm"># 參數更新（學習率線性衰減）</span>
+            p.data -= lr * m_hat / (v_hat**<span class="num">0.5</span> + ε)</pre>
+
+      <pre class="code-block" id="adam-js"><span class="kw">class</span> <span class="cls">AdamOpt</span> {
+  <span class="fn">constructor</span>(params, lr=<span class="num">0.01</span>, b1=<span class="num">0.85</span>, b2=<span class="num">0.99</span>, eps=<span class="num">1e-8</span>) {
+    <span class="kw">this</span>.params = params; <span class="kw">this</span>.lr = lr;
+    <span class="kw">this</span>.b1 = b1; <span class="kw">this</span>.b2 = b2; <span class="kw">this</span>.eps = eps;
+    <span class="kw">this</span>.m = <span class="kw">new</span> <span class="cls">Array</span>(params.length).<span class="fn">fill</span>(<span class="num">0</span>);
+    <span class="kw">this</span>.v = <span class="kw">new</span> <span class="cls">Array</span>(params.length).<span class="fn">fill</span>(<span class="num">0</span>);
+    <span class="kw">this</span>.t = <span class="num">0</span>;
+  }
+
+  <span class="fn">step</span>(lrOvr) {
+    <span class="kw">this</span>.t++;
+    <span class="kw">const</span> lr = lrOvr ?? <span class="kw">this</span>.lr;
+    <span class="kw">this</span>.params.<span class="fn">forEach</span>((p, i) => {
+      <span class="cm">// 一階矩（動量）</span>
+      <span class="kw">this</span>.m[i] = <span class="kw">this</span>.b1*<span class="kw">this</span>.m[i] + (<span class="num">1</span>-<span class="kw">this</span>.b1)*p.grad;
+      <span class="cm">// 二階矩（速度）</span>
+      <span class="kw">this</span>.v[i] = <span class="kw">this</span>.b2*<span class="kw">this</span>.v[i] + (<span class="num">1</span>-<span class="kw">this</span>.b2)*p.grad**<span class="num">2</span>;
+      <span class="cm">// 偏差校正</span>
+      <span class="kw">const</span> mh = <span class="kw">this</span>.m[i]/(<span class="num">1</span>-<span class="kw">this</span>.b1**<span class="kw">this</span>.t);
+      <span class="kw">const</span> vh = <span class="kw">this</span>.v[i]/(<span class="num">1</span>-<span class="kw">this</span>.b2**<span class="kw">this</span>.t);
+      <span class="cm">// 參數更新</span>
+      p.data -= lr * mh / (<span class="cls">Math</span>.<span class="fn">sqrt</span>(vh) + <span class="kw">this</span>.eps);
+      p.grad = <span class="num">0</span>;
+    });
+  }
+}</pre>
+    </div>
+
+    <div class="canvas-row" style="margin-top:0">
+      <div>
+        <div class="section-title">// Adam vs SGD 動量對比</div>
+        <canvas id="optimCanvas" height="220"></canvas>
+      </div>
+      <div>
+        <div class="section-title">// 梯度消失示意（深度影響）</div>
+        <canvas id="gradCanvas" height="220"></canvas>
+      </div>
+    </div>
+
+  </div><!-- /panel-code -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 4: 應用展示
+       ════════════════════════════════════════ -->
+  <div class="panel" id="panel-apps">
+
+    <!-- MNIST 手寫辨識 -->
+    <div class="full-width-card">
+      <div class="card-title">✏ MNIST 手寫數字辨識</div>
+
+      <!-- ── 訓練設定列 ── -->
+      <div class="controls" style="margin-bottom:12px">
+        <div class="ctrl-group">
+          <span class="ctrl-label">隱藏層大小</span>
+          <select id="mnistHidden">
+            <option value="32">32（小）</option>
+            <option value="64" selected>64（中）</option>
+            <option value="128">128（大）</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">學習率</span>
+          <select id="mnistLR">
+            <option value="0.001">0.001（慢）</option>
+            <option value="0.005" selected>0.005（中）</option>
+            <option value="0.02">0.02（快但不穩）</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">訓練樣本 / 數字</span>
+          <select id="mnistSamples">
+            <option value="6">6（少）</option>
+            <option value="12" selected>12（中）</option>
+            <option value="24">24（多）</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="mnistTrainBtn"
+                onclick="mnistStartTrain()" style="align-self:flex-end">
+          ▶ 開始訓練
+        </button>
+        <button class="btn" id="mnistResetBtn"
+                style="border-color:var(--muted);color:var(--muted);align-self:flex-end"
+                onclick="mnistReset()">
+          ↺ 重置
+        </button>
+        <span id="mnistStatus"
+              style="font-family:'Syne Mono',monospace;font-size:10px;
+                     color:var(--muted);align-self:flex-end">
+          尚未訓練
+        </span>
+      </div>
+
+      <!-- ── 影響因素說明 ── -->
+      <div style="background:var(--code-bg);border:1px solid var(--border);
+                  padding:10px 14px;margin-bottom:14px;font-size:11px;
+                  font-family:'Syne Mono',monospace;color:var(--muted);line-height:1.9">
+        <span style="color:var(--accent3)">// 影響辨識結果的因素</span><br>
+        隱藏層大小 → 模型容量，太小學不會，太大容易過擬合<br>
+        學習率 → 太高震盪不收斂，太低訓練慢但穩定<br>
+        訓練樣本數 → 越多越能覆蓋筆跡變異，但速度越慢<br>
+        訓練 Epoch 數 → 看準確率曲線，平穩後再畫就有效
+      </div>
+
+      <!-- ── 主體：左欄進度 / 右欄即時辨識展示 ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+        <!-- 左：準確率曲線 + 手寫測試 -->
+        <div>
+          <div class="progress-wrap" id="mnistProgWrap" style="display:none;margin-bottom:8px">
+            <div class="progress-bar" id="mnistProgBar"></div>
+          </div>
+          <div class="section-title">// 訓練準確率曲線</div>
+          <canvas id="mnistAccCanvas" height="120"
+                  style="background:var(--code-bg);border:1px solid var(--border);
+                         width:100%;display:block;margin-bottom:14px">
+          </canvas>
+
+          <div class="section-title">// 手寫測試</div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div>
+              <canvas id="mnistDraw" width="140" height="140"
+                      style="width:140px;height:140px;display:block;
+                             border:1px solid var(--border);background:var(--code-bg);
+                             cursor:crosshair;touch-action:none;image-rendering:pixelated">
+              </canvas>
+              <div style="display:flex;gap:4px;margin-top:6px">
+                <button class="btn btn-primary"
+                        style="flex:1;padding:5px 0;font-size:10px"
+                        onclick="mnistPredict()">▶ 辨識</button>
+                <button class="btn"
+                        style="border-color:var(--muted);color:var(--muted);
+                               flex:1;padding:5px 0;font-size:10px"
+                        onclick="mnistClear()">✕ 清除</button>
+              </div>
+            </div>
+            <div style="flex:1">
+              <div id="mnistResult"
+                   style="font-family:'Syne Mono',monospace;font-size:36px;
+                          color:var(--accent);margin-bottom:8px;letter-spacing:2px">—</div>
+              <div class="pred-bars" id="predBars"><!-- JS 生成 --></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：即時辨識結果展示（類 ConvNetJS 風格） -->
+        <div>
+          <div class="section-title">// 即時辨識結果（每 epoch 更新）</div>
+          <div id="mnistLiveGrid"
+               style="display:flex;flex-wrap:wrap;gap:5px;
+                      min-height:200px;align-content:flex-start">
+            <!-- JS 動態填入 .mnist-cell -->
+          </div>
+        </div>
+
+      </div><!-- /grid -->
+    </div>
+
+    <!-- 函數逼近 + 邏輯電路 -->
+    <div class="app-grid">
+
+      <!-- 函數逼近器 -->
+      <div class="app-card">
+        <div class="app-card-title">📈 函數逼近器</div>
+        <div class="app-card-desc">點擊畫布放置目標點，NN 即時學習擬合曲線。</div>
+        <canvas id="funcCanvas" height="200"></canvas>
+        <div style="display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary"
+                  style="font-size:11px;padding:6px 14px"
+                  onclick="funcTrain()">▶ 訓練</button>
+          <button class="btn"
+                  style="border-color:var(--muted);color:var(--muted);font-size:11px;padding:6px 14px"
+                  onclick="funcReset()">↺ 清除</button>
+          <span id="funcStatus"
+                style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted)">
+            點擊畫布加入點…
+          </span>
+        </div>
+      </div>
+
+      <!-- 邏輯電路學習 -->
+      <div class="app-card">
+        <div class="app-card-title">🎮 邏輯電路學習</div>
+        <div class="app-card-desc">點擊「目標」欄位切換 0/1，NN 即時學習這張真值表。</div>
+        <table class="truth-table">
+          <thead>
+            <tr><th>A</th><th>B</th><th>目標</th><th>NN 預測</th></tr>
+          </thead>
+          <tbody id="truthBody"></tbody>
+        </table>
+        <canvas id="gateCanvas" height="80"></canvas>
+        <div style="display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary"
+                  style="font-size:11px;padding:6px 14px"
+                  onclick="gateTrain()">▶ 訓練</button>
+          <button class="btn"
+                  style="border-color:var(--muted);color:var(--muted);font-size:11px;padding:6px 14px"
+                  onclick="gatePreset('xor')">XOR</button>
+          <button class="btn"
+                  style="border-color:var(--muted);color:var(--muted);font-size:11px;padding:6px 14px"
+                  onclick="gatePreset('and')">AND</button>
+          <button class="btn"
+                  style="border-color:var(--muted);color:var(--muted);font-size:11px;padding:6px 14px"
+                  onclick="gatePreset('or')">OR</button>
+          <span id="gateStatus"
+                style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted)">
+            就緒
+          </span>
+        </div>
+      </div>
+
+    </div><!-- /app-grid -->
+
+    <!-- 加法規律熱力圖 -->
+    <div class="full-width-card">
+      <div class="card-title">🔢 加法規律學習 — 泛化熱力圖</div>
+      <p class="app-card-desc">
+        訓練 NN 學習 x + y 的映射，熱力圖顯示預測誤差（紅=誤差大，綠=預測準確）。
+        訓練集僅使用部分格子，觀察模型能否泛化到未見過的輸入。
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div>
+          <div class="section-title">// 訓練集覆蓋率</div>
+          <canvas id="arithTrain" height="200"></canvas>
+        </div>
+        <div>
+          <div class="section-title">// 預測誤差熱力圖</div>
+          <canvas id="arithCanvas" height="200"></canvas>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary"
+                style="font-size:11px;padding:6px 14px"
+                onclick="arithTrain()">▶ 開始訓練</button>
+        <button class="btn"
+                style="border-color:var(--muted);color:var(--muted);font-size:11px;padding:6px 14px"
+                onclick="arithReset()">↺ 重置</button>
+        <div class="ctrl-group">
+          <span class="ctrl-label">覆蓋率</span>
+          <input type="range" id="coverSlider" min="10" max="90" value="40"
+                 oninput="updateSlider(this,'coverVal');arithReset()">
+          <span class="val-display" id="coverVal">40</span>
+        </div>
+        <span id="arithStatus"
+              style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted)">
+          就緒
+        </span>
+      </div>
+    </div>
+
+  </div><!-- /panel-apps -->
+
+</div><!-- /.container -->
+
+<script src="main.js"></script>
+</body>
+</html>
