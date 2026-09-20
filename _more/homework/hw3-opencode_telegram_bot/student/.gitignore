@@ -1,0 +1,5 @@
+# 機密與暫存檔不要進版控
+config.env
+*.log
+__pycache__/
+.write-test
