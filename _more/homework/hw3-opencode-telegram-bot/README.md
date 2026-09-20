@@ -1,3 +1,14 @@
+# 說明
+
+原本的想法是做 docker-bot 這個專案
+
+但仔細思考後，認為直接用 opencode 接上 telegram 比 docker-bot 更適合我使用
+
+所以放棄 docker-bot 專案，改用 AI 教我讓手機 telegram 連上我的 Opencode
+
+所以最後沒有做出『專案』，而是得到一個『流程』 ...
+
+
 # 手機呼叫 opencode：Telegram Bot（老師實作區）
 
 本目錄是老師的實作與除錯區：`run_bot.sh`（老師自用前景啟動）、`_doc/`（除錯紀錄）、
