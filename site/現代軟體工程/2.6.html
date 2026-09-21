@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.6 Spec-Driven Development：可執行的規格</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+<style>
+body{margin:0;background:#fff}
+.wrap{display:flex;min-height:100vh}
+nav.site{width:260px;min-width:200px;border-right:1px solid #d0d7de;padding:16px;position:sticky;top:0;height:100vh;overflow:auto;background:#f6f8fa}
+nav.site .home{font-weight:700;margin-bottom:8px;display:block;color:#1f2328;text-decoration:none}
+ul.site-nav{list-style:none;margin:0;padding:0}
+ul.site-nav li{margin:2px 0}
+ul.site-nav a{color:#0969da;text-decoration:none;font-size:.9em}
+ul.site-nav a:hover{text-decoration:underline}
+article{flex:1;min-width:0;box-sizing:border-box;max-width:980px;padding:24px}
+.markdown-alert{padding:.5rem 1rem;margin-bottom:1rem;border-left:.25em solid #888;border-radius:6px;background:#f6f8fa}
+.markdown-alert-title{font-weight:600;margin:0 0 .25rem}
+.markdown-alert-note{border-color:#0969da}.markdown-alert-tip{border-color:#1a7f37}
+.markdown-alert-important{border-color:#8250df}.markdown-alert-warning{border-color:#9a6700}
+.markdown-alert-caution{border-color:#d1242f}
+pre.mermaid{background:#f6f8fa;padding:16px;border-radius:6px}
+@media (max-width:767px){nav.site{display:none}article{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="site"><a class="home" href="../index.html">⌂ 首頁</a><ul class="site-nav">
+<li><a href="../向淘寶學習網站架構演進/1.1.html">1.1 淘寶初期的 Web 架構：單機 Tomcat + 資料庫</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.2.html">1.2 第一次演進：Web 伺服器與資料庫分離部署</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.3.html">1.3 應用伺服器的效能瓶頸：CPU、內存與 I/O 競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.4.html">1.4 單體什麼時候不夠用：擴展性 vs 效能</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.1.html">10.1 Service：ClusterIP / NodePort / LoadBalancer</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.2.html">10.2 對外入口：Ingress 與雲原生網關</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.3.html">10.3 服務網格：Istio 無侵入治理與 mTLS</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.4.html">10.4 儲存與配置：PV / PVC / StorageClass / ConfigMap / Secret</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.1.html">11.1 自癒：Liveness 與 Readiness 探針</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.2.html">11.2 應對大促：HPA / Cluster Autoscaler / KEDA</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.3.html">11.3 資源治理：Requests &amp; Limits 與 OOM 防護</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.4.html">11.4 多機房多集群：Affinity / Taints / Tolerations / Karmada</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.1.html">12.1 微服務過度拆分的技術債</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.2.html">12.2 模組化單體的復興：幾時該拆、幾時該合</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.3.html">12.3 全面 Serverless 化：Knative 與冷啟動優化</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.4.html">12.4 從微服務到 FaaS：前端與業務平台實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.1.html">13.1 GitOps 持續部署：ArgoCD 實戰</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.2.html">13.2 可觀測性三支柱：Log / Metric / Trace 與 OpenTelemetry</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.3.html">13.3 成本治理 FinOps：混部與資源利用率</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.4.html">13.4 公有雲託管 K8s：ACK / EKS / GKE 最佳實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.1.html">14.1 從千人千面到生成式 UI 與 AI Agent 導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.2.html">14.2 K8s 調度 GPU：vGPU / MIG / RDMA 高速網路</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.3.html">14.3 推理服務雲原生部署：vLLM / Triton + K8s</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.4.html">14.4 邊緣與 WASM：輕量容器在邊緣路由的應用</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.5.html">14.5 雲原生 AI 推理棧新進展：AI Serving Stack / 機密推理 / GPU 共享與彈性</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.1.html">15.1 從雲原生到 AI 原生：2025 白皮書與雲智一體</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.2.html">15.2 AgentRun 八大組件：AI 運行時 / AI 網關 / AI MQ / Memory / 可觀測 / 評估 / 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.3.html">15.3 FunctionAI 與 Agent Infra：AWS AgentCore / Azure / FunctionAI 長時運行與會話親和</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.4.html">15.4 MCP / A2A / Kagent on Knative：Agent 協議的 Serverless 託管</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.1.html">16.1 AI 網關：推理路由、Token 限流、多模型協議適配與 Gateway API</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.2.html">16.2 AI 中間件演進：Spring AI Alibaba / Higress / MSE / RocketMQ</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.3.html">16.3 淘寶 AI OS 實戰：搜索推薦全圖架構、RTP / XDL / OpenSearch 百萬 QPS</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.4.html">16.4 淘寶最新落地：Node.js Serverless 核心鏈路、智能客服亞秒級、Wenwen 生成式導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.1.html">17.1 ACK 2025–2026 新能力：Auto Mode / Virtual Node / ACK One 多集群 / AI Assistant</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.2.html">17.2 全景複盤：單體 → 分散式 → 微服務 → 雲原生 → AI 原生</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.3.html">17.3 技術選型白皮書：避免為了雲原生 / AI 而雲原生 / AI</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.4.html">17.4 架構設計原則：N+1、回滾、禁用、監控、多活、水平擴展、FinOps 與 AI 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.1.html">2.1 資料庫讀寫瓶頸與快取救星</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.2.html">2.2 本地快取與分散式快取：Memcached / Redis / Tair</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.3.html">2.3 快取實戰痛點：穿透、擊穿、雪崩與熱點失效</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.4.html">2.4 快取與資料庫的一致性難題</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.1.html">3.1 反向代理與 Web 集群：Nginx / HAProxy</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.2.html">3.2 無狀態設計與 Session 共享：Redis / JWT / 黏性會話</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.3.html">3.3 四層與七層的搭配：LVS / F5 + Keepalived</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.4.html">3.4 機房入口：DNS 輪詢、CDN 與異地多活基礎</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.1.html">4.1 讀寫分離與主從同步：Mycat 與資料一致性</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.2.html">4.2 按業務垂直分庫：降低資源競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.3.html">4.3 大表拆小表：Hash / 時間分片與水平擴展</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.4.html">4.4 拆分後的代價：分散式事務、跨庫 Join 與 MPP</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.1.html">5.1 大應用拆小應用：業務邊界與 DDD 簡介</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.2.html">5.2 公共模組服務化：Dubbo / Spring Cloud RPC</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.3.html">5.3 分散式協調：Zookeeper / Nacos 配置中心與服務發現</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.4.html">5.4 微服務三板斧：限流、熔斷與降級</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.1.html">6.1 異構儲存：HDFS / HBase / Elasticsearch / 大數據場景</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.2.html">6.2 訊息佇列：RocketMQ / Kafka 異步解耦與削峰</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.3.html">6.3 ESB 與 API Gateway：統一協議與路由</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.4.html">6.4 傳統微服務運維地獄：環境不一致與部署死胡同</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.1.html">7.1 虛擬機 vs 容器：本質差異與隔離模型</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.2.html">7.2 Docker 三要素：Image / Container / Repository</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.3.html">7.3 編寫 Dockerfile：把微服務打包為標準單元</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.4.html">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.1.html">8.1 Docker 網路模型：Bridge / Host / Overlay</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.2.html">8.2 數據持久化：Volume 與 Bind Mount</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.3.html">8.3 單機容器的極限：成百上千容器誰來管</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.1.html">9.1 為什麼需要容器編排</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.2.html">9.2 K8s 架構解密：Control Plane 與 Worker Node</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.3.html">9.3 核心物件入門：Pod / ReplicaSet / Deployment</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.4.html">9.4 重新定義部署：滾動更新與版本回滾</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.1.html">A.1 本地實驗環境：Docker Desktop / kind / minikube</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.2.html">A.2 Dockerfile 與 Compose 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.3.html">A.3 kubectl 與 YAML 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.1.html">B.1 淘寶 14 次演進 vs 本書章節對照總表</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.2.html">B.2 雙十一大促案例：預熱、削峰、降級與彈性擴縮</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.3.html">B.3 2025–2026 新名詞表：AI 原生 / AgentRun / FunctionAI / MCP / A2A / AI Serving Stack</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.4.html">B.4 架構演進教學指引：如何用本書上課</a></li>
+<li><a href="../向淘寶學習網站架構演進/README.html">演進式架構實戰：從單體、微服務到 Docker、Kubernetes 與 AI 雲原生轉型</a></li>
+<li><a href="../向淘寶學習網站架構演進/ref.html">ref.md</a></li>
+<li><a href="../現代軟體工程/1.1.html">1.1 什麼是軟體工程</a></li>
+<li><a href="../現代軟體工程/1.2.html">1.2 軟體的複雜性與本質性困難</a></li>
+<li><a href="../現代軟體工程/1.3.html">1.3 人月神話與 Brooks 法則</a></li>
+<li><a href="../現代軟體工程/1.4.html">1.4 AI 時代：附屬性困難的消亡與本質性困難的永存</a></li>
+<li><a href="../現代軟體工程/1.5.html">1.5 軟體工程師的角色轉變</a></li>
+<li><a href="../現代軟體工程/10.1.html">10.1 為什麼沒有度量就沒有改進</a></li>
+<li><a href="../現代軟體工程/10.2.html">10.2 評估資料集的設計原則</a></li>
+<li><a href="../現代軟體工程/10.3.html">10.3 對比實驗與消融實驗</a></li>
+<li><a href="../現代軟體工程/10.4.html">10.4 Agent 的持續進化閉環</a></li>
+<li><a href="../現代軟體工程/10.5.html">10.5 從經驗中學習：學習訊號與更新載體</a></li>
+<li><a href="../現代軟體工程/11.1.html">11.1 事件驅動與非同步架構</a></li>
+<li><a href="../現代軟體工程/11.2.html">11.2 即時互動：語音、Computer Use 與物理世界</a></li>
+<li><a href="../現代軟體工程/11.3.html">11.3 多 Agent 協作的分類框架</a></li>
+<li><a href="../現代軟體工程/11.4.html">11.4 協作拓撲：對等、管理者與去中心化</a></li>
+<li><a href="../現代軟體工程/12.1.html">12.1 從瀑布到敏捷到 AI 增強的 SDLC</a></li>
+<li><a href="../現代軟體工程/12.2.html">12.2 多人 + AI 的協同開發</a></li>
+<li><a href="../現代軟體工程/12.3.html">12.3 統一 AI 的全局認知：Shared Context</a></li>
+<li><a href="../現代軟體工程/12.4.html">12.4 自動化品質護欄與 CI/CD</a></li>
+<li><a href="../現代軟體工程/13.1.html">13.1 提示注入與防禦</a></li>
+<li><a href="../現代軟體工程/13.2.html">13.2 工具安全與權限控制</a></li>
+<li><a href="../現代軟體工程/13.3.html">13.3 AI 的偏見、幻覺與責任歸屬</a></li>
+<li><a href="../現代軟體工程/13.4.html">13.4 合規與隱私保護</a></li>
+<li><a href="../現代軟體工程/14.1.html">14.1 模型即 Agent：RL 內化工具呼叫決策</a></li>
+<li><a href="../現代軟體工程/14.2.html">14.2 模型與 Harness 的共同演進飛輪</a></li>
+<li><a href="../現代軟體工程/14.3.html">14.3 兩朵烏雲：即時互動與持續學習</a></li>
+<li><a href="../現代軟體工程/14.4.html">14.4 軟體工程師的未來：從建築工到指揮官</a></li>
+<li><a href="../現代軟體工程/2.1.html">2.1 需求的本質：從模糊意圖到精確規格</a></li>
+<li><a href="../現代軟體工程/2.2.html">2.2 需求挖掘與訪談技巧</a></li>
+<li><a href="../現代軟體工程/2.3.html">2.3 用例建模與使用者故事</a></li>
+<li><a href="../現代軟體工程/2.4.html">2.4 邊界條件與 Edge Cases</a></li>
+<li><a href="../現代軟體工程/2.5.html">2.5 AI 輔助需求分析：Red Teaming Prompting</a></li>
+<li><a href="../現代軟體工程/2.6.html">2.6 Spec-Driven Development：可執行的規格</a></li>
+<li><a href="../現代軟體工程/3.1.html">3.1 設計思維：抽象、模組化與資訊隱藏</a></li>
+<li><a href="../現代軟體工程/3.2.html">3.2 架構模式：從單體到微服務</a></li>
+<li><a href="../現代軟體工程/3.3.html">3.3 API 與介面設計（ACI vs HCI）</a></li>
+<li><a href="../現代軟體工程/3.4.html">3.4 設計原則：SOLID、DRY 與 KISS</a></li>
+<li><a href="../現代軟體工程/3.5.html">3.5 AI 時代的系統設計：高內聚低耦合的新意義</a></li>
+<li><a href="../現代軟體工程/4.1.html">4.1 程式碼品質與可讀性</a></li>
+<li><a href="../現代軟體工程/4.2.html">4.2 重構：改善既有設計的藝術</a></li>
+<li><a href="../現代軟體工程/4.3.html">4.3 設計模式的實用指南</a></li>
+<li><a href="../現代軟體工程/4.4.html">4.4 Agentic Coding：人機協同的程式碼生成</a></li>
+<li><a href="../現代軟體工程/4.5.html">4.5 Code Review 在 AI 時代的演變</a></li>
+<li><a href="../現代軟體工程/5.1.html">5.1 測試金字塔與測試策略</a></li>
+<li><a href="../現代軟體工程/5.2.html">5.2 單元測試與 TDD</a></li>
+<li><a href="../現代軟體工程/5.3.html">5.3 整合測試與端到端測試</a></li>
+<li><a href="../現代軟體工程/5.4.html">5.4 AI 自動生成測試</a></li>
+<li><a href="../現代軟體工程/5.5.html">5.5 LLM-as-a-Judge：用模型評判模型</a></li>
+<li><a href="../現代軟體工程/5.6.html">5.6 迴歸測試與持續驗證</a></li>
+<li><a href="../現代軟體工程/6.1.html">6.1 CI/CD 管線設計</a></li>
+<li><a href="../現代軟體工程/6.2.html">6.2 DevOps 與基礎設施即程式碼</a></li>
+<li><a href="../現代軟體工程/6.3.html">6.3 監控、日誌與可觀測性</a></li>
+<li><a href="../現代軟體工程/6.4.html">6.4 AI 驅動的異常偵測與自癒系統</a></li>
+<li><a href="../現代軟體工程/7.1.html">7.1 提示工程的基礎與進階</a></li>
+<li><a href="../現代軟體工程/7.2.html">7.2 上下文工程：決定 AI 能力上限的關鍵</a></li>
+<li><a href="../現代軟體工程/7.3.html">7.3 API 的上下文結構：訊息列表的角色</a></li>
+<li><a href="../現代軟體工程/7.4.html">7.4 上下文壓縮與管理策略</a></li>
+<li><a href="../現代軟體工程/7.5.html">7.5 知識庫與 RAG：跨會話的記憶體系</a></li>
+<li><a href="../現代軟體工程/8.1.html">8.1 工具設計的通用原則（ACI）</a></li>
+<li><a href="../現代軟體工程/8.2.html">8.2 五類工具的分類與設計</a></li>
+<li><a href="../現代軟體工程/8.3.html">8.3 MCP 協定：工具互操作標準</a></li>
+<li><a href="../現代軟體工程/8.4.html">8.4 ReAct 迴圈：思考→行動→觀察</a></li>
+<li><a href="../現代軟體工程/8.5.html">8.5 Coding Agent 與程式碼生成的元能力</a></li>
+<li><a href="../現代軟體工程/9.1.html">9.1 Harness 的五要素：Context、Tools、Constrain、Verify、Correct</a></li>
+<li><a href="../現代軟體工程/9.2.html">9.2 約束機制：故障安全預設值</a></li>
+<li><a href="../現代軟體工程/9.3.html">9.3 驗證機制：輸入隔離與結果校驗</a></li>
+<li><a href="../現代軟體工程/9.4.html">9.4 糾正機制：熔斷器與錯誤恢復</a></li>
+<li><a href="../現代軟體工程/9.5.html">9.5 從提示工程到 Loop 工程到 Graph 工程</a></li>
+<li><a href="../現代軟體工程/A.1.html">A.1 版本控制的本質：為什麼需要 Git</a></li>
+<li><a href="../現代軟體工程/A.2.html">A.2 Git 基礎操作：init、add、commit、branch、merge</a></li>
+<li><a href="../現代軟體工程/A.3.html">A.3 分支策略：Git Flow 與 Trunk-Based Development</a></li>
+<li><a href="../現代軟體工程/A.4.html">A.4 GitHub 協作：Pull Request、Code Review、Issue</a></li>
+<li><a href="../現代軟體工程/A.5.html">A.5 GitHub Actions：自動化 CI/CD 入門</a></li>
+<li><a href="../現代軟體工程/A.6.html">A.6 Git 進階：rebase、cherry-pick、bisect</a></li>
+<li><a href="../現代軟體工程/B.1.html">B.1 OpenCode 是什麼：從 CLI 到 Desktop</a></li>
+<li><a href="../現代軟體工程/B.2.html">B.2 安裝與設定 OpenCode Desktop</a></li>
+<li><a href="../現代軟體工程/B.3.html">B.3 AGENTS.md：為 AI 寫一份崗位說明書</a></li>
+<li><a href="../現代軟體工程/B.4.html">B.4 權限控制：讓 AI 能做什麼、不能做什麼</a></li>
+<li><a href="../現代軟體工程/B.5.html">B.5 MCP Servers：擴展 AI 的工具箱</a></li>
+<li><a href="../現代軟體工程/B.6.html">B.6 Skills：教 AI 新技能</a></li>
+<li><a href="../現代軟體工程/B.7.html">B.7 實戰：用 OpenCode 完成一個小專案</a></li>
+<li><a href="../現代軟體工程/C.1.html">C.1 需求發掘與產品驗證案例</a></li>
+<li><a href="../現代軟體工程/C.2.html">C.2 破壞性創新與創意生態案例</a></li>
+<li><a href="../現代軟體工程/C.3.html">C.3 軟體缺陷與安全關鍵系統案例</a></li>
+<li><a href="../現代軟體工程/C.4.html">C.4 架構演進與技術債案例</a></li>
+<li><a href="../現代軟體工程/C.5.html">C.5 網站與服務營運失敗案例</a></li>
+<li><a href="../現代軟體工程/C.6.html">C.6 趣味歷史軼事與其時代啟示</a></li>
+<li><a href="../現代軟體工程/C.7.html">C.7 案例集目錄與教學指引</a></li>
+<li><a href="../現代軟體工程/outline.html">《現代軟體工程：從基礎到 AI Agent 實踐》大綱</a></li>
+<li><a href="../現代軟體工程/README.html">現代軟體工程：從基礎到 AI Agent 實踐</a></li>
+<li><a href="../README.html">README.md</a></li>
+</ul></nav>
+<article class="markdown-body">
+<h1 id="26-spec-driven-development可執行的規格">2.6 Spec-Driven Development：可執行的規格</h1>
+<h2 id="一個關鍵問題精確規格要如何產生">一個關鍵問題：精確規格要如何產生</h2>
+<p>第 2.1 節提到，需求的最底層是「可執行的規格（Spec）」。而 2.5 節的結論說，人類要「產出精確的規格」。這裡浮現了 AI 時代最核心的一個命題：</p>
+<blockquote>
+<p><strong>過去的程式設計是「把需求翻譯成程式碼（Code）」；未來的程式設計，則是「把模糊想法翻譯成精確規格（Spec）」。</strong></p>
+</blockquote>
+<p>很多人會問：「可是規格要怎麼寫得精確？」這正是本節要解開的問題。我們稱這個方法為 <strong>Spec-Driven Development（規格驅動開發）</strong>——一種讓「規格即程式碼（Spec is Code）」成為可能的新開發方式。</p>
+<h2 id="從人讀到人和機器都能讀的規格">從「人讀」到「人和機器都能讀」的規格</h2>
+<p>傳統的需求規格是<strong>給人讀</strong>的自然語言文件（Word、PDF、UML 圖）。這種文件的最大問題是：<strong>模糊、會過期、無法直接被執行</strong>。</p>
+<p>AI 時代的規格，是一份<strong>結構化、可執行、人和 AI 都能讀</strong>的文件。它有幾種典型的形式，每一種都「精確到可以直接拿來生成程式碼和測試」：</p>
+<h3 id="1-可執行的資料介面規格schema">1. 可執行的資料/介面規格（Schema）</h3>
+<p>以結構化方式精確定義資料結構、欄位型別、驗證規則與 API 介面。AI 可以直接讀取 Schema 來自動建立資料庫模型、產生資料驗證邏輯與 API 伺服器。</p>
+<p>以 TypeScript 的 Zod 為例——</p>
+<pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">'zod'</span>;
+
+<span class="hljs-comment">// 定義商品項目規格</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">CartItemSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">productId</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">uuid</span>(),
+  <span class="hljs-attr">quantity</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">int</span>().<span class="hljs-title function_">positive</span>(),
+  <span class="hljs-attr">price</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">positive</span>(),
+});
+
+<span class="hljs-comment">// 定義結帳請求的精確規格</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">CheckoutRequestSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">userId</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">uuid</span>(),
+  <span class="hljs-attr">items</span>: z.<span class="hljs-title function_">array</span>(<span class="hljs-title class_">CartItemSchema</span>).<span class="hljs-title function_">min</span>(<span class="hljs-number">1</span>),
+  <span class="hljs-attr">paymentMethod</span>: z.<span class="hljs-title function_">enum</span>([<span class="hljs-string">'CREDIT_CARD'</span>, <span class="hljs-string">'LINE_PAY'</span>, <span class="hljs-string">'APPLE_PAY'</span>]),
+  <span class="hljs-attr">couponCode</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),
+});
+
+<span class="hljs-comment">// AI 可直接利用此 Schema 進行資料驗證，免寫額外 if/else</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">CheckoutRequest</span> = z.<span class="hljs-property">infer</span>&lt;<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">CheckoutRequestSchema</span>&gt;;</code></pre>
+<p>這份 Schema 同時是人類可讀的規格、程式會執行的驗證邏輯、以及 AI 生成程式碼的輸入。一個規格多重用途，這就是「可執行」的意義。</p>
+<h3 id="2-行為規格bdd-gherkin">2. 行為規格（BDD / Gherkin）</h3>
+<p>用 Given-When-Then 結構定義行為與邊界情境，AI 讀取後可直接轉化成自動化端到端測試。</p>
+<pre><code>Feature: 線上購物結帳邏輯
+  身為一個已登入的購物者
+  我希望能使用折扣碼完成付款
+
+  Scenario: 成功使用有效折扣碼結帳
+    Given 使用者 "User_123" 已經登入
+    And 購物車內包含商品，單價 100 元、數量 2 件
+    When 使用者輸入折扣碼 "SAVE20"
+    Then 系統應計算總金額為 160 元
+    And 系統應呼叫付款 API，金額為 160 元
+
+  Scenario: 購物車為空時結帳失敗
+    Given 使用者清空了購物車
+    When 使用者嘗試結帳
+    Then 系統應拒絕並回傳錯誤碼 "EMPTY_CART"
+    And 不應進行任何扣款</code></pre>
+<h3 id="3-架構介面規格typescript-interfaces">3. 架構介面規格（TypeScript Interfaces）</h3>
+<p>定義模組邊界、服務合約，確保 AI 產出的程式碼嚴格符合架構，不出現型別不匹配。</p>
+<pre><code class="hljs language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">CheckoutResult</span> {
+  <span class="hljs-attr">orderId</span>: <span class="hljs-built_in">string</span>;
+  <span class="hljs-attr">status</span>: <span class="hljs-string">'SUCCESS'</span> | <span class="hljs-string">'FAILED'</span> | <span class="hljs-string">'PENDING'</span>;
+  <span class="hljs-attr">totalAmount</span>: <span class="hljs-built_in">number</span>;
+  <span class="hljs-attr">transactionTime</span>: <span class="hljs-title class_">Date</span>;
+  <span class="hljs-attr">errorMessage</span>?: <span class="hljs-built_in">string</span>;
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ICheckoutService</span> {
+  <span class="hljs-title function_">executeCheckout</span>(<span class="hljs-attr">request</span>: <span class="hljs-title class_">CheckoutRequest</span>): <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-title class_">CheckoutResult</span>&gt;;
+}</code></pre>
+<h2 id="spec-driven-開發的三重核心">Spec-Driven 開發的三重核心</h2>
+<p>把上面的例子總結起來，Spec-Driven Development 有三大核心：</p>
+<h3 id="1-契約優先contract-first">1. 契約優先（Contract-First）</h3>
+<p><strong>在生成業務邏輯程式碼之前，先定義好介面契約與資料結構。</strong> 因為介面是「契約」，定了參數與傳回型別，前端、後端、各模組才能獨立開發。契約靠 Schema / Interface 鎖定，AI 依契約生成實作，就不會跑偏。</p>
+<h3 id="2-測試先行test-first-的延伸">2. 測試先行（Test-First 的延伸）</h3>
+<p><strong>先根據 Spec 寫出測試案例，再讓 AI 去填實作讓測試通過。</strong> 這其實是「測試驅動開發」在 AI 時代的自然延伸——只是現在「寫測試讓人類通過」變成了「寫測試讓 AI 通過」。好的驗收條件就是可驗證的規格。</p>
+<h3 id="3-規格模組化modular-spec">3. 規格模組化（Modular Spec）</h3>
+<p><strong>不要試圖用一份巨大的 Spec 描述整個系統。</strong> 把系統拆成獨立的小模組（認證、支付、通知），每個模組有自己的 Spec。這有兩個好處：一是符合「高內聚、低耦合」（見第 3 章），二是避免一次給 AI 太多上下文（Context 過大時 AI 容易出錯，這是第 7 章的主題）。</p>
+<h2 id="人機分工誰來寫-spec">人機分工：誰來寫 Spec？</h2>
+<p>一個自然的問題是：<strong>這三份 Spec 由人寫還是 AI 寫？</strong></p>
+<p>答案沿用 2.5 節的框架：「<strong>人類主導概念與目標，AI 負責寫出規格，最後由人類審核確認。</strong>」人類不需要從零逐字寫 Schema 或 TS Interface，而是提供高階意圖，讓 AI 生成草稿，人類再把關微調。</p>
+<table>
+<thead>
+<tr>
+<th>規格類型</th>
+<th>人類負責的部分</th>
+<th>AI 負責的部分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BDD（Gherkin）</td>
+<td>商業目標與核心邊界：「我要結帳流程，有折價券，購物車空的要擋掉」</td>
+<td>自動轉為 Given-When-Then，並反問：「折價券過期？金額為負？」補齊邊界</td>
+</tr>
+<tr>
+<td>TS Interface</td>
+<td>架構決策：「用單體還是微服務？要抽象化金流嗎？」</td>
+<td>依架構決策產生 Interface、Enum、Service Contract</td>
+</tr>
+<tr>
+<td>可執行 Schema</td>
+<td>資料驗證規則：「密碼至少 8 碼」「數量不能小於 0」</td>
+<td>把自然語言規則轉成正確的 Zod / OpenAPI 語法</td>
+</tr>
+</tbody>
+</table>
+<h2 id="完整流程">完整流程</h2>
+<p>一個完整的 Spec-Driven 開發循環是：</p>
+<pre class="mermaid">flowchart TD
+    A[人類：提供高階意圖&lt;br/&gt;敘述商業目標] --&gt; B[AI：生成第一版 Spec 草稿&lt;br/&gt;Schema + BDD + Interface]
+    B --&gt; C[人類：審核與微調&lt;br/&gt;補邏輯死角、修正規則]
+    C --&gt; D{Spec 確認？}
+    D -- 否 --&gt; B
+    D -- 是 --&gt; E[AI：根據 Spec 生成程式碼&lt;br/&gt;Controller / Service / 資料模型]
+    E --&gt; F[AI：根據 Spec 生成測試&lt;br/&gt;Unit Test / E2E]
+    F --&gt; G[人類：審查品質與安全&lt;br/&gt;承擔最終責任]</pre>
+<p>值得注意的是，這個流程把<strong>人從「寫實作」解放出來，集中到「前端定義問題、後端把關品質」</strong>（呼應 1.5 節）。而 Spec 是整個循環的「單一真實來源（Single Source of Truth）」——程式碼改了，Spec 應該同步更新；Spec 改了，AI 重新生成對應實作。</p>
+<h2 id="傳統-spec-vs-ai-時代-spec">傳統 Spec vs AI 時代 Spec</h2>
+<table>
+<thead>
+<tr>
+<th>面向</th>
+<th>傳統 Spec</th>
+<th>AI 時代 Spec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>撰寫者</td>
+<td>完全由 PM / 架構師手寫</td>
+<td>人類引導 + AI 自動補全與對齊</td>
+</tr>
+<tr>
+<td>表達形式</td>
+<td>繁複的自然語言 PDF / Word / UML</td>
+<td>可執行的 Schema、BDD、TS Interfaces</td>
+</tr>
+<tr>
+<td>維護成本</td>
+<td>極高（Code 改了，Spec 就過期）</td>
+<td>極低（AI 雙向同步）</td>
+</tr>
+<tr>
+<td>精確度要求</td>
+<td>容忍某種模糊</td>
+<td>需嚴格邏輯一致（作為 AI 生成程式碼的 Prompt）</td>
+</tr>
+</tbody>
+</table>
+<p>一句話總結：<strong>在 AI 時代，「寫精確 Spec」就是新時代的「寫程式」（Specification is Code）。</strong> 人類工程師的核心功力，不再是記得多少語法或函式庫，而是<strong>能否清晰地定義問題邊界、輸入輸出規格，以及判斷 AI 補全的邏輯是否有死角</strong>。</p>
+<h2 id="本章小結">本章小結</h2>
+<ul>
+<li><strong>Spec-Driven Development</strong>：規格即程式碼</li>
+<li>三種可執行規格：<strong>可執行 Schema、BDD/Gherkin、TS Interface</strong></li>
+<li>三大核心：<strong>契約優先、測試先行、規格模組化</strong></li>
+<li>人機分工：<strong>人類主導概念與目標，AI 寫規格草稿，人類審核</strong></li>
+<li>Spec 是<strong>單一真實來源</strong>，驅動程式碼與測試的生成</li>
+<li>「寫精確 Spec」就是 AI 時代的「寫程式」</li>
+</ul>
+<h2 id="想一想">想一想</h2>
+<ol>
+<li>用「訂位系統」為例，嘗試寫一份小的 Zod Schema（或你熟悉語言的對應）定義訂位請求。</li>
+<li>為什麼規格要模組化，不能一份大文件包整個系統？</li>
+<li>你覺得「Spec 是單一真實來源」這句話，在多人 + AI 協作時為什麼特別重要？（提示：見第 12 章）</li>
+</ol>
+
+</article>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){try{if(window.mermaid){mermaid.initialize({startOnLoad:true,securityLevel:'loose'});mermaid.run();}}catch(e){console.warn(e);}})();
+</script>
+</body>
+</html>

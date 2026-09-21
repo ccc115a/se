@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>10.5 從經驗中學習：學習訊號與更新載體</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+<style>
+body{margin:0;background:#fff}
+.wrap{display:flex;min-height:100vh}
+nav.site{width:260px;min-width:200px;border-right:1px solid #d0d7de;padding:16px;position:sticky;top:0;height:100vh;overflow:auto;background:#f6f8fa}
+nav.site .home{font-weight:700;margin-bottom:8px;display:block;color:#1f2328;text-decoration:none}
+ul.site-nav{list-style:none;margin:0;padding:0}
+ul.site-nav li{margin:2px 0}
+ul.site-nav a{color:#0969da;text-decoration:none;font-size:.9em}
+ul.site-nav a:hover{text-decoration:underline}
+article{flex:1;min-width:0;box-sizing:border-box;max-width:980px;padding:24px}
+.markdown-alert{padding:.5rem 1rem;margin-bottom:1rem;border-left:.25em solid #888;border-radius:6px;background:#f6f8fa}
+.markdown-alert-title{font-weight:600;margin:0 0 .25rem}
+.markdown-alert-note{border-color:#0969da}.markdown-alert-tip{border-color:#1a7f37}
+.markdown-alert-important{border-color:#8250df}.markdown-alert-warning{border-color:#9a6700}
+.markdown-alert-caution{border-color:#d1242f}
+pre.mermaid{background:#f6f8fa;padding:16px;border-radius:6px}
+@media (max-width:767px){nav.site{display:none}article{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="site"><a class="home" href="../index.html">⌂ 首頁</a><ul class="site-nav">
+<li><a href="../向淘寶學習網站架構演進/1.1.html">1.1 淘寶初期的 Web 架構：單機 Tomcat + 資料庫</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.2.html">1.2 第一次演進：Web 伺服器與資料庫分離部署</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.3.html">1.3 應用伺服器的效能瓶頸：CPU、內存與 I/O 競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.4.html">1.4 單體什麼時候不夠用：擴展性 vs 效能</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.1.html">10.1 Service：ClusterIP / NodePort / LoadBalancer</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.2.html">10.2 對外入口：Ingress 與雲原生網關</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.3.html">10.3 服務網格：Istio 無侵入治理與 mTLS</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.4.html">10.4 儲存與配置：PV / PVC / StorageClass / ConfigMap / Secret</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.1.html">11.1 自癒：Liveness 與 Readiness 探針</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.2.html">11.2 應對大促：HPA / Cluster Autoscaler / KEDA</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.3.html">11.3 資源治理：Requests &amp; Limits 與 OOM 防護</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.4.html">11.4 多機房多集群：Affinity / Taints / Tolerations / Karmada</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.1.html">12.1 微服務過度拆分的技術債</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.2.html">12.2 模組化單體的復興：幾時該拆、幾時該合</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.3.html">12.3 全面 Serverless 化：Knative 與冷啟動優化</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.4.html">12.4 從微服務到 FaaS：前端與業務平台實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.1.html">13.1 GitOps 持續部署：ArgoCD 實戰</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.2.html">13.2 可觀測性三支柱：Log / Metric / Trace 與 OpenTelemetry</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.3.html">13.3 成本治理 FinOps：混部與資源利用率</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.4.html">13.4 公有雲託管 K8s：ACK / EKS / GKE 最佳實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.1.html">14.1 從千人千面到生成式 UI 與 AI Agent 導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.2.html">14.2 K8s 調度 GPU：vGPU / MIG / RDMA 高速網路</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.3.html">14.3 推理服務雲原生部署：vLLM / Triton + K8s</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.4.html">14.4 邊緣與 WASM：輕量容器在邊緣路由的應用</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.5.html">14.5 雲原生 AI 推理棧新進展：AI Serving Stack / 機密推理 / GPU 共享與彈性</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.1.html">15.1 從雲原生到 AI 原生：2025 白皮書與雲智一體</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.2.html">15.2 AgentRun 八大組件：AI 運行時 / AI 網關 / AI MQ / Memory / 可觀測 / 評估 / 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.3.html">15.3 FunctionAI 與 Agent Infra：AWS AgentCore / Azure / FunctionAI 長時運行與會話親和</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.4.html">15.4 MCP / A2A / Kagent on Knative：Agent 協議的 Serverless 託管</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.1.html">16.1 AI 網關：推理路由、Token 限流、多模型協議適配與 Gateway API</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.2.html">16.2 AI 中間件演進：Spring AI Alibaba / Higress / MSE / RocketMQ</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.3.html">16.3 淘寶 AI OS 實戰：搜索推薦全圖架構、RTP / XDL / OpenSearch 百萬 QPS</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.4.html">16.4 淘寶最新落地：Node.js Serverless 核心鏈路、智能客服亞秒級、Wenwen 生成式導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.1.html">17.1 ACK 2025–2026 新能力：Auto Mode / Virtual Node / ACK One 多集群 / AI Assistant</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.2.html">17.2 全景複盤：單體 → 分散式 → 微服務 → 雲原生 → AI 原生</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.3.html">17.3 技術選型白皮書：避免為了雲原生 / AI 而雲原生 / AI</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.4.html">17.4 架構設計原則：N+1、回滾、禁用、監控、多活、水平擴展、FinOps 與 AI 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.1.html">2.1 資料庫讀寫瓶頸與快取救星</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.2.html">2.2 本地快取與分散式快取：Memcached / Redis / Tair</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.3.html">2.3 快取實戰痛點：穿透、擊穿、雪崩與熱點失效</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.4.html">2.4 快取與資料庫的一致性難題</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.1.html">3.1 反向代理與 Web 集群：Nginx / HAProxy</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.2.html">3.2 無狀態設計與 Session 共享：Redis / JWT / 黏性會話</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.3.html">3.3 四層與七層的搭配：LVS / F5 + Keepalived</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.4.html">3.4 機房入口：DNS 輪詢、CDN 與異地多活基礎</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.1.html">4.1 讀寫分離與主從同步：Mycat 與資料一致性</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.2.html">4.2 按業務垂直分庫：降低資源競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.3.html">4.3 大表拆小表：Hash / 時間分片與水平擴展</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.4.html">4.4 拆分後的代價：分散式事務、跨庫 Join 與 MPP</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.1.html">5.1 大應用拆小應用：業務邊界與 DDD 簡介</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.2.html">5.2 公共模組服務化：Dubbo / Spring Cloud RPC</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.3.html">5.3 分散式協調：Zookeeper / Nacos 配置中心與服務發現</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.4.html">5.4 微服務三板斧：限流、熔斷與降級</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.1.html">6.1 異構儲存：HDFS / HBase / Elasticsearch / 大數據場景</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.2.html">6.2 訊息佇列：RocketMQ / Kafka 異步解耦與削峰</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.3.html">6.3 ESB 與 API Gateway：統一協議與路由</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.4.html">6.4 傳統微服務運維地獄：環境不一致與部署死胡同</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.1.html">7.1 虛擬機 vs 容器：本質差異與隔離模型</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.2.html">7.2 Docker 三要素：Image / Container / Repository</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.3.html">7.3 編寫 Dockerfile：把微服務打包為標準單元</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.4.html">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.1.html">8.1 Docker 網路模型：Bridge / Host / Overlay</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.2.html">8.2 數據持久化：Volume 與 Bind Mount</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.3.html">8.3 單機容器的極限：成百上千容器誰來管</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.1.html">9.1 為什麼需要容器編排</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.2.html">9.2 K8s 架構解密：Control Plane 與 Worker Node</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.3.html">9.3 核心物件入門：Pod / ReplicaSet / Deployment</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.4.html">9.4 重新定義部署：滾動更新與版本回滾</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.1.html">A.1 本地實驗環境：Docker Desktop / kind / minikube</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.2.html">A.2 Dockerfile 與 Compose 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.3.html">A.3 kubectl 與 YAML 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.1.html">B.1 淘寶 14 次演進 vs 本書章節對照總表</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.2.html">B.2 雙十一大促案例：預熱、削峰、降級與彈性擴縮</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.3.html">B.3 2025–2026 新名詞表：AI 原生 / AgentRun / FunctionAI / MCP / A2A / AI Serving Stack</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.4.html">B.4 架構演進教學指引：如何用本書上課</a></li>
+<li><a href="../向淘寶學習網站架構演進/README.html">演進式架構實戰：從單體、微服務到 Docker、Kubernetes 與 AI 雲原生轉型</a></li>
+<li><a href="../向淘寶學習網站架構演進/ref.html">ref.md</a></li>
+<li><a href="../現代軟體工程/1.1.html">1.1 什麼是軟體工程</a></li>
+<li><a href="../現代軟體工程/1.2.html">1.2 軟體的複雜性與本質性困難</a></li>
+<li><a href="../現代軟體工程/1.3.html">1.3 人月神話與 Brooks 法則</a></li>
+<li><a href="../現代軟體工程/1.4.html">1.4 AI 時代：附屬性困難的消亡與本質性困難的永存</a></li>
+<li><a href="../現代軟體工程/1.5.html">1.5 軟體工程師的角色轉變</a></li>
+<li><a href="../現代軟體工程/10.1.html">10.1 為什麼沒有度量就沒有改進</a></li>
+<li><a href="../現代軟體工程/10.2.html">10.2 評估資料集的設計原則</a></li>
+<li><a href="../現代軟體工程/10.3.html">10.3 對比實驗與消融實驗</a></li>
+<li><a href="../現代軟體工程/10.4.html">10.4 Agent 的持續進化閉環</a></li>
+<li><a href="../現代軟體工程/10.5.html">10.5 從經驗中學習：學習訊號與更新載體</a></li>
+<li><a href="../現代軟體工程/11.1.html">11.1 事件驅動與非同步架構</a></li>
+<li><a href="../現代軟體工程/11.2.html">11.2 即時互動：語音、Computer Use 與物理世界</a></li>
+<li><a href="../現代軟體工程/11.3.html">11.3 多 Agent 協作的分類框架</a></li>
+<li><a href="../現代軟體工程/11.4.html">11.4 協作拓撲：對等、管理者與去中心化</a></li>
+<li><a href="../現代軟體工程/12.1.html">12.1 從瀑布到敏捷到 AI 增強的 SDLC</a></li>
+<li><a href="../現代軟體工程/12.2.html">12.2 多人 + AI 的協同開發</a></li>
+<li><a href="../現代軟體工程/12.3.html">12.3 統一 AI 的全局認知：Shared Context</a></li>
+<li><a href="../現代軟體工程/12.4.html">12.4 自動化品質護欄與 CI/CD</a></li>
+<li><a href="../現代軟體工程/13.1.html">13.1 提示注入與防禦</a></li>
+<li><a href="../現代軟體工程/13.2.html">13.2 工具安全與權限控制</a></li>
+<li><a href="../現代軟體工程/13.3.html">13.3 AI 的偏見、幻覺與責任歸屬</a></li>
+<li><a href="../現代軟體工程/13.4.html">13.4 合規與隱私保護</a></li>
+<li><a href="../現代軟體工程/14.1.html">14.1 模型即 Agent：RL 內化工具呼叫決策</a></li>
+<li><a href="../現代軟體工程/14.2.html">14.2 模型與 Harness 的共同演進飛輪</a></li>
+<li><a href="../現代軟體工程/14.3.html">14.3 兩朵烏雲：即時互動與持續學習</a></li>
+<li><a href="../現代軟體工程/14.4.html">14.4 軟體工程師的未來：從建築工到指揮官</a></li>
+<li><a href="../現代軟體工程/2.1.html">2.1 需求的本質：從模糊意圖到精確規格</a></li>
+<li><a href="../現代軟體工程/2.2.html">2.2 需求挖掘與訪談技巧</a></li>
+<li><a href="../現代軟體工程/2.3.html">2.3 用例建模與使用者故事</a></li>
+<li><a href="../現代軟體工程/2.4.html">2.4 邊界條件與 Edge Cases</a></li>
+<li><a href="../現代軟體工程/2.5.html">2.5 AI 輔助需求分析：Red Teaming Prompting</a></li>
+<li><a href="../現代軟體工程/2.6.html">2.6 Spec-Driven Development：可執行的規格</a></li>
+<li><a href="../現代軟體工程/3.1.html">3.1 設計思維：抽象、模組化與資訊隱藏</a></li>
+<li><a href="../現代軟體工程/3.2.html">3.2 架構模式：從單體到微服務</a></li>
+<li><a href="../現代軟體工程/3.3.html">3.3 API 與介面設計（ACI vs HCI）</a></li>
+<li><a href="../現代軟體工程/3.4.html">3.4 設計原則：SOLID、DRY 與 KISS</a></li>
+<li><a href="../現代軟體工程/3.5.html">3.5 AI 時代的系統設計：高內聚低耦合的新意義</a></li>
+<li><a href="../現代軟體工程/4.1.html">4.1 程式碼品質與可讀性</a></li>
+<li><a href="../現代軟體工程/4.2.html">4.2 重構：改善既有設計的藝術</a></li>
+<li><a href="../現代軟體工程/4.3.html">4.3 設計模式的實用指南</a></li>
+<li><a href="../現代軟體工程/4.4.html">4.4 Agentic Coding：人機協同的程式碼生成</a></li>
+<li><a href="../現代軟體工程/4.5.html">4.5 Code Review 在 AI 時代的演變</a></li>
+<li><a href="../現代軟體工程/5.1.html">5.1 測試金字塔與測試策略</a></li>
+<li><a href="../現代軟體工程/5.2.html">5.2 單元測試與 TDD</a></li>
+<li><a href="../現代軟體工程/5.3.html">5.3 整合測試與端到端測試</a></li>
+<li><a href="../現代軟體工程/5.4.html">5.4 AI 自動生成測試</a></li>
+<li><a href="../現代軟體工程/5.5.html">5.5 LLM-as-a-Judge：用模型評判模型</a></li>
+<li><a href="../現代軟體工程/5.6.html">5.6 迴歸測試與持續驗證</a></li>
+<li><a href="../現代軟體工程/6.1.html">6.1 CI/CD 管線設計</a></li>
+<li><a href="../現代軟體工程/6.2.html">6.2 DevOps 與基礎設施即程式碼</a></li>
+<li><a href="../現代軟體工程/6.3.html">6.3 監控、日誌與可觀測性</a></li>
+<li><a href="../現代軟體工程/6.4.html">6.4 AI 驅動的異常偵測與自癒系統</a></li>
+<li><a href="../現代軟體工程/7.1.html">7.1 提示工程的基礎與進階</a></li>
+<li><a href="../現代軟體工程/7.2.html">7.2 上下文工程：決定 AI 能力上限的關鍵</a></li>
+<li><a href="../現代軟體工程/7.3.html">7.3 API 的上下文結構：訊息列表的角色</a></li>
+<li><a href="../現代軟體工程/7.4.html">7.4 上下文壓縮與管理策略</a></li>
+<li><a href="../現代軟體工程/7.5.html">7.5 知識庫與 RAG：跨會話的記憶體系</a></li>
+<li><a href="../現代軟體工程/8.1.html">8.1 工具設計的通用原則（ACI）</a></li>
+<li><a href="../現代軟體工程/8.2.html">8.2 五類工具的分類與設計</a></li>
+<li><a href="../現代軟體工程/8.3.html">8.3 MCP 協定：工具互操作標準</a></li>
+<li><a href="../現代軟體工程/8.4.html">8.4 ReAct 迴圈：思考→行動→觀察</a></li>
+<li><a href="../現代軟體工程/8.5.html">8.5 Coding Agent 與程式碼生成的元能力</a></li>
+<li><a href="../現代軟體工程/9.1.html">9.1 Harness 的五要素：Context、Tools、Constrain、Verify、Correct</a></li>
+<li><a href="../現代軟體工程/9.2.html">9.2 約束機制：故障安全預設值</a></li>
+<li><a href="../現代軟體工程/9.3.html">9.3 驗證機制：輸入隔離與結果校驗</a></li>
+<li><a href="../現代軟體工程/9.4.html">9.4 糾正機制：熔斷器與錯誤恢復</a></li>
+<li><a href="../現代軟體工程/9.5.html">9.5 從提示工程到 Loop 工程到 Graph 工程</a></li>
+<li><a href="../現代軟體工程/A.1.html">A.1 版本控制的本質：為什麼需要 Git</a></li>
+<li><a href="../現代軟體工程/A.2.html">A.2 Git 基礎操作：init、add、commit、branch、merge</a></li>
+<li><a href="../現代軟體工程/A.3.html">A.3 分支策略：Git Flow 與 Trunk-Based Development</a></li>
+<li><a href="../現代軟體工程/A.4.html">A.4 GitHub 協作：Pull Request、Code Review、Issue</a></li>
+<li><a href="../現代軟體工程/A.5.html">A.5 GitHub Actions：自動化 CI/CD 入門</a></li>
+<li><a href="../現代軟體工程/A.6.html">A.6 Git 進階：rebase、cherry-pick、bisect</a></li>
+<li><a href="../現代軟體工程/B.1.html">B.1 OpenCode 是什麼：從 CLI 到 Desktop</a></li>
+<li><a href="../現代軟體工程/B.2.html">B.2 安裝與設定 OpenCode Desktop</a></li>
+<li><a href="../現代軟體工程/B.3.html">B.3 AGENTS.md：為 AI 寫一份崗位說明書</a></li>
+<li><a href="../現代軟體工程/B.4.html">B.4 權限控制：讓 AI 能做什麼、不能做什麼</a></li>
+<li><a href="../現代軟體工程/B.5.html">B.5 MCP Servers：擴展 AI 的工具箱</a></li>
+<li><a href="../現代軟體工程/B.6.html">B.6 Skills：教 AI 新技能</a></li>
+<li><a href="../現代軟體工程/B.7.html">B.7 實戰：用 OpenCode 完成一個小專案</a></li>
+<li><a href="../現代軟體工程/C.1.html">C.1 需求發掘與產品驗證案例</a></li>
+<li><a href="../現代軟體工程/C.2.html">C.2 破壞性創新與創意生態案例</a></li>
+<li><a href="../現代軟體工程/C.3.html">C.3 軟體缺陷與安全關鍵系統案例</a></li>
+<li><a href="../現代軟體工程/C.4.html">C.4 架構演進與技術債案例</a></li>
+<li><a href="../現代軟體工程/C.5.html">C.5 網站與服務營運失敗案例</a></li>
+<li><a href="../現代軟體工程/C.6.html">C.6 趣味歷史軼事與其時代啟示</a></li>
+<li><a href="../現代軟體工程/C.7.html">C.7 案例集目錄與教學指引</a></li>
+<li><a href="../現代軟體工程/outline.html">《現代軟體工程：從基礎到 AI Agent 實踐》大綱</a></li>
+<li><a href="../現代軟體工程/README.html">現代軟體工程：從基礎到 AI Agent 實踐</a></li>
+<li><a href="../README.html">README.md</a></li>
+</ul></nav>
+<article class="markdown-body">
+<h1 id="105-從經驗中學習學習訊號與更新載體">10.5 從經驗中學習：學習訊號與更新載體</h1>
+<h2 id="進化的兩條路線">進化的兩條路線</h2>
+<p>10.4 節的持續進化閉環，是「<strong>由人主導</strong>」的進化——我們看評估結果、改 Prompt、改工具、改 Harness。這條路線非常有效，也是本書強調的重點。</p>
+<p>但這不是唯一的進化方式。還有第二條路線，也是本章的最後一節：<strong>讓 Agent 直接「從經驗（Experience）中學習」</strong>——把它在真實運作中遇到的「成敗案例」，轉化為「自動更新它的知識與技能」的養分。</p>
+<p>這條路線有兩個關鍵概念：<strong>學習訊號（Learning Signal）</strong> 與 <strong>更新載體（Update Vector / Carrier）</strong>。</p>
+<h2 id="學習訊號什麼是你值得記取的經驗">學習訊號：什麼是你「值得記取」的經驗</h2>
+<p><strong>學習訊號（Learning Signal）</strong>，是一個系統為了「改進自己」而會<strong>吸收與利用的資料</strong>——特別指「從任務執行經驗中，得到的成敗資訊」。</p>
+<p>在 7.5 節我們區分過：<strong>知識庫是「查資料」，學習訊號是「記教訓」。</strong> 學習訊號是「記教訓」的那種——讓系統「吃一塹、長一智」。</p>
+<p>常見的學習訊號來源：</p>
+<ul>
+<li><strong>任務成敗</strong>：這次任務成功了還是失敗了？（成功率是基本訊號）</li>
+<li><strong>使用者回饋</strong>：使用者對 Agent 的產出，是按讚、是抱怨、還是直接改寫？</li>
+<li><strong>修正資訊</strong>：人類（或上游）如何「修正」Agent 的產出？（修正後的正確版本是強訊號）</li>
+<li><strong>評估結果</strong>（10.2 節）：在那些樣本上失敗了？失敗類型為何？</li>
+<li><strong>異常偵測</strong>（6.4 節）：行為軌跡中發生的異常</li>
+</ul>
+<p><strong>核心問題</strong>：每個 Agent 系統都應該自問——<strong>「我有哪些『可以吸收』的訊號？我斷得了哪些『成功或失敗』？」</strong> 沒有訊號，就沒有自主學習的可能。</p>
+<h2 id="更新載體學習到的東西存在哪裡">更新載體：學習到的東西「存在哪裡」</h2>
+<p>有了學習訊號，下一個問題是：<strong>「學到的東西要『寫到哪裡』？」</strong> 這個「寫入的地方」，就是<strong>更新載體（Update Vector）</strong>。</p>
+<p>值得注意的是：<strong>Agent 的「大腦」——LLM 的參數——通常不是主要的更新載體。</strong> 因為「更新模型參數」（訓練/微調/RL）成本高、週期慢，不是「日常從每次經驗學習」的合適場所（14.3 節會談這朵烏雲）。</p>
+<p>於是，「讓 Agent 變懂」的更新載體，落在<strong>系統可以快速寫入的地方</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>更新載體</th>
+<th>寫入什麼</th>
+<th>特點</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>知識庫 / RAG</strong>（7.5 節）</td>
+<td>新增/更新事實知識</td>
+<td>快速，事實導向</td>
+</tr>
+<tr>
+<td><strong>規則 / 提示庫</strong>（7.1）</td>
+<td>新增行為規範、常用指令</td>
+<td>快速，行為導向</td>
+</tr>
+<tr>
+<td><strong>工具定義 / 技能</strong>（8 章）</td>
+<td>新增可用能力、教學範例</td>
+<td>中等，能力導向</td>
+</tr>
+<tr>
+<td><strong>評估資料集</strong>（10.2）</td>
+<td>加入「新學到的失敗案例」成樣本</td>
+<td>驅動再評估</td>
+</tr>
+<tr>
+<td><strong>Harness 配置</strong>（9 章）</td>
+<td>強化約束/驗證/糾正規則</td>
+<td>安全導向</td>
+</tr>
+<tr>
+<td><strong>模型參數</strong>（14.2 節）</td>
+<td>長期、深層的能力內化</td>
+<td>慢、貴、長期</td>
+</tr>
+</tbody>
+</table>
+<p><strong>關鍵洞察</strong>：<strong>透過「外部的更新載體」（知識庫、規則、工具、資料集、Harness），我們可以在不訓練模型的情況下，「持續教導」Agent——這是 9 章「Model + Harness」架構的偉大之處：Harness「外側」可以持續更新，而模型「內側」保持穩定。</strong></p>
+<h2 id="更新載體與負責任的進化">更新載體與「負責任的進化」</h2>
+<p>「學習」不是無限美好的事——它需要負責任的治理。兩件重要的事：</p>
+<h3 id="1-學習要先驗證再寫入">1. 學習要先「驗證」再「寫入」</h3>
+<p><strong>不要直接「吞下」任何經驗就更新</strong>——你害怕「學到壞的」：</p>
+<ul>
+<li>失敗案例要<strong>先分析</strong>（10.4 節），確認「真的是 Agent 的錯、且我們知道怎麼改」才行動</li>
+<li>新知識要<strong>送到評估</strong>（10.2）驗證後，才納入知識庫或規則</li>
+<li><strong>更新載體的內容，最終要能回到評估衡量有無變好</strong>（10.4 閉環）</li>
+</ul>
+<p><strong>警惕</strong>：「從失敗案例學習」如果處理不當，可能「把個案當通則」「把偏見學起來」（13.3 節）。</p>
+<h3 id="2-進化要可審計可回滾">2. 進化要「可審計、可回滾」</h3>
+<p>「持續更新」意味著持續變化——因此<strong>必須能「知道改了什麼、回到原本」</strong>（呼應 4.3 節版本控制、4.5 節審查）：</p>
+<ul>
+<li>更新載體的變更要<strong>版本化</strong>（改知識庫、改規則，都有記錄）</li>
+<li>要能<strong>回滾</strong>（某次更新反而變差，回到上一版）</li>
+<li>更新的內容最好<strong>經由人審查</strong>（尤其規則、工具、Harness 這類「高影響」載體）</li>
+</ul>
+<h2 id="讓閉環接地把-10-章串成一個整體">讓「閉環」接地：把 10 章串成一個整體</h2>
+<p>把整個第 10 章收束成一個「可操作的整體」：</p>
+<ol>
+<li><strong>度量</strong>（10.1）：沒度量就沒改進</li>
+<li><strong>資料集</strong>（10.2）：用有代表性的樣本度量</li>
+<li><strong>實驗</strong>（10.3）：用對比/消融科學比較（哪個版本好、哪個部件值）</li>
+<li><strong>閉環</strong>（10.4）：把度量→分析→改進→再度量變成日常節奏</li>
+<li><strong>學習</strong>（10.5）：把真實經驗轉成訊號，寫入可更新的載體</li>
+</ol>
+<p><strong>一句話</strong>：<strong>軟體工程的精神——「持續度量、科學實驗、迭代改進、負責任的變更治理」——在 AI Agent 時代，以「評估與持續進化」的形式被完整地繼承，甚至更加重要。</strong></p>
+<p>而這條「持續進化」之路，最終會通向第 14 章的「前沿與展望」——模型與 Harness 的共同演進（14.2 節）、以及「Agent 像人一樣從經驗中持續學習」的未來（14.3 節）。</p>
+<h2 id="本章小結">本章小結</h2>
+<ul>
+<li>第二條進化路線：Agent <strong>從經驗中學習</strong></li>
+<li><strong>學習訊號</strong>：能吸收的成敗資訊（任務結果、使用者回饋、修正資訊、評估失敗）</li>
+<li><strong>更新載體</strong>：學到的東西「寫到哪」——<strong>多以外部載體為主</strong>（知識庫、規則、工具、資料集、Harness），而非模型參數</li>
+<li><strong>先驗證再寫入</strong>：避免「學到壞的」；每次更新回到評估衡量</li>
+<li><strong>可審計、可回滾</strong>：進化要能知道改了什麼、能回退；高影響載體要人審查</li>
+<li>第 10 章整體：<strong>度量→資料集→實驗→閉環→學習</strong>，是「評估與持續進化」的完整體系</li>
+</ul>
+<h2 id="想一想">想一想</h2>
+<ol>
+<li>你的 Agent 系統有哪些「學習訊號」可以收集？分別適合寫入哪個「更新載體」？</li>
+<li>為什麼「先驗證再寫入」很重要？直接「吞下」失敗案例會產生什麼風險？</li>
+<li>「更新載體在外部而非模型參數」的架構優勢在哪？它如何讓持續更新更可行？（連結 9 章 Model + Harness）</li>
+</ol>
+
+</article>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){try{if(window.mermaid){mermaid.initialize({startOnLoad:true,securityLevel:'loose'});mermaid.run();}}catch(e){console.warn(e);}})();
+</script>
+</body>
+</html>

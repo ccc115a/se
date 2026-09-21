@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+<style>
+body{margin:0;background:#fff}
+.wrap{display:flex;min-height:100vh}
+nav.site{width:260px;min-width:200px;border-right:1px solid #d0d7de;padding:16px;position:sticky;top:0;height:100vh;overflow:auto;background:#f6f8fa}
+nav.site .home{font-weight:700;margin-bottom:8px;display:block;color:#1f2328;text-decoration:none}
+ul.site-nav{list-style:none;margin:0;padding:0}
+ul.site-nav li{margin:2px 0}
+ul.site-nav a{color:#0969da;text-decoration:none;font-size:.9em}
+ul.site-nav a:hover{text-decoration:underline}
+article{flex:1;min-width:0;box-sizing:border-box;max-width:980px;padding:24px}
+.markdown-alert{padding:.5rem 1rem;margin-bottom:1rem;border-left:.25em solid #888;border-radius:6px;background:#f6f8fa}
+.markdown-alert-title{font-weight:600;margin:0 0 .25rem}
+.markdown-alert-note{border-color:#0969da}.markdown-alert-tip{border-color:#1a7f37}
+.markdown-alert-important{border-color:#8250df}.markdown-alert-warning{border-color:#9a6700}
+.markdown-alert-caution{border-color:#d1242f}
+pre.mermaid{background:#f6f8fa;padding:16px;border-radius:6px}
+@media (max-width:767px){nav.site{display:none}article{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="site"><a class="home" href="../index.html">⌂ 首頁</a><ul class="site-nav">
+<li><a href="../向淘寶學習網站架構演進/1.1.html">1.1 淘寶初期的 Web 架構：單機 Tomcat + 資料庫</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.2.html">1.2 第一次演進：Web 伺服器與資料庫分離部署</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.3.html">1.3 應用伺服器的效能瓶頸：CPU、內存與 I/O 競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.4.html">1.4 單體什麼時候不夠用：擴展性 vs 效能</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.1.html">10.1 Service：ClusterIP / NodePort / LoadBalancer</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.2.html">10.2 對外入口：Ingress 與雲原生網關</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.3.html">10.3 服務網格：Istio 無侵入治理與 mTLS</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.4.html">10.4 儲存與配置：PV / PVC / StorageClass / ConfigMap / Secret</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.1.html">11.1 自癒：Liveness 與 Readiness 探針</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.2.html">11.2 應對大促：HPA / Cluster Autoscaler / KEDA</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.3.html">11.3 資源治理：Requests &amp; Limits 與 OOM 防護</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.4.html">11.4 多機房多集群：Affinity / Taints / Tolerations / Karmada</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.1.html">12.1 微服務過度拆分的技術債</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.2.html">12.2 模組化單體的復興：幾時該拆、幾時該合</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.3.html">12.3 全面 Serverless 化：Knative 與冷啟動優化</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.4.html">12.4 從微服務到 FaaS：前端與業務平台實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.1.html">13.1 GitOps 持續部署：ArgoCD 實戰</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.2.html">13.2 可觀測性三支柱：Log / Metric / Trace 與 OpenTelemetry</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.3.html">13.3 成本治理 FinOps：混部與資源利用率</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.4.html">13.4 公有雲託管 K8s：ACK / EKS / GKE 最佳實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.1.html">14.1 從千人千面到生成式 UI 與 AI Agent 導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.2.html">14.2 K8s 調度 GPU：vGPU / MIG / RDMA 高速網路</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.3.html">14.3 推理服務雲原生部署：vLLM / Triton + K8s</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.4.html">14.4 邊緣與 WASM：輕量容器在邊緣路由的應用</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.5.html">14.5 雲原生 AI 推理棧新進展：AI Serving Stack / 機密推理 / GPU 共享與彈性</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.1.html">15.1 從雲原生到 AI 原生：2025 白皮書與雲智一體</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.2.html">15.2 AgentRun 八大組件：AI 運行時 / AI 網關 / AI MQ / Memory / 可觀測 / 評估 / 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.3.html">15.3 FunctionAI 與 Agent Infra：AWS AgentCore / Azure / FunctionAI 長時運行與會話親和</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.4.html">15.4 MCP / A2A / Kagent on Knative：Agent 協議的 Serverless 託管</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.1.html">16.1 AI 網關：推理路由、Token 限流、多模型協議適配與 Gateway API</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.2.html">16.2 AI 中間件演進：Spring AI Alibaba / Higress / MSE / RocketMQ</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.3.html">16.3 淘寶 AI OS 實戰：搜索推薦全圖架構、RTP / XDL / OpenSearch 百萬 QPS</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.4.html">16.4 淘寶最新落地：Node.js Serverless 核心鏈路、智能客服亞秒級、Wenwen 生成式導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.1.html">17.1 ACK 2025–2026 新能力：Auto Mode / Virtual Node / ACK One 多集群 / AI Assistant</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.2.html">17.2 全景複盤：單體 → 分散式 → 微服務 → 雲原生 → AI 原生</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.3.html">17.3 技術選型白皮書：避免為了雲原生 / AI 而雲原生 / AI</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.4.html">17.4 架構設計原則：N+1、回滾、禁用、監控、多活、水平擴展、FinOps 與 AI 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.1.html">2.1 資料庫讀寫瓶頸與快取救星</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.2.html">2.2 本地快取與分散式快取：Memcached / Redis / Tair</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.3.html">2.3 快取實戰痛點：穿透、擊穿、雪崩與熱點失效</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.4.html">2.4 快取與資料庫的一致性難題</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.1.html">3.1 反向代理與 Web 集群：Nginx / HAProxy</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.2.html">3.2 無狀態設計與 Session 共享：Redis / JWT / 黏性會話</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.3.html">3.3 四層與七層的搭配：LVS / F5 + Keepalived</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.4.html">3.4 機房入口：DNS 輪詢、CDN 與異地多活基礎</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.1.html">4.1 讀寫分離與主從同步：Mycat 與資料一致性</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.2.html">4.2 按業務垂直分庫：降低資源競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.3.html">4.3 大表拆小表：Hash / 時間分片與水平擴展</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.4.html">4.4 拆分後的代價：分散式事務、跨庫 Join 與 MPP</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.1.html">5.1 大應用拆小應用：業務邊界與 DDD 簡介</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.2.html">5.2 公共模組服務化：Dubbo / Spring Cloud RPC</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.3.html">5.3 分散式協調：Zookeeper / Nacos 配置中心與服務發現</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.4.html">5.4 微服務三板斧：限流、熔斷與降級</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.1.html">6.1 異構儲存：HDFS / HBase / Elasticsearch / 大數據場景</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.2.html">6.2 訊息佇列：RocketMQ / Kafka 異步解耦與削峰</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.3.html">6.3 ESB 與 API Gateway：統一協議與路由</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.4.html">6.4 傳統微服務運維地獄：環境不一致與部署死胡同</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.1.html">7.1 虛擬機 vs 容器：本質差異與隔離模型</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.2.html">7.2 Docker 三要素：Image / Container / Repository</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.3.html">7.3 編寫 Dockerfile：把微服務打包為標準單元</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.4.html">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.1.html">8.1 Docker 網路模型：Bridge / Host / Overlay</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.2.html">8.2 數據持久化：Volume 與 Bind Mount</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.3.html">8.3 單機容器的極限：成百上千容器誰來管</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.1.html">9.1 為什麼需要容器編排</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.2.html">9.2 K8s 架構解密：Control Plane 與 Worker Node</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.3.html">9.3 核心物件入門：Pod / ReplicaSet / Deployment</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.4.html">9.4 重新定義部署：滾動更新與版本回滾</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.1.html">A.1 本地實驗環境：Docker Desktop / kind / minikube</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.2.html">A.2 Dockerfile 與 Compose 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.3.html">A.3 kubectl 與 YAML 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.1.html">B.1 淘寶 14 次演進 vs 本書章節對照總表</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.2.html">B.2 雙十一大促案例：預熱、削峰、降級與彈性擴縮</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.3.html">B.3 2025–2026 新名詞表：AI 原生 / AgentRun / FunctionAI / MCP / A2A / AI Serving Stack</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.4.html">B.4 架構演進教學指引：如何用本書上課</a></li>
+<li><a href="../向淘寶學習網站架構演進/README.html">演進式架構實戰：從單體、微服務到 Docker、Kubernetes 與 AI 雲原生轉型</a></li>
+<li><a href="../向淘寶學習網站架構演進/ref.html">ref.md</a></li>
+<li><a href="../現代軟體工程/1.1.html">1.1 什麼是軟體工程</a></li>
+<li><a href="../現代軟體工程/1.2.html">1.2 軟體的複雜性與本質性困難</a></li>
+<li><a href="../現代軟體工程/1.3.html">1.3 人月神話與 Brooks 法則</a></li>
+<li><a href="../現代軟體工程/1.4.html">1.4 AI 時代：附屬性困難的消亡與本質性困難的永存</a></li>
+<li><a href="../現代軟體工程/1.5.html">1.5 軟體工程師的角色轉變</a></li>
+<li><a href="../現代軟體工程/10.1.html">10.1 為什麼沒有度量就沒有改進</a></li>
+<li><a href="../現代軟體工程/10.2.html">10.2 評估資料集的設計原則</a></li>
+<li><a href="../現代軟體工程/10.3.html">10.3 對比實驗與消融實驗</a></li>
+<li><a href="../現代軟體工程/10.4.html">10.4 Agent 的持續進化閉環</a></li>
+<li><a href="../現代軟體工程/10.5.html">10.5 從經驗中學習：學習訊號與更新載體</a></li>
+<li><a href="../現代軟體工程/11.1.html">11.1 事件驅動與非同步架構</a></li>
+<li><a href="../現代軟體工程/11.2.html">11.2 即時互動：語音、Computer Use 與物理世界</a></li>
+<li><a href="../現代軟體工程/11.3.html">11.3 多 Agent 協作的分類框架</a></li>
+<li><a href="../現代軟體工程/11.4.html">11.4 協作拓撲：對等、管理者與去中心化</a></li>
+<li><a href="../現代軟體工程/12.1.html">12.1 從瀑布到敏捷到 AI 增強的 SDLC</a></li>
+<li><a href="../現代軟體工程/12.2.html">12.2 多人 + AI 的協同開發</a></li>
+<li><a href="../現代軟體工程/12.3.html">12.3 統一 AI 的全局認知：Shared Context</a></li>
+<li><a href="../現代軟體工程/12.4.html">12.4 自動化品質護欄與 CI/CD</a></li>
+<li><a href="../現代軟體工程/13.1.html">13.1 提示注入與防禦</a></li>
+<li><a href="../現代軟體工程/13.2.html">13.2 工具安全與權限控制</a></li>
+<li><a href="../現代軟體工程/13.3.html">13.3 AI 的偏見、幻覺與責任歸屬</a></li>
+<li><a href="../現代軟體工程/13.4.html">13.4 合規與隱私保護</a></li>
+<li><a href="../現代軟體工程/14.1.html">14.1 模型即 Agent：RL 內化工具呼叫決策</a></li>
+<li><a href="../現代軟體工程/14.2.html">14.2 模型與 Harness 的共同演進飛輪</a></li>
+<li><a href="../現代軟體工程/14.3.html">14.3 兩朵烏雲：即時互動與持續學習</a></li>
+<li><a href="../現代軟體工程/14.4.html">14.4 軟體工程師的未來：從建築工到指揮官</a></li>
+<li><a href="../現代軟體工程/2.1.html">2.1 需求的本質：從模糊意圖到精確規格</a></li>
+<li><a href="../現代軟體工程/2.2.html">2.2 需求挖掘與訪談技巧</a></li>
+<li><a href="../現代軟體工程/2.3.html">2.3 用例建模與使用者故事</a></li>
+<li><a href="../現代軟體工程/2.4.html">2.4 邊界條件與 Edge Cases</a></li>
+<li><a href="../現代軟體工程/2.5.html">2.5 AI 輔助需求分析：Red Teaming Prompting</a></li>
+<li><a href="../現代軟體工程/2.6.html">2.6 Spec-Driven Development：可執行的規格</a></li>
+<li><a href="../現代軟體工程/3.1.html">3.1 設計思維：抽象、模組化與資訊隱藏</a></li>
+<li><a href="../現代軟體工程/3.2.html">3.2 架構模式：從單體到微服務</a></li>
+<li><a href="../現代軟體工程/3.3.html">3.3 API 與介面設計（ACI vs HCI）</a></li>
+<li><a href="../現代軟體工程/3.4.html">3.4 設計原則：SOLID、DRY 與 KISS</a></li>
+<li><a href="../現代軟體工程/3.5.html">3.5 AI 時代的系統設計：高內聚低耦合的新意義</a></li>
+<li><a href="../現代軟體工程/4.1.html">4.1 程式碼品質與可讀性</a></li>
+<li><a href="../現代軟體工程/4.2.html">4.2 重構：改善既有設計的藝術</a></li>
+<li><a href="../現代軟體工程/4.3.html">4.3 設計模式的實用指南</a></li>
+<li><a href="../現代軟體工程/4.4.html">4.4 Agentic Coding：人機協同的程式碼生成</a></li>
+<li><a href="../現代軟體工程/4.5.html">4.5 Code Review 在 AI 時代的演變</a></li>
+<li><a href="../現代軟體工程/5.1.html">5.1 測試金字塔與測試策略</a></li>
+<li><a href="../現代軟體工程/5.2.html">5.2 單元測試與 TDD</a></li>
+<li><a href="../現代軟體工程/5.3.html">5.3 整合測試與端到端測試</a></li>
+<li><a href="../現代軟體工程/5.4.html">5.4 AI 自動生成測試</a></li>
+<li><a href="../現代軟體工程/5.5.html">5.5 LLM-as-a-Judge：用模型評判模型</a></li>
+<li><a href="../現代軟體工程/5.6.html">5.6 迴歸測試與持續驗證</a></li>
+<li><a href="../現代軟體工程/6.1.html">6.1 CI/CD 管線設計</a></li>
+<li><a href="../現代軟體工程/6.2.html">6.2 DevOps 與基礎設施即程式碼</a></li>
+<li><a href="../現代軟體工程/6.3.html">6.3 監控、日誌與可觀測性</a></li>
+<li><a href="../現代軟體工程/6.4.html">6.4 AI 驅動的異常偵測與自癒系統</a></li>
+<li><a href="../現代軟體工程/7.1.html">7.1 提示工程的基礎與進階</a></li>
+<li><a href="../現代軟體工程/7.2.html">7.2 上下文工程：決定 AI 能力上限的關鍵</a></li>
+<li><a href="../現代軟體工程/7.3.html">7.3 API 的上下文結構：訊息列表的角色</a></li>
+<li><a href="../現代軟體工程/7.4.html">7.4 上下文壓縮與管理策略</a></li>
+<li><a href="../現代軟體工程/7.5.html">7.5 知識庫與 RAG：跨會話的記憶體系</a></li>
+<li><a href="../現代軟體工程/8.1.html">8.1 工具設計的通用原則（ACI）</a></li>
+<li><a href="../現代軟體工程/8.2.html">8.2 五類工具的分類與設計</a></li>
+<li><a href="../現代軟體工程/8.3.html">8.3 MCP 協定：工具互操作標準</a></li>
+<li><a href="../現代軟體工程/8.4.html">8.4 ReAct 迴圈：思考→行動→觀察</a></li>
+<li><a href="../現代軟體工程/8.5.html">8.5 Coding Agent 與程式碼生成的元能力</a></li>
+<li><a href="../現代軟體工程/9.1.html">9.1 Harness 的五要素：Context、Tools、Constrain、Verify、Correct</a></li>
+<li><a href="../現代軟體工程/9.2.html">9.2 約束機制：故障安全預設值</a></li>
+<li><a href="../現代軟體工程/9.3.html">9.3 驗證機制：輸入隔離與結果校驗</a></li>
+<li><a href="../現代軟體工程/9.4.html">9.4 糾正機制：熔斷器與錯誤恢復</a></li>
+<li><a href="../現代軟體工程/9.5.html">9.5 從提示工程到 Loop 工程到 Graph 工程</a></li>
+<li><a href="../現代軟體工程/A.1.html">A.1 版本控制的本質：為什麼需要 Git</a></li>
+<li><a href="../現代軟體工程/A.2.html">A.2 Git 基礎操作：init、add、commit、branch、merge</a></li>
+<li><a href="../現代軟體工程/A.3.html">A.3 分支策略：Git Flow 與 Trunk-Based Development</a></li>
+<li><a href="../現代軟體工程/A.4.html">A.4 GitHub 協作：Pull Request、Code Review、Issue</a></li>
+<li><a href="../現代軟體工程/A.5.html">A.5 GitHub Actions：自動化 CI/CD 入門</a></li>
+<li><a href="../現代軟體工程/A.6.html">A.6 Git 進階：rebase、cherry-pick、bisect</a></li>
+<li><a href="../現代軟體工程/B.1.html">B.1 OpenCode 是什麼：從 CLI 到 Desktop</a></li>
+<li><a href="../現代軟體工程/B.2.html">B.2 安裝與設定 OpenCode Desktop</a></li>
+<li><a href="../現代軟體工程/B.3.html">B.3 AGENTS.md：為 AI 寫一份崗位說明書</a></li>
+<li><a href="../現代軟體工程/B.4.html">B.4 權限控制：讓 AI 能做什麼、不能做什麼</a></li>
+<li><a href="../現代軟體工程/B.5.html">B.5 MCP Servers：擴展 AI 的工具箱</a></li>
+<li><a href="../現代軟體工程/B.6.html">B.6 Skills：教 AI 新技能</a></li>
+<li><a href="../現代軟體工程/B.7.html">B.7 實戰：用 OpenCode 完成一個小專案</a></li>
+<li><a href="../現代軟體工程/C.1.html">C.1 需求發掘與產品驗證案例</a></li>
+<li><a href="../現代軟體工程/C.2.html">C.2 破壞性創新與創意生態案例</a></li>
+<li><a href="../現代軟體工程/C.3.html">C.3 軟體缺陷與安全關鍵系統案例</a></li>
+<li><a href="../現代軟體工程/C.4.html">C.4 架構演進與技術債案例</a></li>
+<li><a href="../現代軟體工程/C.5.html">C.5 網站與服務營運失敗案例</a></li>
+<li><a href="../現代軟體工程/C.6.html">C.6 趣味歷史軼事與其時代啟示</a></li>
+<li><a href="../現代軟體工程/C.7.html">C.7 案例集目錄與教學指引</a></li>
+<li><a href="../現代軟體工程/outline.html">《現代軟體工程：從基礎到 AI Agent 實踐》大綱</a></li>
+<li><a href="../現代軟體工程/README.html">現代軟體工程：從基礎到 AI Agent 實踐</a></li>
+<li><a href="../README.html">README.md</a></li>
+</ul></nav>
+<article class="markdown-body">
+<h1 id="74-docker-compose-實戰一鍵啟動-微服務-redis-mysql-nginx">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</h1>
+<h2 id="單個容器不夠電商最小閉環要四個角色">單個容器不夠：電商最小閉環要四個角色</h2>
+<p>7.3 節把一個微服務裝進映像，但淘寶最小可用單元至少四件套：<strong>微服務（業務）+ MySQL（持久）+ Redis（快取）+ Nginx（入口）</strong>。逐個 <code>docker run</code> 再手工連網，順序錯一步就連不上。</p>
+<p>Compose 的定位：<strong>用一個 YAML 聲明整個單機系統</strong>，<code>up</code> 一鍵拉起、<code>down</code> 一鍵銷毀。</p>
+<pre class="mermaid">flowchart TB
+    USER[用戶] --&gt; NG[Nginx :80]
+    NG --&gt; APP[shop-service :8080 x2]
+    APP --&gt; DB[(MySQL :3306)]
+    APP --&gt; CACHE[(Redis :6379)]</pre>
+<h2 id="完整-yaml可直接執行的最小閉環">完整 yaml：可直接執行的最小閉環</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-comment"># compose.yaml：與本書目錄同級存放，直接 docker compose up 可跑</span>
+<span class="hljs-attr">services:</span>
+  <span class="hljs-attr">app:</span>
+    <span class="hljs-attr">build:</span> <span class="hljs-string">./shop-service</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">shop-service:v2</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">SPRING_DATASOURCE_URL:</span> <span class="hljs-string">jdbc:mysql://db:3306/shop?useSSL=false&amp;serverTimezone=UTC</span>
+      <span class="hljs-attr">SPRING_DATASOURCE_USERNAME:</span> <span class="hljs-string">shop</span>
+      <span class="hljs-attr">SPRING_DATASOURCE_PASSWORD:</span> <span class="hljs-string">shop123</span>
+      <span class="hljs-attr">SPRING_DATA_REDIS_HOST:</span> <span class="hljs-string">redis</span>
+    <span class="hljs-attr">depends_on:</span>
+      <span class="hljs-attr">db:</span>
+        <span class="hljs-attr">condition:</span> <span class="hljs-string">service_healthy</span>
+      <span class="hljs-attr">redis:</span>
+        <span class="hljs-attr">condition:</span> <span class="hljs-string">service_started</span>
+    <span class="hljs-attr">networks:</span> [<span class="hljs-string">shopnet</span>]
+
+  <span class="hljs-attr">db:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">mysql:8.0</span>
+    <span class="hljs-attr">command:</span> <span class="hljs-string">--default-authentication-plugin=mysql_native_password</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">MYSQL_DATABASE:</span> <span class="hljs-string">shop</span>
+      <span class="hljs-attr">MYSQL_USER:</span> <span class="hljs-string">shop</span>
+      <span class="hljs-attr">MYSQL_PASSWORD:</span> <span class="hljs-string">shop123</span>
+      <span class="hljs-attr">MYSQL_ROOT_PASSWORD:</span> <span class="hljs-string">root123</span>
+    <span class="hljs-attr">volumes:</span> [<span class="hljs-string">db-data:/var/lib/mysql</span>]
+    <span class="hljs-attr">healthcheck:</span>
+      <span class="hljs-attr">test:</span> [<span class="hljs-string">"CMD"</span>, <span class="hljs-string">"mysqladmin"</span>, <span class="hljs-string">"ping"</span>, <span class="hljs-string">"-h"</span>, <span class="hljs-string">"localhost"</span>]
+      <span class="hljs-attr">interval:</span> <span class="hljs-string">5s</span>
+      <span class="hljs-attr">retries:</span> <span class="hljs-number">10</span>
+    <span class="hljs-attr">networks:</span> [<span class="hljs-string">shopnet</span>]
+
+  <span class="hljs-attr">redis:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">redis:7-alpine</span>
+    <span class="hljs-attr">command:</span> <span class="hljs-string">redis-server</span> <span class="hljs-string">--appendonly</span> <span class="hljs-literal">yes</span>
+    <span class="hljs-attr">volumes:</span> [<span class="hljs-string">redis-data:/data</span>]
+    <span class="hljs-attr">networks:</span> [<span class="hljs-string">shopnet</span>]
+
+  <span class="hljs-attr">nginx:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:1.25-alpine</span>
+    <span class="hljs-attr">ports:</span> [<span class="hljs-string">"80:80"</span>]
+    <span class="hljs-attr">volumes:</span> [<span class="hljs-string">"./nginx.conf:/etc/nginx/conf.d/default.conf:ro"</span>]
+    <span class="hljs-attr">depends_on:</span> [<span class="hljs-string">app</span>]
+    <span class="hljs-attr">networks:</span> [<span class="hljs-string">shopnet</span>]
+
+<span class="hljs-attr">volumes:</span>
+  <span class="hljs-attr">db-data:</span>
+  <span class="hljs-attr">redis-data:</span>
+
+<span class="hljs-attr">networks:</span>
+  <span class="hljs-attr">shopnet:</span></code></pre>
+<pre><code class="hljs language-text"># nginx.conf：與 compose.yaml 同目錄
+upstream shop { server app:8080; }
+server { listen 80; location / { proxy_pass http://shop; } }</code></pre>
+<h2 id="操作步驟從零到驗證">操作步驟：從零到驗證</h2>
+<pre><code class="hljs language-bash"><span class="hljs-comment"># 1. 啟動（首次會自動 build app）</span>
+docker compose up -d --build
+<span class="hljs-comment"># 2. 看狀態與依賴順序</span>
+docker compose ps
+docker compose logs -f app
+<span class="hljs-comment"># 3. 擴縮微服務實例</span>
+docker compose up -d --scale app=3
+docker compose ps app
+<span class="hljs-comment"># 4. 驗證全鏈路</span>
+curl localhost/api/products
+docker <span class="hljs-built_in">exec</span> -it $(docker compose ps -q db) mysql -ushop -pshop123 -e <span class="hljs-string">"SHOW TABLES;"</span> shop
+docker <span class="hljs-built_in">exec</span> -it $(docker compose ps -q redis) redis-cli ping
+<span class="hljs-comment"># 5. 銷毀（-v 連數據卷一起清，慎用於生產）</span>
+docker compose down -v</code></pre>
+<h2 id="常見坑與排查">常見坑與排查</h2>
+<table>
+<thead>
+<tr>
+<th>現象</th>
+<th>原因</th>
+<th>修法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>app 連不上 db</td>
+<td>用了 <code>localhost:3306</code>，容器內 localhost 是自己</td>
+<td>改用服務名 <code>db:3306</code></td>
+</tr>
+<tr>
+<td>db 還沒好 app 就崩</td>
+<td><code>depends_on</code> 預設只等啟動不等健康</td>
+<td>加 <code>condition: service_healthy</code></td>
+</tr>
+<tr>
+<td>改了代碼沒生效</td>
+<td>忘了 <code>--build</code>，用的舊映像</td>
+<td><code>up -d --build</code></td>
+</tr>
+<tr>
+<td>端口衝突</td>
+<td>本機 80 已被佔用</td>
+<td>改 <code>ports: ["8088:80"]</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="hljs language-bash"><span class="hljs-comment"># 除錯三板斧，可直接執行</span>
+docker compose config
+docker network inspect $(<span class="hljs-built_in">basename</span> <span class="hljs-variable">$PWD</span>)_shopnet
+docker compose logs --<span class="hljs-built_in">tail</span>=50 db</code></pre>
+<h2 id="本章小結">本章小結</h2>
+<ul>
+<li>Compose 是單機編排：一個 YAML 描述微服務 + 中介軟體 + 入口</li>
+<li>服務名即 DNS：容器間用 <code>db</code>、<code>redis</code>、<code>app</code> 互連，不用 IP</li>
+<li><code>depends_on + healthcheck</code> 保證啟動順序，<code>volumes</code> 保證數據不丟</li>
+<li>全流程：<code>up -d --build</code> → <code>ps/logs</code> → <code>curl</code> 驗證 → <code>down</code></li>
+<li>極限伏筆：Compose 只管單機，多機、故障自癒管不了（見 8.3 節）</li>
+</ul>
+<h2 id="想一想">想一想</h2>
+<ol>
+<li>為什麼容器間要用服務名 <code>db:3306</code> 而非 <code>localhost</code>？畫出網路命名空間解釋。</li>
+<li><code>depends_on</code> 不加健康檢查會有什麼競態？雙十一高併發啟動會放大什麼後果？</li>
+<li>Compose 的 <code>scale app=3</code> 與 Nginx 負載均衡，能替代 K8s 嗎？缺了哪三個能力？</li>
+</ol>
+
+</article>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){try{if(window.mermaid){mermaid.initialize({startOnLoad:true,securityLevel:'loose'});mermaid.run();}}catch(e){console.warn(e);}})();
+</script>
+</body>
+</html>

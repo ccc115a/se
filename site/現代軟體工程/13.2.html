@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>13.2 工具安全與權限控制</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+<style>
+body{margin:0;background:#fff}
+.wrap{display:flex;min-height:100vh}
+nav.site{width:260px;min-width:200px;border-right:1px solid #d0d7de;padding:16px;position:sticky;top:0;height:100vh;overflow:auto;background:#f6f8fa}
+nav.site .home{font-weight:700;margin-bottom:8px;display:block;color:#1f2328;text-decoration:none}
+ul.site-nav{list-style:none;margin:0;padding:0}
+ul.site-nav li{margin:2px 0}
+ul.site-nav a{color:#0969da;text-decoration:none;font-size:.9em}
+ul.site-nav a:hover{text-decoration:underline}
+article{flex:1;min-width:0;box-sizing:border-box;max-width:980px;padding:24px}
+.markdown-alert{padding:.5rem 1rem;margin-bottom:1rem;border-left:.25em solid #888;border-radius:6px;background:#f6f8fa}
+.markdown-alert-title{font-weight:600;margin:0 0 .25rem}
+.markdown-alert-note{border-color:#0969da}.markdown-alert-tip{border-color:#1a7f37}
+.markdown-alert-important{border-color:#8250df}.markdown-alert-warning{border-color:#9a6700}
+.markdown-alert-caution{border-color:#d1242f}
+pre.mermaid{background:#f6f8fa;padding:16px;border-radius:6px}
+@media (max-width:767px){nav.site{display:none}article{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="site"><a class="home" href="../index.html">⌂ 首頁</a><ul class="site-nav">
+<li><a href="../向淘寶學習網站架構演進/1.1.html">1.1 淘寶初期的 Web 架構：單機 Tomcat + 資料庫</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.2.html">1.2 第一次演進：Web 伺服器與資料庫分離部署</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.3.html">1.3 應用伺服器的效能瓶頸：CPU、內存與 I/O 競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/1.4.html">1.4 單體什麼時候不夠用：擴展性 vs 效能</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.1.html">10.1 Service：ClusterIP / NodePort / LoadBalancer</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.2.html">10.2 對外入口：Ingress 與雲原生網關</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.3.html">10.3 服務網格：Istio 無侵入治理與 mTLS</a></li>
+<li><a href="../向淘寶學習網站架構演進/10.4.html">10.4 儲存與配置：PV / PVC / StorageClass / ConfigMap / Secret</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.1.html">11.1 自癒：Liveness 與 Readiness 探針</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.2.html">11.2 應對大促：HPA / Cluster Autoscaler / KEDA</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.3.html">11.3 資源治理：Requests &amp; Limits 與 OOM 防護</a></li>
+<li><a href="../向淘寶學習網站架構演進/11.4.html">11.4 多機房多集群：Affinity / Taints / Tolerations / Karmada</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.1.html">12.1 微服務過度拆分的技術債</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.2.html">12.2 模組化單體的復興：幾時該拆、幾時該合</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.3.html">12.3 全面 Serverless 化：Knative 與冷啟動優化</a></li>
+<li><a href="../向淘寶學習網站架構演進/12.4.html">12.4 從微服務到 FaaS：前端與業務平台實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.1.html">13.1 GitOps 持續部署：ArgoCD 實戰</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.2.html">13.2 可觀測性三支柱：Log / Metric / Trace 與 OpenTelemetry</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.3.html">13.3 成本治理 FinOps：混部與資源利用率</a></li>
+<li><a href="../向淘寶學習網站架構演進/13.4.html">13.4 公有雲託管 K8s：ACK / EKS / GKE 最佳實踐</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.1.html">14.1 從千人千面到生成式 UI 與 AI Agent 導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.2.html">14.2 K8s 調度 GPU：vGPU / MIG / RDMA 高速網路</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.3.html">14.3 推理服務雲原生部署：vLLM / Triton + K8s</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.4.html">14.4 邊緣與 WASM：輕量容器在邊緣路由的應用</a></li>
+<li><a href="../向淘寶學習網站架構演進/14.5.html">14.5 雲原生 AI 推理棧新進展：AI Serving Stack / 機密推理 / GPU 共享與彈性</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.1.html">15.1 從雲原生到 AI 原生：2025 白皮書與雲智一體</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.2.html">15.2 AgentRun 八大組件：AI 運行時 / AI 網關 / AI MQ / Memory / 可觀測 / 評估 / 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.3.html">15.3 FunctionAI 與 Agent Infra：AWS AgentCore / Azure / FunctionAI 長時運行與會話親和</a></li>
+<li><a href="../向淘寶學習網站架構演進/15.4.html">15.4 MCP / A2A / Kagent on Knative：Agent 協議的 Serverless 託管</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.1.html">16.1 AI 網關：推理路由、Token 限流、多模型協議適配與 Gateway API</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.2.html">16.2 AI 中間件演進：Spring AI Alibaba / Higress / MSE / RocketMQ</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.3.html">16.3 淘寶 AI OS 實戰：搜索推薦全圖架構、RTP / XDL / OpenSearch 百萬 QPS</a></li>
+<li><a href="../向淘寶學習網站架構演進/16.4.html">16.4 淘寶最新落地：Node.js Serverless 核心鏈路、智能客服亞秒級、Wenwen 生成式導購</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.1.html">17.1 ACK 2025–2026 新能力：Auto Mode / Virtual Node / ACK One 多集群 / AI Assistant</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.2.html">17.2 全景複盤：單體 → 分散式 → 微服務 → 雲原生 → AI 原生</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.3.html">17.3 技術選型白皮書：避免為了雲原生 / AI 而雲原生 / AI</a></li>
+<li><a href="../向淘寶學習網站架構演進/17.4.html">17.4 架構設計原則：N+1、回滾、禁用、監控、多活、水平擴展、FinOps 與 AI 安全</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.1.html">2.1 資料庫讀寫瓶頸與快取救星</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.2.html">2.2 本地快取與分散式快取：Memcached / Redis / Tair</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.3.html">2.3 快取實戰痛點：穿透、擊穿、雪崩與熱點失效</a></li>
+<li><a href="../向淘寶學習網站架構演進/2.4.html">2.4 快取與資料庫的一致性難題</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.1.html">3.1 反向代理與 Web 集群：Nginx / HAProxy</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.2.html">3.2 無狀態設計與 Session 共享：Redis / JWT / 黏性會話</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.3.html">3.3 四層與七層的搭配：LVS / F5 + Keepalived</a></li>
+<li><a href="../向淘寶學習網站架構演進/3.4.html">3.4 機房入口：DNS 輪詢、CDN 與異地多活基礎</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.1.html">4.1 讀寫分離與主從同步：Mycat 與資料一致性</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.2.html">4.2 按業務垂直分庫：降低資源競爭</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.3.html">4.3 大表拆小表：Hash / 時間分片與水平擴展</a></li>
+<li><a href="../向淘寶學習網站架構演進/4.4.html">4.4 拆分後的代價：分散式事務、跨庫 Join 與 MPP</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.1.html">5.1 大應用拆小應用：業務邊界與 DDD 簡介</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.2.html">5.2 公共模組服務化：Dubbo / Spring Cloud RPC</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.3.html">5.3 分散式協調：Zookeeper / Nacos 配置中心與服務發現</a></li>
+<li><a href="../向淘寶學習網站架構演進/5.4.html">5.4 微服務三板斧：限流、熔斷與降級</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.1.html">6.1 異構儲存：HDFS / HBase / Elasticsearch / 大數據場景</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.2.html">6.2 訊息佇列：RocketMQ / Kafka 異步解耦與削峰</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.3.html">6.3 ESB 與 API Gateway：統一協議與路由</a></li>
+<li><a href="../向淘寶學習網站架構演進/6.4.html">6.4 傳統微服務運維地獄：環境不一致與部署死胡同</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.1.html">7.1 虛擬機 vs 容器：本質差異與隔離模型</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.2.html">7.2 Docker 三要素：Image / Container / Repository</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.3.html">7.3 編寫 Dockerfile：把微服務打包為標準單元</a></li>
+<li><a href="../向淘寶學習網站架構演進/7.4.html">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.1.html">8.1 Docker 網路模型：Bridge / Host / Overlay</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.2.html">8.2 數據持久化：Volume 與 Bind Mount</a></li>
+<li><a href="../向淘寶學習網站架構演進/8.3.html">8.3 單機容器的極限：成百上千容器誰來管</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.1.html">9.1 為什麼需要容器編排</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.2.html">9.2 K8s 架構解密：Control Plane 與 Worker Node</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.3.html">9.3 核心物件入門：Pod / ReplicaSet / Deployment</a></li>
+<li><a href="../向淘寶學習網站架構演進/9.4.html">9.4 重新定義部署：滾動更新與版本回滾</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.1.html">A.1 本地實驗環境：Docker Desktop / kind / minikube</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.2.html">A.2 Dockerfile 與 Compose 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/A.3.html">A.3 kubectl 與 YAML 速查</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.1.html">B.1 淘寶 14 次演進 vs 本書章節對照總表</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.2.html">B.2 雙十一大促案例：預熱、削峰、降級與彈性擴縮</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.3.html">B.3 2025–2026 新名詞表：AI 原生 / AgentRun / FunctionAI / MCP / A2A / AI Serving Stack</a></li>
+<li><a href="../向淘寶學習網站架構演進/B.4.html">B.4 架構演進教學指引：如何用本書上課</a></li>
+<li><a href="../向淘寶學習網站架構演進/README.html">演進式架構實戰：從單體、微服務到 Docker、Kubernetes 與 AI 雲原生轉型</a></li>
+<li><a href="../向淘寶學習網站架構演進/ref.html">ref.md</a></li>
+<li><a href="../現代軟體工程/1.1.html">1.1 什麼是軟體工程</a></li>
+<li><a href="../現代軟體工程/1.2.html">1.2 軟體的複雜性與本質性困難</a></li>
+<li><a href="../現代軟體工程/1.3.html">1.3 人月神話與 Brooks 法則</a></li>
+<li><a href="../現代軟體工程/1.4.html">1.4 AI 時代：附屬性困難的消亡與本質性困難的永存</a></li>
+<li><a href="../現代軟體工程/1.5.html">1.5 軟體工程師的角色轉變</a></li>
+<li><a href="../現代軟體工程/10.1.html">10.1 為什麼沒有度量就沒有改進</a></li>
+<li><a href="../現代軟體工程/10.2.html">10.2 評估資料集的設計原則</a></li>
+<li><a href="../現代軟體工程/10.3.html">10.3 對比實驗與消融實驗</a></li>
+<li><a href="../現代軟體工程/10.4.html">10.4 Agent 的持續進化閉環</a></li>
+<li><a href="../現代軟體工程/10.5.html">10.5 從經驗中學習：學習訊號與更新載體</a></li>
+<li><a href="../現代軟體工程/11.1.html">11.1 事件驅動與非同步架構</a></li>
+<li><a href="../現代軟體工程/11.2.html">11.2 即時互動：語音、Computer Use 與物理世界</a></li>
+<li><a href="../現代軟體工程/11.3.html">11.3 多 Agent 協作的分類框架</a></li>
+<li><a href="../現代軟體工程/11.4.html">11.4 協作拓撲：對等、管理者與去中心化</a></li>
+<li><a href="../現代軟體工程/12.1.html">12.1 從瀑布到敏捷到 AI 增強的 SDLC</a></li>
+<li><a href="../現代軟體工程/12.2.html">12.2 多人 + AI 的協同開發</a></li>
+<li><a href="../現代軟體工程/12.3.html">12.3 統一 AI 的全局認知：Shared Context</a></li>
+<li><a href="../現代軟體工程/12.4.html">12.4 自動化品質護欄與 CI/CD</a></li>
+<li><a href="../現代軟體工程/13.1.html">13.1 提示注入與防禦</a></li>
+<li><a href="../現代軟體工程/13.2.html">13.2 工具安全與權限控制</a></li>
+<li><a href="../現代軟體工程/13.3.html">13.3 AI 的偏見、幻覺與責任歸屬</a></li>
+<li><a href="../現代軟體工程/13.4.html">13.4 合規與隱私保護</a></li>
+<li><a href="../現代軟體工程/14.1.html">14.1 模型即 Agent：RL 內化工具呼叫決策</a></li>
+<li><a href="../現代軟體工程/14.2.html">14.2 模型與 Harness 的共同演進飛輪</a></li>
+<li><a href="../現代軟體工程/14.3.html">14.3 兩朵烏雲：即時互動與持續學習</a></li>
+<li><a href="../現代軟體工程/14.4.html">14.4 軟體工程師的未來：從建築工到指揮官</a></li>
+<li><a href="../現代軟體工程/2.1.html">2.1 需求的本質：從模糊意圖到精確規格</a></li>
+<li><a href="../現代軟體工程/2.2.html">2.2 需求挖掘與訪談技巧</a></li>
+<li><a href="../現代軟體工程/2.3.html">2.3 用例建模與使用者故事</a></li>
+<li><a href="../現代軟體工程/2.4.html">2.4 邊界條件與 Edge Cases</a></li>
+<li><a href="../現代軟體工程/2.5.html">2.5 AI 輔助需求分析：Red Teaming Prompting</a></li>
+<li><a href="../現代軟體工程/2.6.html">2.6 Spec-Driven Development：可執行的規格</a></li>
+<li><a href="../現代軟體工程/3.1.html">3.1 設計思維：抽象、模組化與資訊隱藏</a></li>
+<li><a href="../現代軟體工程/3.2.html">3.2 架構模式：從單體到微服務</a></li>
+<li><a href="../現代軟體工程/3.3.html">3.3 API 與介面設計（ACI vs HCI）</a></li>
+<li><a href="../現代軟體工程/3.4.html">3.4 設計原則：SOLID、DRY 與 KISS</a></li>
+<li><a href="../現代軟體工程/3.5.html">3.5 AI 時代的系統設計：高內聚低耦合的新意義</a></li>
+<li><a href="../現代軟體工程/4.1.html">4.1 程式碼品質與可讀性</a></li>
+<li><a href="../現代軟體工程/4.2.html">4.2 重構：改善既有設計的藝術</a></li>
+<li><a href="../現代軟體工程/4.3.html">4.3 設計模式的實用指南</a></li>
+<li><a href="../現代軟體工程/4.4.html">4.4 Agentic Coding：人機協同的程式碼生成</a></li>
+<li><a href="../現代軟體工程/4.5.html">4.5 Code Review 在 AI 時代的演變</a></li>
+<li><a href="../現代軟體工程/5.1.html">5.1 測試金字塔與測試策略</a></li>
+<li><a href="../現代軟體工程/5.2.html">5.2 單元測試與 TDD</a></li>
+<li><a href="../現代軟體工程/5.3.html">5.3 整合測試與端到端測試</a></li>
+<li><a href="../現代軟體工程/5.4.html">5.4 AI 自動生成測試</a></li>
+<li><a href="../現代軟體工程/5.5.html">5.5 LLM-as-a-Judge：用模型評判模型</a></li>
+<li><a href="../現代軟體工程/5.6.html">5.6 迴歸測試與持續驗證</a></li>
+<li><a href="../現代軟體工程/6.1.html">6.1 CI/CD 管線設計</a></li>
+<li><a href="../現代軟體工程/6.2.html">6.2 DevOps 與基礎設施即程式碼</a></li>
+<li><a href="../現代軟體工程/6.3.html">6.3 監控、日誌與可觀測性</a></li>
+<li><a href="../現代軟體工程/6.4.html">6.4 AI 驅動的異常偵測與自癒系統</a></li>
+<li><a href="../現代軟體工程/7.1.html">7.1 提示工程的基礎與進階</a></li>
+<li><a href="../現代軟體工程/7.2.html">7.2 上下文工程：決定 AI 能力上限的關鍵</a></li>
+<li><a href="../現代軟體工程/7.3.html">7.3 API 的上下文結構：訊息列表的角色</a></li>
+<li><a href="../現代軟體工程/7.4.html">7.4 上下文壓縮與管理策略</a></li>
+<li><a href="../現代軟體工程/7.5.html">7.5 知識庫與 RAG：跨會話的記憶體系</a></li>
+<li><a href="../現代軟體工程/8.1.html">8.1 工具設計的通用原則（ACI）</a></li>
+<li><a href="../現代軟體工程/8.2.html">8.2 五類工具的分類與設計</a></li>
+<li><a href="../現代軟體工程/8.3.html">8.3 MCP 協定：工具互操作標準</a></li>
+<li><a href="../現代軟體工程/8.4.html">8.4 ReAct 迴圈：思考→行動→觀察</a></li>
+<li><a href="../現代軟體工程/8.5.html">8.5 Coding Agent 與程式碼生成的元能力</a></li>
+<li><a href="../現代軟體工程/9.1.html">9.1 Harness 的五要素：Context、Tools、Constrain、Verify、Correct</a></li>
+<li><a href="../現代軟體工程/9.2.html">9.2 約束機制：故障安全預設值</a></li>
+<li><a href="../現代軟體工程/9.3.html">9.3 驗證機制：輸入隔離與結果校驗</a></li>
+<li><a href="../現代軟體工程/9.4.html">9.4 糾正機制：熔斷器與錯誤恢復</a></li>
+<li><a href="../現代軟體工程/9.5.html">9.5 從提示工程到 Loop 工程到 Graph 工程</a></li>
+<li><a href="../現代軟體工程/A.1.html">A.1 版本控制的本質：為什麼需要 Git</a></li>
+<li><a href="../現代軟體工程/A.2.html">A.2 Git 基礎操作：init、add、commit、branch、merge</a></li>
+<li><a href="../現代軟體工程/A.3.html">A.3 分支策略：Git Flow 與 Trunk-Based Development</a></li>
+<li><a href="../現代軟體工程/A.4.html">A.4 GitHub 協作：Pull Request、Code Review、Issue</a></li>
+<li><a href="../現代軟體工程/A.5.html">A.5 GitHub Actions：自動化 CI/CD 入門</a></li>
+<li><a href="../現代軟體工程/A.6.html">A.6 Git 進階：rebase、cherry-pick、bisect</a></li>
+<li><a href="../現代軟體工程/B.1.html">B.1 OpenCode 是什麼：從 CLI 到 Desktop</a></li>
+<li><a href="../現代軟體工程/B.2.html">B.2 安裝與設定 OpenCode Desktop</a></li>
+<li><a href="../現代軟體工程/B.3.html">B.3 AGENTS.md：為 AI 寫一份崗位說明書</a></li>
+<li><a href="../現代軟體工程/B.4.html">B.4 權限控制：讓 AI 能做什麼、不能做什麼</a></li>
+<li><a href="../現代軟體工程/B.5.html">B.5 MCP Servers：擴展 AI 的工具箱</a></li>
+<li><a href="../現代軟體工程/B.6.html">B.6 Skills：教 AI 新技能</a></li>
+<li><a href="../現代軟體工程/B.7.html">B.7 實戰：用 OpenCode 完成一個小專案</a></li>
+<li><a href="../現代軟體工程/C.1.html">C.1 需求發掘與產品驗證案例</a></li>
+<li><a href="../現代軟體工程/C.2.html">C.2 破壞性創新與創意生態案例</a></li>
+<li><a href="../現代軟體工程/C.3.html">C.3 軟體缺陷與安全關鍵系統案例</a></li>
+<li><a href="../現代軟體工程/C.4.html">C.4 架構演進與技術債案例</a></li>
+<li><a href="../現代軟體工程/C.5.html">C.5 網站與服務營運失敗案例</a></li>
+<li><a href="../現代軟體工程/C.6.html">C.6 趣味歷史軼事與其時代啟示</a></li>
+<li><a href="../現代軟體工程/C.7.html">C.7 案例集目錄與教學指引</a></li>
+<li><a href="../現代軟體工程/outline.html">《現代軟體工程：從基礎到 AI Agent 實踐》大綱</a></li>
+<li><a href="../現代軟體工程/README.html">現代軟體工程：從基礎到 AI Agent 實踐</a></li>
+<li><a href="../README.html">README.md</a></li>
+</ul></nav>
+<article class="markdown-body">
+<h1 id="132-工具安全與權限控制">13.2 工具安全與權限控制</h1>
+<h2 id="為什麼工具安全至關重要">為什麼工具安全至關重要</h2>
+<p>在第 13.1 節中，我們看到提示注入可能導致 LLM 被操控來執行非預期操作。但這一切的前提是：Agent <strong>確實擁有</strong>可以造成傷害的工具。一個只能輸出文字的 LLM，最壞情況是產生不當內容；但一個能呼叫 Bash、讀寫檔案、執行金流交易的 Agent，一旦被劫持，造成的損害就可能是真實世界的損失。</p>
+<p>因此，工具安全（Tool Safety）是 Agent 系統設計中不可妥協的核心議題。</p>
+<h2 id="故障安全預設值fail-safe-defaults">故障安全預設值（Fail-Safe Defaults）</h2>
+<p><strong>所有能力預設關閉</strong>，是工具安全的第一原則。</p>
+<p>新的 Agent 系統上線時，不應自動綁定任何具有寫入能力或外部副作用的工具。每個工具都需要經過明確的授權流程才能啟用。這與傳統資安中的「預設拒絕」（Default Deny）原則一致。</p>
+<p>實務上的實作方式：</p>
+<ul>
+<li><strong>工具註冊表</strong>（Tool Registry）：所有可用工具集中管理，每個工具附帶元資料，包括用途描述、風險等級、所需權限。</li>
+<li><strong>啟用清單機制</strong>：Agent 需要在設定中明確列出要啟用的工具，未列出的工具一律不可呼叫。</li>
+<li><strong>風險分級</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>風險等級</th>
+<th>工具類型</th>
+<th>範例</th>
+<th>啟用條件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>低</td>
+<td>只讀查詢</td>
+<td>網頁搜尋、唯讀資料庫查詢</td>
+<td>預設啟用</td>
+</tr>
+<tr>
+<td>中</td>
+<td>本地操作</td>
+<td>檔案讀寫、Shell 執行</td>
+<td>需明確啟用</td>
+</tr>
+<tr>
+<td>高</td>
+<td>外部副作用</td>
+<td>發送郵件、金流交易、API 寫入</td>
+<td>需逐次確認</td>
+</tr>
+<tr>
+<td>極高</td>
+<td>不可逆操作</td>
+<td>刪除資料庫、撤銷部署</td>
+<td>需人類審批</td>
+</tr>
+</tbody>
+</table>
+<h2 id="權限最小化principle-of-least-privilege">權限最小化（Principle of Least Privilege）</h2>
+<p>每個工具應只擁有完成其功能所<strong>絕對必要</strong>的最小權限。例如：</p>
+<ul>
+<li>資料庫查詢工具只能 SELECT，不能執行 DROP 或 DELETE。</li>
+<li>檔案工具只能操作特定目錄（如 <code>/workspace/</code>），不能存取 <code>/etc/</code> 或 <code>~/.ssh/</code>。</li>
+<li>網路工具只能連線白名單上的域名，不能任意發出 HTTP 請求。</li>
+</ul>
+<p>在實作上，這通常透過作業系統層級的機制來強制執行（如 Linux 的 namespace、seccomp、AppArmor），而非僅依賴模型自律。</p>
+<h2 id="sandbox-與隔離環境">Sandbox 與隔離環境</h2>
+<h3 id="為什麼需要沙盒">為什麼需要沙盒</h3>
+<p>即使做了權限最小化，仍然可能有零日漏洞或未預期的權限提升路徑。沙盒（Sandbox）是最後一道防線：讓工具在隔離環境中執行，即使被攻破，影響範圍也受到限制。</p>
+<h3 id="沙盒實作層次">沙盒實作層次</h3>
+<ol>
+<li><strong>語言層沙盒</strong>：如 Python 的 RestrictedPython，限制可使用的內建函式。</li>
+<li><strong>程序層沙盒</strong>：使用 Linux namespace、seccomp-BPF 限制系統呼叫。</li>
+<li><strong>容器沙盒</strong>：使用 Docker/gVisor/Kata Containers 隔離檔案系統與網路。</li>
+<li><strong>虛擬機沙盒</strong>：最強隔離，但啟動成本較高，適合高風險操作。</li>
+</ol>
+<h3 id="工具沙盒示意圖">工具沙盒示意圖</h3>
+<pre class="mermaid">flowchart TB
+    subgraph User
+        A[使用者] --&gt;|請求| B[Agent 調度器]
+    end
+
+    subgraph Agent Core
+        B --&gt;|決策| C{風險評估}
+        C --&gt;|低風險 自動執行| D[工具呼叫]
+        C --&gt;|高風險 需確認| E[人類審批佇列]
+        E --&gt;|核准| D
+        E --&gt;|拒絕| F[取消]
+    end
+
+    subgraph Sandbox Layer
+        D --&gt; G[沙盒執行環境]
+        G --&gt; H[檔案系統\n唯讀掛載 + tmpfs]
+        G --&gt; I[網路\n白名單域名]
+        G --&gt; J[系統呼叫\nseccomp 過濾]
+        G --&gt; K[資源限制\nCPU / 記憶體 / 超時]
+    end
+
+    subgraph Output Validation
+        G --&gt;|原始結果| L[輸出驗證器]
+        L --&gt;|通過| M[回傳 Agent]
+        L --&gt;|異常| N[攔截 + 告警]
+    end
+
+    M --&gt; O[回應使用者]</pre>
+<h2 id="存取控制清單acl">存取控制清單（ACL）</h2>
+<p>對於每一種工具的每一個操作，都應有明確的存取控制清單（Access Control List）。在 Agent 系統中，ACL 可以同時作用於三個層面：</p>
+<h3 id="agent-層-acl">Agent 層 ACL</h3>
+<p>不同 Agent 角色擁有不同的工具存取權限。例如：</p>
+<ul>
+<li>客服 Agent 只能讀取訂單資料，不能修改。</li>
+<li>部署 Agent 只能觸發 CI/CD pipeline，不能直接操作伺服器。</li>
+<li>研究 Agent 只能搜尋網頁和讀取文件，不能執行任意程式碼。</li>
+</ul>
+<h3 id="工具層-acl">工具層 ACL</h3>
+<p>同一個工具對不同 Agent 或不同情境有不同權限。例如檔案系統工具：</p>
+<ul>
+<li>Agent A 只能讀寫 <code>/workspace/agent_a/</code>。</li>
+<li>Agent B 只能讀寫 <code>/workspace/agent_b/</code>。</li>
+<li>所有 Agent 都不能存取 <code>/workspace/shared/secrets/</code>。</li>
+</ul>
+<h3 id="操作層-acl">操作層 ACL</h3>
+<p>同一個工具的同一個操作，根據參數有不同的風險。例如 SQL 工具：</p>
+<ul>
+<li>SELECT 語句：自動執行。</li>
+<li>INSERT/UPDATE 語句：需日誌記錄。</li>
+<li>DELETE 語句：需人類確認。</li>
+<li>DDL（CREATE/DROP）：禁止執行。</li>
+</ul>
+<h2 id="ai-使用高風險工具的安全設計案例">AI 使用高風險工具的安全設計案例</h2>
+<p>以 Bash 工具為例，說明如何在實務中結合上述原則：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">BashTool</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.allowed_commands = [<span class="hljs-string">"ls"</span>, <span class="hljs-string">"cat"</span>, <span class="hljs-string">"grep"</span>, <span class="hljs-string">"find"</span>, <span class="hljs-string">"wc"</span>]
+        <span class="hljs-variable language_">self</span>.blocked_patterns = [<span class="hljs-string">"rm "</span>, <span class="hljs-string">"sudo "</span>, <span class="hljs-string">"curl "</span>, <span class="hljs-string">"wget "</span>, <span class="hljs-string">"| sh"</span>]
+        <span class="hljs-variable language_">self</span>.max_execution_time = <span class="hljs-number">30</span>  <span class="hljs-comment"># 秒</span>
+        <span class="hljs-variable language_">self</span>.workspace_root = <span class="hljs-string">"/workspace/"</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">execute</span>(<span class="hljs-params">self, command: <span class="hljs-built_in">str</span>, agent_id: <span class="hljs-built_in">str</span></span>) -&gt; ToolResult:
+        <span class="hljs-comment"># 1. 路徑正規化：防止路徑穿越</span>
+        resolved = os.path.realpath(command)
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> resolved.startswith(<span class="hljs-variable language_">self</span>.workspace_root):
+            <span class="hljs-keyword">return</span> ToolResult(blocked=<span class="hljs-literal">True</span>, reason=<span class="hljs-string">"路徑超出允許範圍"</span>)
+
+        <span class="hljs-comment"># 2. 命令白名單檢查</span>
+        base_cmd = command.split()[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">if</span> base_cmd <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.allowed_commands:
+            <span class="hljs-keyword">return</span> ToolResult(blocked=<span class="hljs-literal">True</span>, reason=<span class="hljs-string">f"命令 <span class="hljs-subst">{base_cmd}</span> 不在白名單"</span>)
+
+        <span class="hljs-comment"># 3. 危險模式過濾</span>
+        <span class="hljs-keyword">for</span> pattern <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.blocked_patterns:
+            <span class="hljs-keyword">if</span> pattern <span class="hljs-keyword">in</span> command:
+                <span class="hljs-keyword">return</span> ToolResult(blocked=<span class="hljs-literal">True</span>, reason=<span class="hljs-string">"偵測到危險模式"</span>)
+
+        <span class="hljs-comment"># 4. 在沙盒中執行（帶超時）</span>
+        result = sandbox.run(command, timeout=<span class="hljs-variable language_">self</span>.max_execution_time)
+
+        <span class="hljs-comment"># 5. 輸出驗證</span>
+        <span class="hljs-keyword">if</span> contains_sensitive_info(result.output):
+            result.output = redact(result.output)
+
+        <span class="hljs-keyword">return</span> result</code></pre>
+<p>以金流工具為例，安全設計更為嚴格：</p>
+<ul>
+<li>每筆交易都需人類在前端 UI 確認，Agent 只能「建議」交易，不能直接執行。</li>
+<li>交易金額設有上限，超出部分需二次授權。</li>
+<li>所有交易記錄寫入不可變更的審計日誌。</li>
+<li>實作速率限制（Rate Limiting），防止被提示注入操控後大量轉帳。</li>
+</ul>
+<h2 id="本章小結">本章小結</h2>
+<p>工具安全是 Agent 系統從「能做事」到「安全地做事」的關鍵跨越。核心原則包括：故障安全預設值（所有能力預設關閉）、權限最小化、Sandbox 隔離、以及精細的 ACL 控制。這些原則需要同時作用於 Agent 層、工具層、操作層，形成縱深防禦。記住：模型的智慧無法取代架構的約束——安全不能靠「希望模型不要做壞事」來保證。</p>
+<h2 id="想一想">想一想</h2>
+<ol>
+<li>如果你的 Agent 需要執行 SQL 查詢，你會如何設計 ACL 來區分 SELECT、INSERT、UPDATE、DELETE 的權限？</li>
+<li>沙盒環境會帶來效能開銷。在需要即時回應的場景（如客服對話），你會如何在安全與效能之間取捨？</li>
+<li>設計一個「Agent 可以發送郵件」的工具安全方案：需要哪些層級的確認機制？如何防止 Agent 被提示注入後發送垃圾郵件？</li>
+</ol>
+
+</article>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){try{if(window.mermaid){mermaid.initialize({startOnLoad:true,securityLevel:'loose'});mermaid.run();}}catch(e){console.warn(e);}})();
+</script>
+</body>
+</html>
