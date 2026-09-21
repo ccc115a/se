@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+BUCKET="opencodeschool-assets"
+BASE_URL="https://assets.opencode.school"
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [options] <file> [<file> ...]
+
+Upload video files to R2 and print their public URLs.
+
+Files are uploaded to the 'video/' prefix in the '${BUCKET}' R2 bucket
+and served at ${BASE_URL}/video/<filename>.
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") intro.webm intro.mov
+  $(basename "$0") lesson-01.webm lesson-01.mov
+EOF
+  exit 0
+}
+
+if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+  usage
+fi
+
+content_type_for() {
+  case "$1" in
+    *.webm) echo "video/webm" ;;
+    *.mov)  echo "video/mp4" ;;
+    *.mp4)  echo "video/mp4" ;;
+    *)      echo "application/octet-stream" ;;
+  esac
+}
+
+for file in "$@"; do
+  if [[ ! -f "$file" ]]; then
+    echo "Error: file not found: $file" >&2
+    exit 1
+  fi
+
+  filename="$(basename "$file")"
+  key="video/${filename}"
+  content_type="$(content_type_for "$filename")"
+
+  echo "Uploading ${filename} → r2://${BUCKET}/${key}"
+  npx wrangler r2 object put "${BUCKET}/${key}" \
+    --file "$file" \
+    --content-type "$content_type" \
+    --remote
+
+  echo "  ✓ ${BASE_URL}/${key}"
+done
+
+echo ""
+echo "All uploads complete."

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的网誌</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { color: #333; }
+    .post { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+    .post h2 { margin-top: 0; }
+    .post a { text-decoration: none; color: #0066cc; }
+    .btn { display: inline-block; padding: 8px 15px; background: #0066cc; color: white; text-decoration: none; border-radius: 5px; }
+    .btn-delete { background: #cc0000; }
+    .date { color: #666; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>📝 我的网誌</h1>
+  <a href="/new" class="btn">➕ 写新文章</a>
+  <hr>
+  
+  <% if (posts.length === 0) { %>
+    <p>还没有文章，来写第一篇吧！</p>
+  <% } else { %>
+    <% posts.forEach(post => { %>
+      <div class="post">
+        <h2><a href="/post/<%= post.id %>"><%= post.title %></a></h2>
+        <p class="date">📅 <%= post.created_at %></p>
+        <p><%= post.content.substring(0, 100) %>...</p>
+        <a href="/post/<%= post.id %>" class="btn">阅读更多</a>
+        <form action="/delete/<%= post.id %>" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-delete" onclick="return confirm('确定删除？')">🗑️ 删除</button>
+        </form>
+      </div>
+    <% }) %>
+  <% } %>
+</body>
+</html>

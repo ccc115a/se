@@ -1,0 +1,292 @@
+---
+title: "Installation"
+slug: installation
+description: "Check your system and install OpenCode Desktop."
+order: 1
+quiz: false
+agentInstructions: |
+  If the student is talking to you through OpenCode Desktop, they have
+  already completed this lesson. Otherwise, confirm they have a supported
+  OS (macOS, Windows, or Linux), have installed OpenCode Desktop, can
+  launch it, and have sent at least one prompt successfully.
+---
+
+In this course we'll be using **OpenCode Desktop** — a native app with a [GUI](/glossary#gui) (graphical user interface) you interact with using your mouse and keyboard. If you've used apps like ChatGPT or Claude, this chat-based interface should feel pretty familiar to you.
+
+OpenCode also has a [TUI](https://opencode.ai/docs/tui/) (terminal user interface) for terminal-based workflows, a [CLI](https://opencode.ai/docs/cli/) (command-line interface) for one-off commands, and [IDE extensions](https://opencode.ai/docs/ide/) for VS Code, Cursor, Zed, and Windsurf. The skills you learn here apply to any of these interfaces. But for this course, **Desktop is all you need**.
+
+Before we install anything, let's run a quick system check. Your browser can detect most of this automatically:
+
+<div id="system-check" class="my-8 rounded-2xl border border-gray-200 dark:border-stone-700/50 overflow-hidden not-prose">
+  <div class="px-6 py-4 bg-gray-50 dark:bg-stone-900/80 border-b border-gray-200 dark:border-stone-700/50">
+    <p class="text-sm font-mono uppercase tracking-[0.15em] text-gray-500 dark:text-stone-400">System Check</p>
+  </div>
+  <div class="divide-y divide-gray-100 dark:divide-stone-800">
+    <div class="flex items-center justify-between px-6 py-4" id="check-os">
+      <span class="text-base text-gray-600 dark:text-stone-300">Operating system</span>
+      <span class="flex items-center gap-3 text-base font-mono">
+        <span class="check-value"><span class="spinner"></span></span>
+        <span class="check-icon w-5 flex items-center justify-center"></span>
+      </span>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4" id="check-cpu">
+      <span class="text-base text-gray-600 dark:text-stone-300">CPU cores</span>
+      <span class="flex items-center gap-3 text-base font-mono">
+        <span class="check-value"><span class="spinner"></span></span>
+        <span class="check-icon w-5 flex items-center justify-center"></span>
+      </span>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4" id="check-memory">
+      <span class="text-base text-gray-600 dark:text-stone-300">Memory</span>
+      <span class="flex items-center gap-3 text-base font-mono">
+        <span class="check-value"><span class="spinner"></span></span>
+        <span class="check-icon w-5 flex items-center justify-center"></span>
+      </span>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4" id="check-internet">
+      <span class="text-base text-gray-600 dark:text-stone-300">Internet</span>
+      <span class="flex items-center gap-3 text-base font-mono">
+        <span class="check-value"><span class="spinner"></span></span>
+        <span class="check-icon w-5 flex items-center justify-center"></span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<p id="system-check-success" class="hidden mt-5 px-6 text-sm font-mono text-gray-500 dark:text-stone-400 not-prose">Your system is ready!</p>
+
+## Install OpenCode Desktop
+
+<div id="install-section" class="not-prose">
+
+<div id="install-loading" class="my-6 text-sm text-gray-500 dark:text-stone-400">Detecting your operating system...</div>
+
+<div id="install-macos" class="hidden">
+
+<div class="my-6 space-y-4">
+  <p>Download the .dmg for your Mac. Most Macs from 2021 or later use Apple Silicon (M1, M2, M3, M4). Not sure? Click &#xF8FF; &gt; About This Mac — your chip is listed at the top.</p>
+  <div class="flex flex-wrap gap-3 my-6">
+    <a href="https://opencode.ai/download/stable/darwin-aarch64-dmg" class="theme-button flex-1 inline-flex justify-center items-center gap-2 rounded-xl px-6 py-4 text-base font-medium">Download for Apple Silicon</a>
+    <a href="https://opencode.ai/download/stable/darwin-x64-dmg" class="flex-1 inline-flex justify-center items-center gap-2 px-6 py-4 bg-gray-100 hover:bg-gray-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-gray-700 dark:text-stone-300 font-medium rounded-xl transition-colors text-base">Download for Intel</a>
+  </div>
+  <p>Or install with <a href="/glossary#homebrew" class="underline hover:text-gray-700 dark:hover:text-stone-300">Homebrew</a>:</p>
+  <div class="brew-prompt-box relative rounded-lg overflow-hidden">
+    <pre class="px-5 py-4 font-mono text-sm overflow-x-auto whitespace-pre-wrap leading-relaxed">brew install --cask opencode-desktop</pre>
+    <button class="brew-copy absolute top-2.5 right-2.5 px-2.5 py-1 text-xs font-mono font-medium rounded transition-colors cursor-pointer theme-button">Copy</button>
+  </div>
+</div>
+
+</div>
+
+<div id="install-windows" class="hidden">
+
+<div class="my-6 space-y-4">
+  <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+    <div class="flex flex-wrap gap-3 mb-3">
+      <a href="https://opencode.ai/download/stable/windows-x64-nsis" class="theme-button inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium">Download for Windows</a>
+    </div>
+    <p class="text-sm text-gray-500 dark:text-stone-400">Run the installer and follow the on-screen prompts.</p>
+  </div>
+  <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+    <p class="text-sm text-gray-600 dark:text-stone-300 mb-1">Recommended: install WSL</p>
+    <p class="text-sm text-gray-500 dark:text-stone-400">Windows Subsystem for Linux lets you run a full Linux environment inside Windows. It's free, built into Windows 10 and 11, and takes one command to install. OpenCode works best with WSL. See the <a href="https://opencode.ai/docs/windows-wsl" class="underline hover:text-gray-700 dark:hover:text-stone-300">WSL setup guide</a>.</p>
+  </div>
+</div>
+
+</div>
+
+<div id="install-linux" class="hidden">
+
+<div class="my-6 space-y-4">
+  <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+    <p class="text-sm text-gray-500 dark:text-stone-400 mb-3">Choose the package for your distribution:</p>
+    <div class="flex flex-wrap gap-3">
+      <a href="https://opencode.ai/download/stable/linux-x64-deb" class="theme-button inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium">Download .deb</a>
+      <a href="https://opencode.ai/download/stable/linux-x64-rpm" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-gray-700 dark:text-stone-300 font-medium rounded-lg transition-colors text-sm">Download .rpm</a>
+    </div>
+    <p class="text-xs text-gray-400 dark:text-stone-500 mt-2">.deb for Ubuntu/Debian, .rpm for Fedora/RHEL.</p>
+  </div>
+  <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+    <p class="text-sm text-gray-500 dark:text-stone-400 mb-3">Or install with your package manager:</p>
+    <pre class="bg-gray-50 dark:bg-stone-900/80 rounded-lg px-4 py-3 font-mono text-sm text-gray-800 dark:text-stone-200 overflow-x-auto"><code>sudo dpkg -i opencode-desktop_*.deb</code></pre>
+  </div>
+</div>
+
+</div>
+
+<div id="install-other" class="hidden">
+
+<div class="my-6">
+  <p class="text-sm text-gray-500 dark:text-stone-400 mb-3">Download OpenCode Desktop for your platform:</p>
+  <div class="space-y-4">
+    <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+      <p class="text-sm font-medium text-gray-700 dark:text-stone-300 mb-3">macOS</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="https://opencode.ai/download/stable/darwin-aarch64-dmg" class="theme-button inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium">Apple Silicon</a>
+        <a href="https://opencode.ai/download/stable/darwin-x64-dmg" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-gray-700 dark:text-stone-300 font-medium rounded-lg transition-colors text-sm">Intel</a>
+      </div>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+      <p class="text-sm font-medium text-gray-700 dark:text-stone-300 mb-3">Windows</p>
+      <a href="https://opencode.ai/download/stable/windows-x64-nsis" class="theme-button inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium">Download</a>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-stone-700/50 p-5">
+      <p class="text-sm font-medium text-gray-700 dark:text-stone-300 mb-3">Linux</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="https://opencode.ai/download/stable/linux-x64-deb" class="theme-button inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium">.deb</a>
+        <a href="https://opencode.ai/download/stable/linux-x64-rpm" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-gray-700 dark:text-stone-300 font-medium rounded-lg transition-colors text-sm">.rpm</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div>
+
+## Launch the app
+
+Double-click OpenCode Desktop from your applications menu or dock, or use Spotlight to open it.
+
+Watch this short video for a quick overview of OpenCode Desktop's user interface, which covers projects, sessions, prompts, agents, and models.
+
+<div class="my-8 border-2 overflow-hidden not-prose lg:w-[calc(100%+8rem)] lg:max-w-[calc(100vw-4rem)]" style={`border-color: var(--theme-solid); aspect-ratio: 1112/720;`}>
+  <video controls playsinline class="w-full h-full block object-cover" src="https://assets.opencode.school/video/opencode-desktop-ui-tour-grey-bg.mp4" />
+</div>
+
+## Open a project
+
+You'll be prompted to open a project — click **Open Project** and select any folder on your computer. You should then see a chat interface with a text input at the bottom.
+
+## Enter a prompt
+
+Try this prompt to confirm everything is working:
+
+> Hello, are you there?
+
+<span id="send-key-hint">Press <strong>Return</strong> to send.</span> If you get a response, you're connected to a language model and ready to go.
+
+<script>{`
+document.addEventListener("DOMContentLoaded", function() {
+  var CHECK = '<span class="theme-solid-bg inline-flex w-5 h-5 rounded-full text-white text-[11px] font-bold items-center justify-center">\\u2713</span>';
+  var WARN = '<span class="text-yellow-500 dark:text-yellow-400">!</span>';
+  var DASH = '<span class="text-gray-300 dark:text-stone-600">\\u2014</span>';
+
+  function setCheck(id, value, icon) {
+    var row = document.getElementById(id);
+    if (!row) return;
+    var val = row.querySelector(".check-value");
+    var ico = row.querySelector(".check-icon");
+    if (val) val.textContent = value;
+    if (ico) ico.innerHTML = icon;
+  }
+
+  function delay(ms) {
+    return new Promise(function(r) { setTimeout(r, ms); });
+  }
+
+  // Detect OS from user agent
+  function detectOS() {
+    var ua = navigator.userAgent;
+    if (/Macintosh|Mac OS X/.test(ua)) return "macOS";
+    if (/Windows/.test(ua)) return "Windows";
+    if (/Linux/.test(ua)) return "Linux";
+    if (/CrOS/.test(ua)) return "ChromeOS";
+    return "Unknown";
+  }
+
+  // Measure connectivity: try navigator.connection first, fall back to fetch timing
+  async function measureConnectivity() {
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && conn.rtt !== undefined && conn.rtt > 0) {
+      var rtt = conn.rtt;
+      var label = "Connected, ~" + rtt + "ms latency";
+      var icon = rtt < 300 ? CHECK : WARN;
+      return { label: label, icon: icon };
+    }
+
+    if (!navigator.onLine) {
+      return { label: "Offline", icon: WARN };
+    }
+
+    try {
+      var start = performance.now();
+      await fetch("/api/enroll", { method: "HEAD", cache: "no-store" }).catch(function() {});
+      var elapsed = Math.round(performance.now() - start);
+      var label2 = "Connected, ~" + elapsed + "ms latency";
+      var icon2 = elapsed < 500 ? CHECK : WARN;
+      return { label: label2, icon: icon2 };
+    } catch (e) {
+      return { label: navigator.onLine ? "Connected" : "Offline", icon: navigator.onLine ? CHECK : WARN };
+    }
+  }
+
+  // Run system checks with staggered reveal
+  async function runChecks() {
+    await delay(300);
+    var os = detectOS();
+    var supportedOS = ["macOS", "Windows", "Linux"];
+    var osIcon = supportedOS.indexOf(os) !== -1 ? CHECK : WARN;
+    setCheck("check-os", os, osIcon);
+
+    await delay(400);
+    var cores = navigator.hardwareConcurrency;
+    if (cores) {
+      setCheck("check-cpu", "\\u2265" + cores + " cores", cores >= 2 ? CHECK : WARN);
+    } else {
+      setCheck("check-cpu", "Unable to detect", DASH);
+    }
+
+    await delay(400);
+    var mem = navigator.deviceMemory;
+    if (mem) {
+      setCheck("check-memory", mem >= 1 ? "\\u2265" + mem + " GB" : "\\u2265" + (mem * 1024) + " MB", mem >= 4 ? CHECK : WARN);
+    } else {
+      setCheck("check-memory", "Unable to detect", DASH);
+    }
+
+    await delay(300);
+    var result = await measureConnectivity();
+    setCheck("check-internet", result.label, result.icon);
+
+    var allPassed =
+      ["check-os", "check-cpu", "check-memory", "check-internet"].every(function(id) {
+        var row = document.getElementById(id);
+        return row && row.querySelector(".check-icon").innerHTML.indexOf("theme-solid-bg") !== -1;
+      });
+    if (allPassed) {
+      var successEl = document.getElementById("system-check-success");
+      if (successEl) successEl.classList.remove("hidden");
+    }
+  }
+
+  // OS detection for install section and send-key hint
+  var ua = navigator.userAgent;
+  var os = "other";
+  if (/Macintosh|Mac OS X/.test(ua)) os = "macos";
+  else if (/Windows/.test(ua)) os = "windows";
+  else if (/Linux/.test(ua)) os = "linux";
+
+  var loading = document.getElementById("install-loading");
+  if (loading) loading.classList.add("hidden");
+
+  var section = document.getElementById("install-" + os);
+  if (section) section.classList.remove("hidden");
+
+  var hint = document.getElementById("send-key-hint");
+  if (hint) hint.innerHTML = os === "windows" ? "Press <strong>Enter</strong> to send." : "Press <strong>Return</strong> to send.";
+
+  // Brew copy button
+  var brewBtn = document.querySelector(".brew-copy");
+  if (brewBtn) {
+    brewBtn.addEventListener("click", function() {
+      navigator.clipboard.writeText("brew install --cask opencode-desktop").then(function() {
+        brewBtn.textContent = "Copied!";
+        setTimeout(function() { brewBtn.textContent = "Copy"; }, 2000);
+      });
+    });
+  }
+
+  runChecks();
+});
+`}</script>

@@ -1,0 +1,84 @@
+---
+title: "Run AI models"
+slug: run-ai-models
+description: "Generate images and video using AI models on Replicate."
+order: 2
+agentInstructions: |
+  This exercise requires the Replicate skill. If the student does not have
+  it installed (check ~/.config/opencode/skills/replicate/ or
+  ~/.agents/skills/replicate/ for a SKILL.md file), stop and help them
+  install it first with
+  `npx skills add replicate/skills`. The
+  skill must be loaded before proceeding.
+
+  Guide the student through these steps, adapting depth to their profile:
+
+  1. Check that REPLICATE_API_TOKEN is set in the environment. If not,
+     guide them to create a Replicate account at https://replicate.com
+     (requires a GitHub account, help them create one at
+     https://github.com/signup if needed), then generate an API token at
+     https://replicate.com/account/api-tokens and add
+     `REPLICATE_API_TOKEN=r8_...` to their shell profile (~/.zshrc,
+     ~/.bashrc, etc.) and to the current session with
+     `export REPLICATE_API_TOKEN=r8_...`. They will need to restart
+     OpenCode after adding the token for it to take effect.
+
+  2. Generate images with google/nano-banana-2. Start with a
+     text-to-image prompt: ask the student what they want to create and
+     help them write a descriptive prompt. Run the model and show the
+     result. Then try image editing: have the student provide an existing
+     image (photo, screenshot, anything) and use nano-banana-2 to
+     transform it with a text prompt. Experiment with different aspect
+     ratios and styles.
+
+  3. Generate a video from one of the images using google/veo-3.1-fast.
+     Use the image_url input to pass one of the generated images, and
+     write a prompt describing the motion or scene. The video takes a
+     minute or two to generate.
+
+  4. Save the outputs locally: download the generated images and video to
+     the student's machine. Use the Replicate skill's API knowledge to
+     create predictions, poll for results, and handle output URLs. Do not
+     use the Replicate CLI or Node.js SDK, work directly with the API via
+     the skill. Fire off multiple predictions concurrently when possible.
+     Output URLs expire after 1 hour, so download files promptly.
+
+  Verify completion by confirming the student has at least one generated
+  image and one generated video saved locally.
+---
+
+import AgentPrompt from '../../components/AgentPrompt.astro'
+
+In this exercise, you'll use AI models to generate images and video — right from OpenCode. You'll work with [Replicate](https://replicate.com), a platform that hosts thousands of open-source AI models and lets you run them through an API.
+
+You'll generate images with [Nano Banana 2](https://replicate.com/google/nano-banana-2) (Google's image generation model built on Gemini Flash), then turn one of those images into a video with [Veo 3.1 Fast](https://replicate.com/google/veo-3.1-fast) (Google's video generation model).
+
+<AgentPrompt title="Run AI models" prompt='Let&#39;s work on the "Run AI models" exercise together!' />
+
+## Prerequisites
+
+This exercise requires the **Replicate skill** for OpenCode. If you completed the [Skills lesson](/lessons/skills), you already have it installed. If not, install it now:
+
+```
+npx skills add replicate/skills
+```
+
+You'll also need a **Replicate account** and API token:
+
+1. Sign up at [replicate.com](https://replicate.com) (requires a GitHub account)
+2. Generate an API token at [replicate.com/account/api-tokens](https://replicate.com/account/api-tokens)
+3. Add the token to your shell profile (`~/.zshrc` or `~/.bashrc`):
+
+```
+export REPLICATE_API_TOKEN=r8_your_token_here
+```
+
+Restart OpenCode after adding the token so it picks up the new environment variable.
+
+## What you'll do
+
+**Generate images** — Describe what you want and Nano Banana 2 creates it. It handles photorealistic scenes, illustrations, product mockups, and more. It can also edit existing images: pass in a photo along with a text prompt to change backgrounds, swap styles, or combine multiple images.
+
+**Generate video** — Take one of your generated images and bring it to life with Veo 3.1 Fast. Describe the motion or scene you want, and the model produces a short video clip.
+
+The Replicate skill gives OpenCode everything it needs to discover models, check their input schemas, create predictions, and retrieve results — all through the API. No CLI tools or SDKs needed.

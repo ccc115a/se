@@ -1,0 +1,110 @@
+---
+// Copyright (c) 2026 Cloudflare, Inc.
+// Licensed under the Apache 2.0 license found in the LICENSE file or at:
+//     https://opensource.org/licenses/Apache-2.0
+export const prerender = true;
+
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Troubleshooting" description="Tips for solving problems with OpenCode and this course.">
+  <div class="mb-6">
+    <a href="/" class="text-sm text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+      &larr; All lessons
+    </a>
+  </div>
+
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold">Troubleshooting</h1>
+    <p class="text-gray-600 dark:text-stone-400 mt-2">Tips for solving problems with OpenCode and this course.</p>
+  </header>
+
+  <article class="prose dark:prose-invert max-w-none">
+    <h2 id="using-opencode-to-solve-problems"><a href="#using-opencode-to-solve-problems" class="heading-anchor">Using OpenCode to solve problems</a></h2>
+    <p>
+      When you run into trouble — whether it's an error message you don't
+      understand, a lesson that isn't working, or something broken in your own
+      project — try asking OpenCode to help you figure it out. That's what it's
+      for.
+    </p>
+    <p>Here are some things OpenCode can do to help you debug:</p>
+    <ul>
+      <li>Read error messages and explain what they mean</li>
+      <li>Search your codebase for relevant files and functions</li>
+      <li>Run commands and inspect the output</li>
+      <li>Check logs, config files, and environment variables</li>
+      <li>Suggest fixes and apply them directly</li>
+    </ul>
+    <p>
+      Instead of trying to solve everything yourself, describe the problem to
+      OpenCode and let it investigate. You can paste in an error message, point
+      it at a file, or just say "something is broken" and let it look around.
+    </p>
+
+    <h2 id="digging-into-the-opencode-source"><a href="#digging-into-the-opencode-source" class="heading-anchor">Digging into the OpenCode source</a></h2>
+    <p>
+      OpenCode is <a href="https://github.com/anomalyco/opencode" target="_blank" rel="noopener noreferrer">open source</a>. If you want to understand how a feature works,
+      track down a bug, or just learn by reading real code, the repo is on GitHub.
+    </p>
+    <p>
+      The codebase is primarily Go and TypeScript. Reading the source is one of
+      the best ways to build a deeper understanding of how OpenCode works under
+      the hood — how it manages sessions, talks to LLM providers, runs tools,
+      and more.
+    </p>
+    <p>
+      You can also use OpenCode itself to explore the repo. Clone it, open it in
+      OpenCode, and ask questions like "how does the permission system work?" or
+      "where are MCP connections managed?" It's a great way to learn a codebase
+      you didn't write.
+    </p>
+
+    <h2 id="getting-help-with-opencode"><a href="#getting-help-with-opencode" class="heading-anchor">Getting help with OpenCode</a></h2>
+    <p>
+      If you run into a bug or unexpected behavior in OpenCode itself — crashes,
+      tool errors, model issues — the best place to get help is the official
+      Anomaly OpenCode Discord community:
+    </p>
+    <p>
+      <a href="https://opencode.ai/discord" target="_blank" rel="noopener noreferrer">https://opencode.ai/discord</a>
+    </p>
+    <p>
+      The Discord is monitored by the OpenCode team and community. You can ask
+      questions, report bugs, and see if others have run into the same issue.
+    </p>
+
+    <h2 id="reporting-an-issue-with-opencode-school"><a href="#reporting-an-issue-with-opencode-school" class="heading-anchor">Reporting an issue with OpenCode School</a></h2>
+    <p>
+      If you find a problem with this course — a broken lesson, incorrect
+      content, enrollment issues, or anything else on this site — or if you
+      have an idea for making the course better, please share it on GitHub.
+      Bug reports, suggestions, and ideas for new lessons or exercises are all
+      welcome.
+    </p>
+    <p>
+      See the <a href="/contributing">Contributing</a> page for the easiest
+      ways to file an issue, including prefilled templates for bug reports,
+      ideas, and exercise proposals. OpenCode can also help draft the issue
+      for you based on your session.
+    </p>
+
+    <h2 id="disenroll"><a href="#disenroll" class="heading-anchor">How to reset progress or disenroll</a></h2>
+    <p>
+      If you want to redo lessons you've already completed, visit the
+      <a href="/disenroll">disenroll page</a> and use "Reset progress." This
+      clears all your completions while keeping your student ID and profile, so
+      you can go through the lessons again without re-enrolling.
+    </p>
+    <p>
+      If you want to fully clear your enrollment from this browser, the same page
+      has a "Disenroll completely" option that removes your student ID, progress,
+      and theme color from local storage. You would need to re-enroll to use
+      OpenCode School again.
+    </p>
+    <p>
+      Note that both options only affect your current browser. There is no
+      account to delete on the server side — your progress record is just a small
+      anonymous entry keyed to your student ID.
+    </p>
+  </article>
+</Base>

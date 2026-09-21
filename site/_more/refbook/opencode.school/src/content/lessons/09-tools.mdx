@@ -1,0 +1,136 @@
+---
+title: "Tools"
+slug: tools
+description: "Extend OpenCode with external tools and MCP servers."
+order: 9
+quiz: true
+modifiesGlobalConfig: true
+agentInstructions: |
+  Cover these four topics:
+
+  1. What tools are: functions an AI can call to do things beyond
+     generating text, sometimes called "function calling" or "tool use".
+     This is what makes OpenCode an agent rather than a chatbot.
+
+  2. What MCP is: Model Context Protocol, an open standard for connecting
+     AI to external tools. Two kinds of servers: local (runs on your
+     machine, typically via npx) and remote (runs in the cloud, connected
+     by URL). You can edit the config yourself or just ask OpenCode to add
+     servers for you.
+
+  3. Public vs. authenticated servers: some MCP servers require no
+     credentials and work immediately. Others require an API token in your
+     config or an OAuth browser flow to authenticate.
+
+  4. The /mcp command and context: use /mcp in OpenCode to see configured
+     servers and their connection status. Good practice after installing a
+     new server to confirm it's connected and authenticated. Also note
+     that each MCP server adds tools to the context window, so be
+     selective about how many you enable.
+
+  After every write or edit to the config file, re-read it and validate it
+  is well-formed JSON before proceeding.
+
+  After teaching and quizzing, verify completion by reading
+  ~/.config/opencode/opencode.json (or opencode.jsonc) and confirming an "mcp" block exists
+  with at least one server entry.
+
+  After marking the lesson complete, help the student add an "MCP
+  authentication" section to their global ~/.config/opencode/AGENTS.md.
+  The section should instruct the agent to read the user's OpenCode config
+  to find remote MCP server names and give exact re-authentication
+  commands using those names (e.g. "opencode mcp auth sentry", not
+  "opencode mcp auth <server-name>"). Include these related commands:
+  opencode mcp auth <name>, opencode mcp auth list,
+  opencode mcp logout <name>, and opencode mcp debug <name>.
+
+  After updating the AGENTS.md, do NOT suggest moving on to the next
+  lesson. Instead, tell the student: MCP servers are connected at startup,
+  so they need to quit OpenCode Desktop and reopen it for the new server
+  to be available, and they can move on to the next lesson after
+  restarting.
+---
+
+import AgentPrompt from '../../components/AgentPrompt.astro'
+
+When you type a message to an AI, it generates text. That's it — on its own, it can only produce words. But words aren't always enough. Sometimes you need the AI to actually *do* something: look up today's weather, search the web, read a file, or call an API.
+
+That's what tools are for. A tool is a function the AI can call when it decides one is needed — it recognizes the situation, picks the right tool, runs it, and uses the result to give you a better answer. This is sometimes called "function calling" or "tool use."
+
+OpenCode comes with built-in tools for things like reading files, editing code, and running shell commands. But you can extend it with external tools too, using a standard called **MCP** (Model Context Protocol). An MCP server is a small program that exposes tools to the AI — things like searching your calendar, querying a database, or fetching live data from the web. You connect an MCP server to OpenCode once, and those tools become available in every session.
+
+<AgentPrompt title="Tools" />
+
+## Two kinds of MCP servers
+
+**Local servers** run as a process on your own machine. OpenCode starts them automatically on launch using a command you specify in your config — typically `npx` followed by a package name. Local servers are common for tools that need access to your filesystem or local environment.
+
+**Remote servers** run in the cloud. You connect to them by URL — no local process required. Many services publish remote MCP servers so you can give your AI agent access to their platform without installing anything.
+
+## Public vs. authenticated
+
+**Public servers** require no credentials. You add them to your config and they work immediately.
+
+**Token-authenticated servers** require an API key. You add the key to your config, usually via an environment variable so it's not stored in plain text.
+
+**OAuth servers** open a browser to log in to the service. OpenCode handles the OAuth flow automatically — it detects when authentication is needed and prompts you to complete it.
+
+## Add a weather MCP server
+
+Let's install a local MCP server that fetches live weather data from [Open-Meteo](https://open-meteo.com) — a free, public weather API with no account or API key required.
+
+Even though MCP servers are managed in the global OpenCode config, you don't have to edit the file yourself — you can just ask OpenCode to do it. Try asking it to add the following to your `~/.config/opencode/opencode.json`:
+
+```json
+"mcp": {
+  "open-meteo": {
+    "type": "local",
+    "command": ["npx", "-y", "-p", "open-meteo-mcp-server", "open-meteo-mcp-server"]
+  }
+}
+```
+
+This tells OpenCode to start the `open-meteo-mcp-server` package via `npx` each time it launches. The server runs locally on your machine and connects to the Open-Meteo API when a weather tool is called.
+
+**This requires Node.js 22 or later.** If you don't have it installed, ask OpenCode to help you install it for your operating system.
+
+## Check with /mcp
+
+After adding a server, type `/mcp` in OpenCode to see a list of your configured MCP servers and their connection status. This is a good habit — pop it open after installing a new server to confirm it's connected and, if needed, authenticated.
+
+## Restart OpenCode
+
+MCP servers are connected at startup. **Quit and reopen OpenCode Desktop**, then use the prompt below to continue.
+
+<AgentPrompt title="Tools" prompt={`I've added the weather MCP server and restarted OpenCode. Let's verify the Tools lesson is complete.`} />
+
+## Try it
+
+Once you're back, ask OpenCode something like:
+
+> What's the weather forecast for Tokyo this week?
+
+Watch the UI as OpenCode responds — you should see it make a tool call to the weather server, fetch the data, and use the result in its answer. That's the AI deciding a tool is needed, calling it, and working with what comes back. This is what distinguishes an agent from a chatbot.
+
+If you have several tools available, the model might not always pick the one you expect. You can nudge it by mentioning the tool by name — for example, "use the open-meteo MCP server to check the weather in Tokyo." This makes the model more likely to reach for that specific tool instead of trying to answer from its training data or picking a different tool.
+
+## A note on context
+
+Each MCP server you add registers its tools with the model at the start of every session. With many servers enabled, those tool descriptions can take up a meaningful portion of your [context window](/glossary#context-window). OpenCode's docs recommend being selective — only enable the servers you actually use regularly.
+
+## Find more MCP servers
+
+The [OpenCode MCP docs](https://opencode.ai/docs/mcp-servers/) include ready-to-use config examples for Sentry, Context7, and Grep. For broader discovery, the [official MCP registry](https://registry.modelcontextprotocol.io) indexes thousands of servers across categories like databases, developer tools, and productivity — backed by Anthropic, GitHub, and Microsoft.
+
+You can also ask OpenCode to find and install MCP servers for you — describe what you need, and it can search for a server and add it to your config.
+
+## Reconnecting authenticated servers
+
+Some MCP servers require authentication to work. That connection can expire, and when it does the server silently stops working. It can be tricky to remember the exact commands to re-authenticate.
+
+This is a good use for your global `~/.config/opencode/AGENTS.md` file: add structured instructions that remind OpenCode how to reconnect. Ask OpenCode to add an "MCP authentication" section to your global AGENTS.md with guidance like:
+
+- When troubleshooting MCP connection issues, read my OpenCode config to find the server names, then give me the exact commands to run (e.g. `opencode mcp auth sentry`, not `opencode mcp auth <server-name>`).
+- Related commands: `opencode mcp auth <name>`, `opencode mcp auth list`, `opencode mcp logout <name>`, `opencode mcp debug <name>`.
+
+Once it's in your AGENTS.md, OpenCode will know how to help you reconnect any time a server drops.

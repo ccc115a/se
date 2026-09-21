@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gradient Descent — 梯度下降</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+<style>
+body{margin:0;background:#fff}
+.wrap{display:flex;min-height:100vh}
+nav.site{width:260px;min-width:200px;border-right:1px solid #d0d7de;padding:16px;position:sticky;top:0;height:100vh;overflow:auto;background:#f6f8fa}
+nav.site .home{font-weight:700;margin-bottom:8px;display:block;color:#1f2328;text-decoration:none}
+ul.site-nav{list-style:none;margin:0;padding:0}
+ul.site-nav li{margin:2px 0}
+ul.site-nav a{color:#0969da;text-decoration:none;font-size:.9em}
+ul.site-nav a:hover{text-decoration:underline}
+article{flex:1;min-width:0;box-sizing:border-box;max-width:980px;padding:24px}
+.markdown-alert{padding:.5rem 1rem;margin-bottom:1rem;border-left:.25em solid #888;border-radius:6px;background:#f6f8fa}
+.markdown-alert-title{font-weight:600;margin:0 0 .25rem}
+.markdown-alert-note{border-color:#0969da}.markdown-alert-tip{border-color:#1a7f37}
+.markdown-alert-important{border-color:#8250df}.markdown-alert-warning{border-color:#9a6700}
+.markdown-alert-caution{border-color:#d1242f}
+pre.mermaid{background:#f6f8fa;padding:16px;border-radius:6px}
+@media (max-width:767px){nav.site{display:none}article{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="site"><a class="home" href="../../../../index.html">⌂ 首頁</a><ul class="site-nav">
+<li><a href="../../../../_more/code/傳統軟體工程/_case/blog/_doc/docker_run.html">docker run</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/blog/_doc/wsl.html">wsl</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/blog/README.html">Blog -- Classic</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/docker101/ccc_log.html">docker101</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/docker101/README.html">docker101</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/compose/gitea-postgres/README.html">docker-compose gitea+postgresql</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/config.html">config</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/fail2ban.html">fail2ban</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/linode.html">用 docker compose 在 linode 上安裝 gitea</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/README.html">doc</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/reverse_proxy.html">reverseproxy</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/windows.html">windows.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/gitea/wsl.html">wsl</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/nextcloud/README.html">nextcloud</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/nginx/programmermedia.org.html">programmermedia.org.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/nginx/README.html">nginx</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_case/pub6/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/_Footer.html">_Footer.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/_Sidebar.html">軟體工程</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/01-preface.html">第 1 章 -- 軟體工程簡介</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/02-test.html">第 2 章 -- 測試與 TDD</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/03-npm.html">第 3 章 -- NPM 套件</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/04-git.html">第 4 章 -- Git 合作</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/05-quality.html">第 5 章 -- 軟體品質</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/06-project.html">第 6 章 -- 軟體專案</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/07-analysis.html">第 7 章 -- 系統分析</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/08-design.html">第 8 章 -- 系統設計</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/09-implement.html">第 9 章 -- 實作</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/10-verify.html">第 10 章 -- 驗證 整合測試</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/11-operation.html">第 11 章 -- 上線與維護</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/A1-uml.html">UML 圖形建模</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/A2-designPattern.html">設計模式 -- 以 JavaScript 為例</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/A3-refactor.html">代碼重構 Refactor</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/book.html">book.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/C1-blogMvc.html">案例 1.1 -- 網誌經典版</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/C2-blogAjax.html">案例 2 -- AJAX 網誌</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/C3-WebPos.html">案例 3 -- WebPos 系統分析、設計與實作</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/directory.html">軟體工程 -- 以 node.js 為例</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/git.html">git / github 的用法</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/Home.html">軟體工程 -- 以 Node.js 為例</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/mylodash.html">mylodash 的 github pull request 練習</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/note.html">JavaScript 與軟體工程</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/README.html">陳鍾誠的軟體工程課程地圖</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/Reference.html">參考文獻</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/rule.html">軟體法則</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/SUMMARY.html">軟體工程 -- 以 node.js 為例</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_doc/tool.html">Tool</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/ai/autograd/README.html">autograd</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/ai/cuda/README.html">cuda</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/co/attack/README.html">attack</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/co/riscv/README.html">riscv CPU</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/dasm/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/docker/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/elf/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/fs/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallc/README.html">deno 呼叫 C</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/bash_run_fail.html">bash_run_fail.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/docker_run_fail.html">docker_run_fail.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/powershell_fail.html">powershell_fail.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/README.html">deno call rust</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/v8/README.html">v8 interaction</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/c_to_wasm/README.html">c to wasm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_call_py/README.html">deno call python</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_call_shell/README.html">deno call shell</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_call_wasm/README.html">deno call wasm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_embed/README.html">deno embedding</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_use_npm/README.html">deno use npm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/dotnet_call_wasm/README.html">dotnet call wasm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/python_call_wasm/README.html">python call wasm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/README.html">deno core</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/rust_call_wasm/README.html">rust call wasm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/interop/rust_to_wasm/README.html">rust to wasm</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/loader/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/os/os/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/os/README.html">OS</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_domain/sp/vm/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/git/action/README.html">github action</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/git/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/github/README.html">github</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/gitter/README.html">gitter</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/app/README.html">app</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/01-op/databaseVsBigData.html">databaseVsBigData.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/01-op/README.html">sqlite</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/02-blog/README.html">Blog -- Classic</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/README.html">sqlite</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/02-session/02-blogLogin/README.html">Blog -- Classic</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/02-session/03-blogSignup/README.html">Blog -- Classic</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/02-session/README.html">Session</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/README.html">database</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/deno-sqlite/CONTRIBUTING.html">Contribute to SQLite for Deno</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/_more/deno-sqlite/README.html">Deno SQLite Module</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/blog/README.html">Blog -- Classic</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/blog/wsl.html">wsl run deno blog</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/build-deno/README.html">build deno</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/git-server/README.html">deno git server</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/git-server/test/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_case/README.html">case</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/網站的軟體工程.html">網站的軟體工程</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/deploy/README.html">deno deploy</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/e2e/README.html">puppeteer</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/gendoc/README.html">GenDoc</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/package/README.html">deno 套件</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/performance/README.html">效能問題</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/postman/README.html">postman</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/_more/test/README.html">Test</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/00-callback/01-basic/README.html">設計模式</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/00-callback/02-promise/README.html">模式 -- callback Promise</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/01-chain/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/02-pubsub/README.html">pub-sub</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/03-middleware/README.html">middle ware</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/04-mvc/README.html">MVC -- Model/View/Controller</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/bundle/README.html">deno bundle</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/pattern/README.html">設計模式</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/js/README.html">deno</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/pm/README.html">Project Management</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/_more/test/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/c/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/00-uselodash/README.html">uselodash</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/01a-mylodashjs/README.html">練習 -- 模仿 lodash 套件實作</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/01b-mylodashts/README.html">練習 -- 模仿 lodash 套件實作</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/02-helloTest/README.html">學習使用 deno test 進行測試</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/03-lodashTest/README.html">練習 -- 模仿 lodash 套件實作</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/04-tdd/README.html">練習 -- TDD</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/05-tdd2/README.html">練習 -- TDD2</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/06-bdd/README.html">練習 -- BDD</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/07-bdd2/code.html">練習 -- BDD</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/07-bdd2/README.html">練習 -- BDD</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/08-bench/README.html">deno benchmark</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/09-metrics/README.html">deno metrics</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/js/README.html">測試 test</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/01-測試/README.html">測試 test</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/01-deno/01-use/README.html">lodash</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/01-deno/02-publish/README.html">deno 的套件出版</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/01-deno/03-install/README.html">install</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/01-deno/04-package-manager/README.html">package-manager</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/01-deno/README.html">deno package</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/02-team/README.html">兩人的專案</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/03-model/agile.html">敏捷軟體製程 Agile</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/03-model/README.html">軟體開發模式</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/04-workflow/README.html">GithubFlow</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/05-platform/README.html">確認開發工具</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/06-pm/README.html">Project Management</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/07-github/README.html">github</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/02-合作/08-redmine/README.html">Redmine</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/00-readable/history.html">history</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/01-cache/README.html">效能</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/02-constantFolding/README.html">Constant Folding</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/03-loopInvariant/README.html">Loop Invariant -- 迴圈不變量</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/04-volatile/README.html">volatile</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/05-jumpTableSwitch/jumpTable.html">JumpTable</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/06-struBits/README.html">bits struct</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/08-valgrind/README.html">debug</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/編譯器優化.html">編譯器優化</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/gcc編譯器的優化功能.html">gcc 編譯器的優化功能</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/gdb除錯工具.html">gdb 除錯工具</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/GNU工具的用法.html">GNU 工具的用法</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/c/README.html">軟硬體的效能</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/_more/00-standardjs/README.html">隨堂練習 -- StandardJS 標準語法</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/_more/03-throw/README.html">練習 throw -- bug 預防 及早警示</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/_more/04-assert/README.html">練習 assert -- bug 預防 及早警示</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/_more/09-modularize/exercise.html">練習 -- publish</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/_more/09-modularize/README.html">ccclodash</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/01-format/README.html">自動排版</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/02-debug/README.html">debug</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/03-guard/README.html">練習 -- 除錯 debug</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/05-catch/README.html">練習 catch -- bug 治療</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/06-pitfall/README.html">練習 Pitfall -- 語言的陷阱</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/07-profiling/README.html">效能地圖 -- Profiling</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/08-floatbug/README.html">Bug</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/doc/README.html">deno doc</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/garbage/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/lint/README.html">deno lint</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/README.html">程式品質 -- 避免 bug</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/js/style/README.html">deno style</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/03-品質/README.html">程式品質</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/04-分析/00-uml/README.html">UML</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/04-分析/01-usecase/README.html">iPos 使用者個案</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/04-分析/02-sequence/README.html">iPos 循序圖</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/04-分析/03-ui/README.html">介面分析設計</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/04-分析/README.html">系統分析與設計</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/01-class/README.html">iPos -- 類別圖</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/02-algorithm/caseAsm/asm/README.html">Assembler -- JavaScript</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/02-algorithm/caseAsm/README.html">Design 系統設計</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/02-algorithm/README.html">演算法</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/03-deploy/README.html">佈署</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/04-pattern/README.html">設計模式</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/05-設計/05-architect/README.html">軟件架構</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/01-classic/01-superdeno/README.html">練習 -- koa server 測試入門</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/01-classic/02-blogClassic/src/README.html">Blog -- Classic</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/01-classic/02-blogClassic/test/README.html">blog test</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/02-ajax/01-puppeteer/PdfTest_fail.html">PdfTest_fail.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/02-ajax/01-puppeteer/README.html">練習 e2e 測試 -- 使用 puppeteer</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/02-ajax/02-blogAjax/README.html">練習 -- 使用 puppeteer 測試你的 AJAX 程式 完整</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/02-ajax/c1-playweight/README.html">playweight</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/correct/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/loadTest.html">練習 : loadTest</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/_more/02-flash-messages/README.html">Flash</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/_more/03-csrf/README.html">CSRF</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/_more/10-helmet/README.html">koa-helmet 套件</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/網站漏洞.html">網站漏洞</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/翻牆.html">翻牆</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/CORS.html">CORS</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/Fail2ban防護程式.html">Fail2ban 防護程式</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/hack.html">破解密碼</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/07-驗證/security/README.html">安全性議題</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/devops/README.html">DevOps</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/入門必看.html">入門必看</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/compose/deno/README.html">docker compose -- deno</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/compose/gitea-postgres/README.html">docker-compose gitea+postgresql</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/compose/README.html">docker compose</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/deno/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/gitea/linode.html">用 docker compose 在 linode 上安裝 gitea</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/gitea/windows.html">windows.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/gitea/wsl.html">gitea</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/hello/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/images.html">images.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/README.html">docker</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/docker/windows/README.html">docker for windows</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/installer/README.html">Installer Builder</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/kubernetes/README.html">kubernetes</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/linux/ps.html">ps</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/08-佈署/linux/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/09-自動化/deno/README.html">deno auto</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/09-自動化/githook/example.html">example.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/09-自動化/githook/README.html">githook</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/09-自動化/github_action/README.html">github action</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/軟體工程.html">軟體工程.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/04-inherit/hillClimbingFramework/實作：通用的爬山演算法架構.html">實作：通用的爬山演算法架構</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/04-inherit/hillClimbingFramework/實作：通用的模擬退火法架構.html">模擬退火法 Simulated-Annealing</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/04-inherit/README.html">繼承</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/05-pattern/README.html">設計模式</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/全錄PARC的Alto電腦.html">全錄PARC的Alto電腦.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/事件驅動EventDriven.html">事件驅動EventDriven.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/視窗GUI與物件導向.html">視窗GUI與物件導向.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/提高可理解性.html">提高可理解性</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/結構化程式興起.html">結構化程式興起.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/賈伯斯AppleII與LisaMac.html">賈伯斯AppleII與LisaMac.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/模組化.html">模組化</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/避免重複的程式碼.html">避免重複的程式碼</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/Church與LambdaCalculus.html">Church與LambdaCalculus.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A1-模組化/Dijkstra的goto有害論.html">Dijkstra的goto有害論.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/bash.html">~/.bashprofile</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/deno.html">deno</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/dot_圖形繪製工具.html">dot 圖形繪製工具</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/figma介面設計工具.html">figma介面設計工具.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/gcc.html">gcc.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/git.html">git.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/gitbash.html">gitbash.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/github相關工具.html">Github</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/linux.html">linux.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/mermaid_UML流程圖繪製工具.html">mermaid UML 流程圖繪製工具</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/README.html">《軟體工程與演算法》課程使用環境</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/riscv.html">riscv.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/tex數學式撰寫工具.html">tex</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A2-工具/wsl.html">WSL -- Windows Subsystem for Linux</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/flow.html">git flow</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/gitHook.html">git hook</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/github.html"> Git 教學和 GitHub 設定指引https://hackmd.io/@sysprog/git-with-github</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/githubAction.html">github action</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/githubflow.html">git 與 github 使用</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/gitlab.html">gitlab</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/A3-git/submodule.html">git submodule</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/map.html">軟體工程課程地圖</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/installer/README.html">pyinstaller</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/publish/ai6.html">ai6.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/publish/ai6/README.html">ai6 -- Artificial Intelligence Code Examples</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/publish/README.html">unittest</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/test1/pytest-bdd/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/test1/pytest/README.html">pytest</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/test1/README.html">python test framework</a></li>
+<li><a href="../../../../_more/code/傳統軟體工程/python/test1/unittest/README.html">unittest</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/_doc/run.html">run.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/_more/agentOllama.html">Agent with Memory — XML-based Tool Use + 記憶系統</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/_more/blog/server.html">Express + SQLite 部落格伺服器（XML Agent 測試目標）</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent1prompt/agent1.1image.html">agent1.1image.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_bigpickle/session-ses_f9f8.html">agent1prompt.py 改為 agent2context.py 並加入 SQLite 機制</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/AGENT.html">AGENT.md — 長期記憶</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/memory/AGENT.html">AGENT.md — 長期記憶</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/memory/skills/system_info/SKILL.html">技能：系統資訊查詢</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/README_memory.html">記憶功能說明</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/SKILL.html">技能：系統資訊查詢</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent3harness/agent3harness.html">系統服務與配置</a></li>
+<li><a href="../../../../_more/code/agent/_more/_bak/v2-agent-claude/agent4loop/agent4loop.html">-- coding: utf-8 --</a></li>
+<li><a href="../../../../_more/code/agent/_more/_doc/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/_doc/安全規劃.html">Agent0 安全規劃</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/_doc/run.html">run.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/agent0.html">Agent in Docker — 容器隔離執行 Agent</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/blog/server.html">Express + SQLite 部落格伺服器（Docker 測試目標）</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/test_docker.html">Python 3.12.8 已安裝！</a></li>
+<li><a href="../../../../_more/code/agent/_more/A1-agent_in_docker/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/mini-openclaw.html">mini-openclaw — 最小化 AI Agent 框架（OpenClaw 克隆版）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v1-mini-opencraw/agent0.html">Agent0 — JSON-based Tool Use Agent（OpenClaw 簡化版）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v1-mini-opencraw/agent0test/hello.html">Hello World — Agent 測試腳本</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/_doc/run.html">run.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/agent0.html">Agent with Security Reviewer — XML-based Tool Use Agent</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/blog/server.html">Express + SQLite 部落格伺服器 — Agent 工具測試目標</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/hello.html">Hello World — Agent 測試用目標腳本</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/test_reviewer.html">安全審查者測試工具</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-reviewer/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/_doc/run.html">run.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/agent0.html">Agent with Security — LLM 安全審查 + 目錄存取控制</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/blog/server.html">Express + SQLite 部落格伺服器（安全 Agent 測試目標）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/hello.html">Hello World — Agent 安全測試腳本</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/test_reviewer.html">安全審查者測試（含目錄存取測試）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v3-agent-secure/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/harnessEngineering.html">harnessEngineering.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/run.html">run.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/team規劃書.html">Agent0 Team 規劃書</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/team測試計劃.html">Agent0Team 測試計劃</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/team測試案例.html">Agent0Team 測試案例 - Case 1</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/_doc/team詳細計劃.html">Agent0Team 詳細程式規格書</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/agent0.html">Agent0 Class — 物件導向 Agent 框架</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/test_reviewer.html">安全審查者測試（v4 類別版本）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v4-agent-class/test0.html">Agent0 互動測試 — 匯入 Agent0 類別</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/harnessEngineering.html">harnessEngineering.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/run.html">run.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/team_test_case.html">team_test_case.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/team規劃書.html">Agent0 Team 規劃書</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/team測試計劃.html">Agent0Team 測試計劃</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/team測試案例.html">Agent0Team 測試案例 - Case 1</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/_doc/team詳細計劃.html">Agent0Team 詳細程式規格書</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/agent0.html">Agent0 Class（v5 基礎類別）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/agent0team.html">Agent Team — Planner/Generator/Evaluator 團隊協作框架</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/test_reviewer.html">安全審查者測試（v5 版本）</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/test_team_case1.html">測試個案 1：FastAPI + SQLite 網誌系統</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/test_team_case2.html">測試個案 2：伊朗戰情報告</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/test_team.html">團隊功能測試</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/_more/v5-agent-team/test0.html">Agent0 互動測試（v5 版本）</a></li>
+<li><a href="../../../../_more/code/agent/ai_chat.html">ai_chat.md</a></li>
+<li><a href="../../../../_more/code/agent/v0-hello/_more/chat0.html">Chat0 — 純對話 LLM 客戶端（無工具）</a></li>
+<li><a href="../../../../_more/code/agent/v0-hello/_more/kimiResponse.html">kimiResponse.md</a></li>
+<li><a href="../../../../_more/code/agent/v0-hello/helloOllama.html">helloOllama.md</a></li>
+<li><a href="../../../../_more/code/agent/v0-hello/helloPicture.html">helloPicture.md</a></li>
+<li><a href="../../../../_more/code/agent/v0-hello/picture1.html">picture1.md</a></li>
+<li><a href="../../../../_more/code/agent/v1-chat/chatOllama.html">1. 相對論（Theoretical Physics）</a></li>
+<li><a href="../../../../_more/code/agent/v1-chat/chatThinking.html">我能为你做什么？</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/agent1prompt/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/agent2context/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/agent3harness/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/agent4loop/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/agent4loop2/test.html">test.md</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/agent5claw/test.html">事實</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/AGENTS.html">AGENTS.md</a></li>
+<li><a href="../../../../_more/code/agent/v2-agent/session-ses_f9f6.html">AGENTS.md creation for repo onboarding</a></li>
+<li><a href="../../../../_more/code/mini-llm/_doc/_ai.html">_ai.md</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/adamw-optimizer.html">AdamW Optimizer — AdamW 最佳化器</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/autoregressive-language-model.html">Autoregressive Language Model — 自迴歸語言模型</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/causal-self-attention.html">Causal Self-Attention — 因果自注意力</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/character-level-tokenizer.html">Character-Level Tokenizer — 字元級分詞器</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/cross-entropy-loss.html">Cross-Entropy Loss — 交叉熵損失函數</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/gradient-clipping.html">Gradient Clipping — 梯度裁切</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/gradient-descent.html">Gradient Descent — 梯度下降</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/index.html">mini-llm Wiki</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/knowledge-distillation.html">Knowledge Distillation — 知識蒸餾</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/pretraining-finetuning.html">Pretraining + Fine-tuning — 預訓練與微調範式</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/rmsnorm.html">RMSNorm — Root Mean Square Normalization</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/rotary-position-embedding.html">Rotary Position Embedding RoPE</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/swiglu.html">SwiGLU — Swish-Gated Linear Unit</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/synthetic-data-augmentation.html">Synthetic Data Augmentation — 合成資料擴增</a></li>
+<li><a href="../../../../_more/code/mini-llm/_wiki/weight-tying.html">Weight Tying — 權重共享</a></li>
+<li><a href="../../../../_more/code/mini-llm/AGENTS.html">mini-llm — AGENTS.md</a></li>
+<li><a href="../../../../_more/code/mini-llm/README.html">mini-llm — 微型語言模型訓練流程</a></li>
+<li><a href="../../../../_more/code/mini-llm/v1-pretrain/mini-llm.html">mini-llm.md</a></li>
+<li><a href="../../../../_more/code/mini-llm/v2-finetune/run.html">mini-llm v2 -- run.sh</a></li>
+<li><a href="../../../../_more/code/mini-llm/v3-distill/run.html">mini-llm v3 -- run.sh</a></li>
+<li><a href="../../../../_more/code/nn0/nn0js/README.html">README.md</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/examples/ex1-grad.html">ex1-grad.py — 基礎自動微分運算</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/examples/ex2-linear.html">ex2-linear.py — 線性回歸訓練</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/examples/ex3-xor.html">ex3-xor.py — 多層感知器 MLP 訓練 XOR</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/examples/ex4-classify.html">ex4-classify.py — Softmax 與 Cross-Entropy Loss</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/examples/ex5-charpredicate.html">ex5-charpredicate.py — 迷你字元預測器</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/examples/gpt0demo.html">gpt0demo.py — 教學演示</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/gpt0.html">gpt0.py — GPT 模型實現</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/nn0.html">nn0.py — 自動微分引擎</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/README.html">gpt.py</a></li>
+<li><a href="../../../../_more/code/nn0/nn0py/test.html">test.md</a></li>
+<li><a href="../../../../_more/homework/hw1-curl/_doc/session-ses_f71a.html">規劃Rust版curl專案功能</a></li>
+<li><a href="../../../../_more/homework/hw1-curl/_doc/v0.1.html">rurl v0.1.0 — Phase 1</a></li>
+<li><a href="../../../../_more/homework/hw1-curl/AGENTS.html">AGENTS.md</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/plan.html">金門大學校務系統 MVP 實作規劃</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/session-v0.1.html">NQU ERP MVP Rust 後端實作</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/session-v0.3.html">Create or update AGENTS.md</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/v0.1.html">NQU-ERP v0.1 Release Notes</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/v0.2.html">NQU-ERP v0.2 Release Notes</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/v0.3.1.html">NQU-ERP v0.3.1 Release Notes</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/_doc/v0.3.html">NQU-ERP v0.3 Release Notes</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/AGENTS.html">AGENTS.md — NQU-ERP 開發指南</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/run.html">run.md</a></li>
+<li><a href="../../../../_more/homework/hw2-nqu-erp/target/debug/build/rust_decimal-1f3ee603002b6b55/out/README-lib.html">Installing</a></li>
+<li><a href="../../../../_more/homework/hw3-opencode-telegram-bot/_doc/install.html">install.md</a></li>
+<li><a href="../../../../_more/homework/hw3-opencode-telegram-bot/_doc/success_log.html">success_log.md</a></li>
+<li><a href="../../../../_more/homework/hw3-opencode-telegram-bot/_doc/telegram-bot.html">Telegram Bot × opencode 除錯紀錄（2026-09-20）</a></li>
+<li><a href="../../../../_more/homework/hw3-opencode-telegram-bot/README.html">說明</a></li>
+<li><a href="../../../../_more/homework/hw3-opencode-telegram-bot/student/README.html">手機呼叫 opencode：Telegram Bot（學生版）</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/1.1.html">1.1 淘寶初期的 Web 架構：單機 Tomcat + 資料庫</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/1.2.html">1.2 第一次演進：Web 伺服器與資料庫分離部署</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/1.3.html">1.3 應用伺服器的效能瓶頸：CPU、內存與 I/O 競爭</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/1.4.html">1.4 單體什麼時候不夠用：擴展性 vs 效能</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/10.1.html">10.1 Service：ClusterIP / NodePort / LoadBalancer</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/10.2.html">10.2 對外入口：Ingress 與雲原生網關</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/10.3.html">10.3 服務網格：Istio 無侵入治理與 mTLS</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/10.4.html">10.4 儲存與配置：PV / PVC / StorageClass / ConfigMap / Secret</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/11.1.html">11.1 自癒：Liveness 與 Readiness 探針</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/11.2.html">11.2 應對大促：HPA / Cluster Autoscaler / KEDA</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/11.3.html">11.3 資源治理：Requests &amp; Limits 與 OOM 防護</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/11.4.html">11.4 多機房多集群：Affinity / Taints / Tolerations / Karmada</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/12.1.html">12.1 微服務過度拆分的技術債</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/12.2.html">12.2 模組化單體的復興：幾時該拆、幾時該合</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/12.3.html">12.3 全面 Serverless 化：Knative 與冷啟動優化</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/12.4.html">12.4 從微服務到 FaaS：前端與業務平台實踐</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/13.1.html">13.1 GitOps 持續部署：ArgoCD 實戰</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/13.2.html">13.2 可觀測性三支柱：Log / Metric / Trace 與 OpenTelemetry</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/13.3.html">13.3 成本治理 FinOps：混部與資源利用率</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/13.4.html">13.4 公有雲託管 K8s：ACK / EKS / GKE 最佳實踐</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/14.1.html">14.1 從千人千面到生成式 UI 與 AI Agent 導購</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/14.2.html">14.2 K8s 調度 GPU：vGPU / MIG / RDMA 高速網路</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/14.3.html">14.3 推理服務雲原生部署：vLLM / Triton + K8s</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/14.4.html">14.4 邊緣與 WASM：輕量容器在邊緣路由的應用</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/14.5.html">14.5 雲原生 AI 推理棧新進展：AI Serving Stack / 機密推理 / GPU 共享與彈性</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/15.1.html">15.1 從雲原生到 AI 原生：2025 白皮書與雲智一體</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/15.2.html">15.2 AgentRun 八大組件：AI 運行時 / AI 網關 / AI MQ / Memory / 可觀測 / 評估 / 安全</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/15.3.html">15.3 FunctionAI 與 Agent Infra：AWS AgentCore / Azure / FunctionAI 長時運行與會話親和</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/15.4.html">15.4 MCP / A2A / Kagent on Knative：Agent 協議的 Serverless 託管</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/16.1.html">16.1 AI 網關：推理路由、Token 限流、多模型協議適配與 Gateway API</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/16.2.html">16.2 AI 中間件演進：Spring AI Alibaba / Higress / MSE / RocketMQ</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/16.3.html">16.3 淘寶 AI OS 實戰：搜索推薦全圖架構、RTP / XDL / OpenSearch 百萬 QPS</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/16.4.html">16.4 淘寶最新落地：Node.js Serverless 核心鏈路、智能客服亞秒級、Wenwen 生成式導購</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/17.1.html">17.1 ACK 2025–2026 新能力：Auto Mode / Virtual Node / ACK One 多集群 / AI Assistant</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/17.2.html">17.2 全景複盤：單體 → 分散式 → 微服務 → 雲原生 → AI 原生</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/17.3.html">17.3 技術選型白皮書：避免為了雲原生 / AI 而雲原生 / AI</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/17.4.html">17.4 架構設計原則：N+1、回滾、禁用、監控、多活、水平擴展、FinOps 與 AI 安全</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/2.1.html">2.1 資料庫讀寫瓶頸與快取救星</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/2.2.html">2.2 本地快取與分散式快取：Memcached / Redis / Tair</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/2.3.html">2.3 快取實戰痛點：穿透、擊穿、雪崩與熱點失效</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/2.4.html">2.4 快取與資料庫的一致性難題</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/3.1.html">3.1 反向代理與 Web 集群：Nginx / HAProxy</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/3.2.html">3.2 無狀態設計與 Session 共享：Redis / JWT / 黏性會話</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/3.3.html">3.3 四層與七層的搭配：LVS / F5 + Keepalived</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/3.4.html">3.4 機房入口：DNS 輪詢、CDN 與異地多活基礎</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/4.1.html">4.1 讀寫分離與主從同步：Mycat 與資料一致性</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/4.2.html">4.2 按業務垂直分庫：降低資源競爭</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/4.3.html">4.3 大表拆小表：Hash / 時間分片與水平擴展</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/4.4.html">4.4 拆分後的代價：分散式事務、跨庫 Join 與 MPP</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/5.1.html">5.1 大應用拆小應用：業務邊界與 DDD 簡介</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/5.2.html">5.2 公共模組服務化：Dubbo / Spring Cloud RPC</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/5.3.html">5.3 分散式協調：Zookeeper / Nacos 配置中心與服務發現</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/5.4.html">5.4 微服務三板斧：限流、熔斷與降級</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/6.1.html">6.1 異構儲存：HDFS / HBase / Elasticsearch / 大數據場景</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/6.2.html">6.2 訊息佇列：RocketMQ / Kafka 異步解耦與削峰</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/6.3.html">6.3 ESB 與 API Gateway：統一協議與路由</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/6.4.html">6.4 傳統微服務運維地獄：環境不一致與部署死胡同</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/7.1.html">7.1 虛擬機 vs 容器：本質差異與隔離模型</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/7.2.html">7.2 Docker 三要素：Image / Container / Repository</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/7.3.html">7.3 編寫 Dockerfile：把微服務打包為標準單元</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/7.4.html">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/8.1.html">8.1 Docker 網路模型：Bridge / Host / Overlay</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/8.2.html">8.2 數據持久化：Volume 與 Bind Mount</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/8.3.html">8.3 單機容器的極限：成百上千容器誰來管</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/9.1.html">9.1 為什麼需要容器編排</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/9.2.html">9.2 K8s 架構解密：Control Plane 與 Worker Node</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/9.3.html">9.3 核心物件入門：Pod / ReplicaSet / Deployment</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/9.4.html">9.4 重新定義部署：滾動更新與版本回滾</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/A.1.html">A.1 本地實驗環境：Docker Desktop / kind / minikube</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/A.2.html">A.2 Dockerfile 與 Compose 速查</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/A.3.html">A.3 kubectl 與 YAML 速查</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/B.1.html">B.1 淘寶 14 次演進 vs 本書章節對照總表</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/B.2.html">B.2 雙十一大促案例：預熱、削峰、降級與彈性擴縮</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/B.3.html">B.3 2025–2026 新名詞表：AI 原生 / AgentRun / FunctionAI / MCP / A2A / AI Serving Stack</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/B.4.html">B.4 架構演進教學指引：如何用本書上課</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/README.html">演進式架構實戰：從單體、微服務到 Docker、Kubernetes 與 AI 雲原生轉型</a></li>
+<li><a href="../../../../_more/mybook/向淘寶學習網站架構演進/ref.html">ref.md</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/1.1.html">1.1 什麼是軟體工程</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/1.2.html">1.2 軟體的複雜性與本質性困難</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/1.3.html">1.3 人月神話與 Brooks 法則</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/1.4.html">1.4 AI 時代：附屬性困難的消亡與本質性困難的永存</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/1.5.html">1.5 軟體工程師的角色轉變</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/10.1.html">10.1 為什麼沒有度量就沒有改進</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/10.2.html">10.2 評估資料集的設計原則</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/10.3.html">10.3 對比實驗與消融實驗</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/10.4.html">10.4 Agent 的持續進化閉環</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/10.5.html">10.5 從經驗中學習：學習訊號與更新載體</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/11.1.html">11.1 事件驅動與非同步架構</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/11.2.html">11.2 即時互動：語音、Computer Use 與物理世界</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/11.3.html">11.3 多 Agent 協作的分類框架</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/11.4.html">11.4 協作拓撲：對等、管理者與去中心化</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/12.1.html">12.1 從瀑布到敏捷到 AI 增強的 SDLC</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/12.2.html">12.2 多人 + AI 的協同開發</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/12.3.html">12.3 統一 AI 的全局認知：Shared Context</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/12.4.html">12.4 自動化品質護欄與 CI/CD</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/13.1.html">13.1 提示注入與防禦</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/13.2.html">13.2 工具安全與權限控制</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/13.3.html">13.3 AI 的偏見、幻覺與責任歸屬</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/13.4.html">13.4 合規與隱私保護</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/14.1.html">14.1 模型即 Agent：RL 內化工具呼叫決策</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/14.2.html">14.2 模型與 Harness 的共同演進飛輪</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/14.3.html">14.3 兩朵烏雲：即時互動與持續學習</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/14.4.html">14.4 軟體工程師的未來：從建築工到指揮官</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/2.1.html">2.1 需求的本質：從模糊意圖到精確規格</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/2.2.html">2.2 需求挖掘與訪談技巧</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/2.3.html">2.3 用例建模與使用者故事</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/2.4.html">2.4 邊界條件與 Edge Cases</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/2.5.html">2.5 AI 輔助需求分析：Red Teaming Prompting</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/2.6.html">2.6 Spec-Driven Development：可執行的規格</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/3.1.html">3.1 設計思維：抽象、模組化與資訊隱藏</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/3.2.html">3.2 架構模式：從單體到微服務</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/3.3.html">3.3 API 與介面設計（ACI vs HCI）</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/3.4.html">3.4 設計原則：SOLID、DRY 與 KISS</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/3.5.html">3.5 AI 時代的系統設計：高內聚低耦合的新意義</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/4.1.html">4.1 程式碼品質與可讀性</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/4.2.html">4.2 重構：改善既有設計的藝術</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/4.3.html">4.3 設計模式的實用指南</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/4.4.html">4.4 Agentic Coding：人機協同的程式碼生成</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/4.5.html">4.5 Code Review 在 AI 時代的演變</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/5.1.html">5.1 測試金字塔與測試策略</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/5.2.html">5.2 單元測試與 TDD</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/5.3.html">5.3 整合測試與端到端測試</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/5.4.html">5.4 AI 自動生成測試</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/5.5.html">5.5 LLM-as-a-Judge：用模型評判模型</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/5.6.html">5.6 迴歸測試與持續驗證</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/6.1.html">6.1 CI/CD 管線設計</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/6.2.html">6.2 DevOps 與基礎設施即程式碼</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/6.3.html">6.3 監控、日誌與可觀測性</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/6.4.html">6.4 AI 驅動的異常偵測與自癒系統</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/7.1.html">7.1 提示工程的基礎與進階</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/7.2.html">7.2 上下文工程：決定 AI 能力上限的關鍵</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/7.3.html">7.3 API 的上下文結構：訊息列表的角色</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/7.4.html">7.4 上下文壓縮與管理策略</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/7.5.html">7.5 知識庫與 RAG：跨會話的記憶體系</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/8.1.html">8.1 工具設計的通用原則（ACI）</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/8.2.html">8.2 五類工具的分類與設計</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/8.3.html">8.3 MCP 協定：工具互操作標準</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/8.4.html">8.4 ReAct 迴圈：思考→行動→觀察</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/8.5.html">8.5 Coding Agent 與程式碼生成的元能力</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/9.1.html">9.1 Harness 的五要素：Context、Tools、Constrain、Verify、Correct</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/9.2.html">9.2 約束機制：故障安全預設值</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/9.3.html">9.3 驗證機制：輸入隔離與結果校驗</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/9.4.html">9.4 糾正機制：熔斷器與錯誤恢復</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/9.5.html">9.5 從提示工程到 Loop 工程到 Graph 工程</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/A.1.html">A.1 版本控制的本質：為什麼需要 Git</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/A.2.html">A.2 Git 基礎操作：init、add、commit、branch、merge</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/A.3.html">A.3 分支策略：Git Flow 與 Trunk-Based Development</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/A.4.html">A.4 GitHub 協作：Pull Request、Code Review、Issue</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/A.5.html">A.5 GitHub Actions：自動化 CI/CD 入門</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/A.6.html">A.6 Git 進階：rebase、cherry-pick、bisect</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.1.html">B.1 OpenCode 是什麼：從 CLI 到 Desktop</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.2.html">B.2 安裝與設定 OpenCode Desktop</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.3.html">B.3 AGENTS.md：為 AI 寫一份崗位說明書</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.4.html">B.4 權限控制：讓 AI 能做什麼、不能做什麼</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.5.html">B.5 MCP Servers：擴展 AI 的工具箱</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.6.html">B.6 Skills：教 AI 新技能</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/B.7.html">B.7 實戰：用 OpenCode 完成一個小專案</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.1.html">C.1 需求發掘與產品驗證案例</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.2.html">C.2 破壞性創新與創意生態案例</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.3.html">C.3 軟體缺陷與安全關鍵系統案例</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.4.html">C.4 架構演進與技術債案例</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.5.html">C.5 網站與服務營運失敗案例</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.6.html">C.6 趣味歷史軼事與其時代啟示</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/C.7.html">C.7 案例集目錄與教學指引</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/outline.html">《現代軟體工程：從基礎到 AI Agent 實踐》大綱</a></li>
+<li><a href="../../../../_more/mybook/現代軟體工程/README.html">現代軟體工程：從基礎到 AI Agent 實踐</a></li>
+<li><a href="../../../../_more/mybook/README.html">README.md</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/afterword.zhtw.html">後記：回到 Agent = LLM + 上下文 + 工具 {.unnumbered}</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter1.zhtw.html">AI Agent 入門</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter10.zhtw.html">多 Agent 協作</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter2.zhtw.html">上下文工程</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter3.zhtw.html">使用者記憶和知識庫</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter4.zhtw.html">工具</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter5.zhtw.html">Coding Agent 與程式碼生成</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter6.zhtw.html">互動：觀察與動作空間的擴展</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter7.zhtw.html">Agent 的評估</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter8.zhtw.html">模型後訓練</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/chapter9.zhtw.html">Agent 的持續進化</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/introduction.zhtw.html">引言 {.unnumbered}</a></li>
+<li><a href="../../../../_more/refbook/agent-book-zhtw/reference-answers.zhtw.html">思考題參考答案</a></li>
+<li><a href="../../../../_more/refbook/chat/案例集.html">案例集.md</a></li>
+<li><a href="../../../../_more/refbook/chat/agent工程.html">==========================================</a></li>
+<li><a href="../../../../_more/refbook/chat/ai軟體工程.html">Domain Glossary</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/agent-plan.html">agent-plan.md</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/AGENTS.html">Project overview</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/CONTRIBUTING.html">Contributing to OpenCode School</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/human-plan.html">opencode.school</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/README.html">OpenCode School</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/src/content/pages/cheatsheet.html">Slash commands</a></li>
+<li><a href="../../../../_more/refbook/opencode.school/src/content/pages/glossary.html">agent</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/人機協作模式.html">人機協作模式</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/上線營運.html">上線營運</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/公司登記與開業.html">公司登記與開業</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/安全開發.html">安全開發 Secure Development</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/技術債.html">技術債 Technical Debt</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/災難復原.html">災難復原：確保業務連續性</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/版本控制.html">版本控制</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/金流整合.html">金流整合</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/金流整合範例.html">金流整合範例</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/持續部署.html">持續部署</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/持續整合.html">持續整合</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/容器編排.html">容器編排 Container Orchestration</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/效能優化.html">效能優化 Performance Optimization</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/訊息佇列.html">訊息佇列：異步通信與事件驅動</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/敏捷開發.html">敏捷開發</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/設計模式.html">設計模式</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/軟體工程的歷史.html">軟體工程的歷史</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/軟體生命週期.html">軟體生命週期</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/軟體度量.html">軟體度量 Software Metrics</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/軟體架構.html">軟體架構</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/測試.html">測試</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/程式碼品質.html">程式碼品質 Code Quality</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/雲端架構.html">雲端架構：現代雲計算服務</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/雲端原生.html">雲端原生 Cloud-Native</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/微服務架構.html">微服務架構：服務拆分與協作</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/監控與日誌.html">監控與日誌 Monitoring &amp; Logging</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/需求工程.html">需求工程：系統開發的起點</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/領域驅動設計.html">領域驅動設計：複雜系統的設計方法</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Agent發展史.html">Agent 發展史</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Agentic工程.html">Agentic Engineering（智慧體工程）</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/API設計.html">API 設計</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Context工程.html">Context Engineering 上下文工程</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/DevOps.html">DevOps</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Docker.html">Docker</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/E2E測試.html">端到端測試（E2E Testing）</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Git.html">Git</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Harness工程.html">Harness Engineering 馭繮工程</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/index.html">軟體工程</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Jenkins.html">Jenkins</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/karpathy.html">Andrej Karpathy</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/KarpathySkill.html">Skill 文檔 Claude Skills</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/log.html">日誌</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Loop工程.html">Loop Engineering（反饋迴圈工程）</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Pay4自建金流系統.html">Pay4 自建金流系統</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Prompt工程.html">Prompt Engineering 提示詞工程</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Rust軟體工程.html">Rust 在軟體工程的應用</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Rust測試.html">Rust 測試</a></li>
+<li><a href="../../../../_more/wiki/軟體工程/Skill文檔.html">Skill 文檔 Claude Skills</a></li>
+<li><a href="../../../../01-overview/大綱.html">現代軟體工程</a></li>
+<li><a href="../../../../01-overview/前線部署工程師.html">前線部署工程師.md</a></li>
+<li><a href="../../../../01-overview/海嘯第一排.html">海嘯第一排.md</a></li>
+<li><a href="../../../../01-overview/黃金時代.html">黃金時代.md</a></li>
+<li><a href="../../../../01-overview/閱讀程式.html">閱讀程式.md</a></li>
+<li><a href="../../../../01-overview/難不難.html">難不難.md</a></li>
+<li><a href="../../../../01-overview/LLM特性.html">LLM特性.md</a></li>
+<li><a href="../../../../01-overview/note.html">note.md</a></li>
+<li><a href="../../../../01-overview/README.html">閱讀</a></li>
+<li><a href="../../../../02-classical/01-使用者需求.html">01-使用者需求.md</a></li>
+<li><a href="../../../../02-classical/02-系統分析.html">02-系統分析.md</a></li>
+<li><a href="../../../../02-classical/03-系統設計.html">03-系統設計.md</a></li>
+<li><a href="../../../../02-classical/04-程式撰寫.html">04-程式撰寫.md</a></li>
+<li><a href="../../../../02-classical/05-除錯.html">05-除錯.md</a></li>
+<li><a href="../../../../02-classical/06-系統測試.html">06-系統測試.md</a></li>
+<li><a href="../../../../02-classical/07-部署上線.html">07-部署上線.md</a></li>
+<li><a href="../../../../02-classical/08-維護.html">08-維護.md</a></li>
+<li><a href="../../../../02-classical/README.html">測試</a></li>
+<li><a href="../../../../03-tool/00-editor/README.html">README.md</a></li>
+<li><a href="../../../../03-tool/01-test/README.html">README.md</a></li>
+<li><a href="../../../../03-tool/02-git/branch.html">branch.md</a></li>
+<li><a href="../../../../03-tool/02-git/README.html">README.md</a></li>
+<li><a href="../../../../03-tool/02-git/worktree.html">基本流程單一分支,不用 worktree</a></li>
+<li><a href="../../../../04-opencode/README.html">opencode</a></li>
+<li><a href="../../../../05-agent/00-agent.html">ccc: 請說明 agent, prompt, context, harness, loop engineering</a></li>
+<li><a href="../../../../05-agent/01-prompt.html">01-prompt.md</a></li>
+<li><a href="../../../../05-agent/02-context.html">02-context.md</a></li>
+<li><a href="../../../../05-agent/03-harness.html">opencode</a></li>
+<li><a href="../../../../05-agent/04-loop.html">04-loop.md</a></li>
+<li><a href="../../../../05-agent/05-graph.html">ccc: loop engineering 之後，又有 graph engineering ，那是什麼？</a></li>
+<li><a href="../../../../05-agent/06-deepeval.html">06-deepeval.md</a></li>
+<li><a href="../../../../05-agent/反蒸餾.html">反蒸餾.md</a></li>
+<li><a href="../../../../05-agent/多Agent協作.html">多Agent協作.md</a></li>
+<li><a href="../../../../05-agent/推理模型.html">推理模型.md</a></li>
+<li><a href="../../../../05-agent/提示注入.html">提示注入.md</a></li>
+<li><a href="../../../../05-agent/AblationStudy消融实验.html">消融基础设施：理解每个特性的真实贡献</a></li>
+<li><a href="../../../../05-agent/agent狀態欄.html">agent狀態欄.md</a></li>
+<li><a href="../../../../05-agent/COT思維鏈.html">COT思維鏈.md</a></li>
+<li><a href="../../../../05-agent/FewShot.html">FewShot.md</a></li>
+<li><a href="../../../../05-agent/HermesAgent.html">HermesAgent.md</a></li>
+<li><a href="../../../../05-agent/KV_cache.html">KV_cache.md</a></li>
+<li><a href="../../../../05-agent/LLM.html">预训练在做什么：预测下一个词</a></li>
+<li><a href="../../../../05-agent/LongHorizon-Harness.html">LongHorizon-Harness.md</a></li>
+<li><a href="../../../../05-agent/loopx.html">loopx.md</a></li>
+<li><a href="../../../../05-agent/openclaw.html">openclaw.md</a></li>
+<li><a href="../../../../05-agent/ReAct.html">ReAct.md</a></li>
+<li><a href="../../../../05-agent/README.html">Agent</a></li>
+<li><a href="../../../../05-agent/Skill.html">Skill.md</a></li>
+<li><a href="../../../../05-agent/tools工具專屬欄位傳入與回覆.html">tools工具專屬欄位傳入與回覆.md</a></li>
+<li><a href="../../../../06-engineering/新軟體工程.html">新軟體工程.md</a></li>
+<li><a href="../../../../大綱.html">現代軟體工程</a></li>
+<li><a href="../../../../問答：Agent工程.html">問答：Agent工程.md</a></li>
+<li><a href="../../../../問答：AI軟體工程.html">AI 版的瀑布螺旋模式</a></li>
+<li><a href="../../../../教材.html">現代軟體工程 -- 教材 115 下學期</a></li>
+<li><a href="../../../../README.html">課程：現代軟體工程 -- 教材</a></li>
+</ul></nav>
+<article class="markdown-body">
+<h1 id="gradient-descent-梯度下降">Gradient Descent — 梯度下降</h1>
+<h2 id="概述">概述</h2>
+<p><strong>梯度下降（Gradient Descent）</strong> 是深度學習中最核心的最佳化演算法。它透過反覆沿著損失函數對參數的梯度方向（最陡下降方向）更新參數，逐步逼近損失函數的最小值。所有神經網路的訓練本質上都是梯度下降或其變體的應用。mini-llm 專案使用 AdamW（一種梯度下降的進階變體）來訓練模型。</p>
+<h2 id="動機從函數到最佳化">動機：從函數到最佳化</h2>
+<p>深度學習的本質是：<strong>找到一組參數 θ 使得損失函數 L(θ) 最小化</strong>。</p>
+<pre><code>θ* = argmin_θ L(θ)</code></pre>
+<p>對於線性迴歸，我們可以解析求解（正規方程式）。但對於多層神經網路，損失函數是高度非凸的，不存在解析解。我們需要<strong>迭代方法</strong>：從隨機初始點出發，逐步走向低損失區域。</p>
+<h2 id="基本原理">基本原理</h2>
+<h3 id="梯度最快上升方向">梯度：最快上升方向</h3>
+<p>一個多變數函數 <code>f(x₁, x₂, ..., xₙ)</code> 在點 <code>x</code> 的梯度是一個向量：</p>
+<pre><code>∇f(x) = [∂f/∂x₁, ∂f/∂x₂, ..., ∂f/∂xₙ]ᵀ</code></pre>
+<p>梯度的兩個關鍵性質：</p>
+<ol>
+<li><strong>方向性</strong> — 梯度指向函數在該點<strong>增加最快</strong>的方向</li>
+<li><strong>大小</strong> — 梯度的範數 <code>||∇f(x)||</code> 表示變化的劇烈程度</li>
+</ol>
+<h3 id="梯度下降更新規則">梯度下降更新規則</h3>
+<p>要讓函數值下降，我們往梯度的<strong>反方向</strong>移動：</p>
+<pre><code>x_{t+1} = x_t - η · ∇f(x_t)</code></pre>
+<p>其中：</p>
+<ul>
+<li><code>x_t</code> — 第 t 步的參數值</li>
+<li><code>∇f(x_t)</code> — 在 x_t 處的梯度</li>
+<li><code>η</code> — 學習率（步長的超參數）</li>
+</ul>
+<h3 id="類比登山者下山">類比：登山者下山</h3>
+<p>想像一個在山谷中迷霧中的登山者想要下山：</p>
+<ul>
+<li><strong>梯度</strong> = 登山者腳下最陡的方向（測量）</li>
+<li><strong>負梯度方向</strong> = 往山下走的方向</li>
+<li><strong>學習率</strong> = 每一步的大小
+<ul>
+<li>太大：可能跨過山谷到另一側的山坡上</li>
+<li>太小：永遠走不到山底</li>
+</ul>
+</li>
+<li><strong>收斂</strong> = 到達谷底（損失最小值）</li>
+</ul>
+<h2 id="三種梯度下降的變體">三種梯度下降的變體</h2>
+<h3 id="1-batch-gradient-descent批次梯度下降">1. Batch Gradient Descent（批次梯度下降）</h3>
+<p>每次更新使用<strong>所有</strong>訓練樣本計算梯度：</p>
+<pre><code>θ_{t+1} = θ_t - η · (1/N) · Σᵢⁿ ∇Lᵢ(θ_t)</code></pre>
+<table>
+<thead>
+<tr>
+<th>優點</th>
+<th>缺點</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>梯度方向準確</td>
+<td>每次更新計算量大</td>
+</tr>
+<tr>
+<td>收斂穩定</td>
+<td>無法處理超過記憶體大小的資料集</td>
+</tr>
+<tr>
+<td>理論分析方便</td>
+<td>無法利用 GPU 的批次處理優勢</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-stochastic-gradient-descent隨機梯度下降">2. Stochastic Gradient Descent（隨機梯度下降）</h3>
+<p>每次更新只使用<strong>一個</strong>隨機樣本：</p>
+<pre><code>θ_{t+1} = θ_t - η · ∇Lᵢ(θ_t)</code></pre>
+<table>
+<thead>
+<tr>
+<th>優點</th>
+<th>缺點</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每次更新非常快</td>
+<td>梯度方向雜訊大</td>
+</tr>
+<tr>
+<td>可以逃離局部極小值（雜訊的正面效果）</td>
+<td>收斂路徑曲折</td>
+</tr>
+<tr>
+<td>可以處理流式／線上資料</td>
+<td>需要更小的學習率來補償雜訊</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-mini-batch-gradient-descent小批次梯度下降-最常用">3. Mini-batch Gradient Descent（小批次梯度下降）— 最常用</h3>
+<p>每次更新使用一個<strong>小批次</strong>（通常 16–512）樣本：</p>
+<pre><code>θ_{t+1} = θ_t - η · (1/B) · Σᵢᴮ ∇Lᵢ(θ_t)</code></pre>
+<p>這是 mini-llm 使用的方式（<code>batch_size = 32</code>），也是深度學習的標準做法。</p>
+<h2 id="學習率learning-rate">學習率（Learning Rate）</h2>
+<p>學習率是最重要的超參數。它的選擇直接決定訓練的成敗。</p>
+<h3 id="學習率過高-vs-過低">學習率過高 vs 過低</h3>
+<pre><code>學習率過低：               學習率過高：
+Loss                       Loss
+  | ↘                        | ↙↗
+  |  ↘                       | ↙   ↗
+  |   ↘                      | ↙     ↗
+  |    ↘                     | ↙
+  |     →                    | → time
+  time                      
+  (太慢收斂)                 (發散)</code></pre>
+<h3 id="學習率排程learning-rate-schedule">學習率排程（Learning Rate Schedule）</h3>
+<p>在訓練過程中動態調整學習率：</p>
+<ul>
+<li><strong>Step Decay</strong> — 每固定步數乘以一個因子（如每 500 步 × 0.1）</li>
+<li><strong>Cosine Annealing</strong> — 按照餘弦曲線從初始值下降到接近 0</li>
+<li><strong>Warmup</strong> — 先從很小的學習率線性增長到目標值，再開始下降</li>
+<li><strong>Reduce on Plateau</strong> — 當 loss 不再下降時降低學習率</li>
+</ul>
+<p>mini-llm 使用固定學習率（最簡形式），但大規模訓練中學習率排程至關重要。</p>
+<h2 id="梯度消失與梯度爆炸">梯度消失與梯度爆炸</h2>
+<h3 id="梯度消失vanishing-gradient">梯度消失（Vanishing Gradient）</h3>
+<p>在深層網路中，梯度可能隨著向輸入端傳播而指數級減少：</p>
+<pre><code>如果權重矩陣的最大奇異值 &lt; 1：
+    每層梯度 ≈ 原始梯度 × λ^層數
+    λ &lt; 1 → λ^10 ≈ 0 → 淺層參數幾乎不更新</code></pre>
+<p><strong>影響</strong>：深層網路的淺層幾乎無法訓練。</p>
+<p><strong>解決方案</strong>：</p>
+<ul>
+<li>使用 ReLU/Swish 等非飽和活化函數</li>
+<li>殘差連接（ResNet / Transformer）</li>
+<li>適當的權重初始化（Xavier / He / Kaiming）</li>
+<li>Layer / RMS 正規化</li>
+</ul>
+<h3 id="梯度爆炸exploding-gradient">梯度爆炸（Exploding Gradient）</h3>
+<p>相反情況：梯度指數級增長，導致參數更新過大，loss 變為 NaN。</p>
+<p><strong>解決方案</strong>：</p>
+<ul>
+<li>梯度裁切（Gradient Clipping）— mini-llm 使用 <code>max_norm=1.0</code></li>
+<li>權重正則化</li>
+<li>較小的學習率</li>
+</ul>
+<h2 id="一階方法-vs-二階方法">一階方法 vs 二階方法</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>一階方法 (SGD/Adam)</th>
+<th>二階方法 (Newton/Quasi-Newton)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用資訊</td>
+<td>梯度（一階導數）</td>
+<td>梯度 + Hessian（二階導數）</td>
+</tr>
+<tr>
+<td>每次迭代成本</td>
+<td>O(n)</td>
+<td>O(n²) 或更高</td>
+</tr>
+<tr>
+<td>收斂速度</td>
+<td>線性</td>
+<td>二次（更快）</td>
+</tr>
+<tr>
+<td>適合大模型</td>
+<td>是</td>
+<td>否（計算量太高）</td>
+</tr>
+<tr>
+<td>對曲率的適應</td>
+<td>透過自適應方法間接處理</td>
+<td>直接處理</td>
+</tr>
+</tbody>
+</table>
+<p>深度學習中一階方法佔主導地位，因為參數量太大而無法計算 Hessian 矩陣。AdamW 作為自適應一階方法，在收斂速度和計算成本之間取得了良好的平衡。</p>
+<h2 id="backpropagation反向傳播">Backpropagation（反向傳播）</h2>
+<p>梯度下降依賴於高效的梯度計算，而反向傳播提供了這種計算方式。</p>
+<h3 id="鏈式法則chain-rule">鏈式法則（Chain Rule）</h3>
+<pre><code>如果 z = f(y), y = g(x)
+則 dz/dx = dz/dy · dy/dx</code></pre>
+<h3 id="反向傳播的過程">反向傳播的過程</h3>
+<pre><code>前向傳播：x → h₁ → h₂ → ... → loss（計算每個節點的值）
+反向傳播：loss → ... → ∂h₂/∂h₁ → ∂h₁/∂x（計算每個節點的梯度）</code></pre>
+<p>深度學習框架（PyTorch、TensorFlow）透過<strong>計算圖</strong>自動進行反向傳播：</p>
+<pre><code class="hljs language-python">loss.backward()  <span class="hljs-comment"># PyTorch 自動計算所有參數的梯度</span></code></pre>
+<p>在這個步驟之後，每個 <code>nn.Parameter</code> 的 <code>.grad</code> 屬性包含了對應的梯度。</p>
+<h2 id="隨機梯度的統計性質">隨機梯度的統計性質</h2>
+<p>雖然每個 mini-batch 的梯度 <code>g_B(θ)</code> 只是真實梯度 <code>∇L(θ)</code> 的<strong>有雜訊估計</strong>，但：</p>
+<pre><code>E[g_B(θ)] = ∇L(θ)  ← 無偏估計（unbiased）
+Var(g_B(θ)) ∝ σ²/B ← 批次越大，估計越準確</code></pre>
+<p>這種雜訊實際上對訓練有益：</p>
+<ol>
+<li><strong>逃離鞍點</strong> — 梯度雜訊可以幫助模型逃離梯度接近 0 的鞍點</li>
+<li><strong>隱式正則化</strong> — 雜訊相當於在損失函數上添加了一個隱式的正則項</li>
+</ol>
+<h2 id="收斂理論">收斂理論</h2>
+<p>凸最佳化中，梯度下降有成熟的收斂理論。但神經網路的損失函數是高度非凸的，理論分析更困難。</p>
+<h3 id="非凸最佳化的挑戰">非凸最佳化的挑戰</h3>
+<ol>
+<li><strong>局部極小值</strong> — 非凸函數有多個局部極小值，不一定找到全局最小值</li>
+<li><strong>鞍點</strong> — 在高維空間中，鞍點比局部極小值更常見</li>
+<li><strong>Plateau（平台）</strong> — 大面積的平坦區域，梯度接近 0，幾乎不更新</li>
+</ol>
+<h3 id="經驗觀察">經驗觀察</h3>
+<p>大量的經驗研究發現：</p>
+<ul>
+<li>神經網路的局部極小值通常質量相似（loss 值接近）</li>
+<li>更深的網路反而更容易找到好的極小值（深度學習的「反直覺」性質）</li>
+<li>超參數的選擇對收斂品質的影響遠大於初始值</li>
+</ul>
+<h2 id="實例追蹤-fxx²-的梯度下降">實例：追蹤 f(x)=x² 的梯度下降</h2>
+<p>考慮最簡單的單變數二次函數：</p>
+<pre><code>f(x) = x²,   f'(x) = 2x</code></pre>
+<p>最小值在 x=0, f(0)=0。從 x₀=10 出發，η=0.1：</p>
+<pre><code>Step 0: x₀=10.000, f=100.000, ∇f=20.000, x₁=10-0.1×20=8.0
+Step 1: x₁=8.000,  f=64.000,  ∇f=16.000, x₂=8-0.1×16=6.4
+Step 2: x₂=6.400,  f=40.960,  ∇f=12.800, x₃=6.4-0.1×12.8=5.12
+Step 3: x₃=5.120,  f=26.214,  ∇f=10.240, x₄=5.12-0.1×10.24=4.096
+...
+Step 10: x₁₀=1.074, f=1.153,  ∇f=2.147
+Step 20: x₂₀=0.122, f=0.015,  ∇f=0.243
+Step 30: x₃₀=0.014, f=0.0002, ∇f=0.028</code></pre>
+<p>經過 30 步，x 從 10 降至 0.014，loss 從 100 降至 2×10⁻⁴。注意 |∇f| 隨 x 減小而自動縮小，這是梯度下降對二次函數的「自然退火」。誤差 |xₜ−0| 每步乘以 (1−2η)，η=0.1 時乘 0.8，呈指數衰減。</p>
+<h2 id="三種變體的實際梯度計算範例">三種變體的實際梯度計算範例</h2>
+<p>假設 4 個樣本的簡單資料集，每個樣本的損失：</p>
+<pre><code>L₁(θ)=(θ-1)² → ∇L₁(θ)=2(θ-1)
+L₂(θ)=(θ+1)² → ∇L₂(θ)=2(θ+1)
+L₃(θ)=(θ-2)² → ∇L₃(θ)=2(θ-2)
+L₄(θ)=(θ+2)² → ∇L₄(θ)=2(θ+2)</code></pre>
+<p>在 θ=0 處計算梯度：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>梯度計算</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Batch GD</td>
+<td>(1/4)Σᵢ∇Lᵢ(0)</td>
+<td>(1/4)(-2+2-4+4)=0</td>
+</tr>
+<tr>
+<td>SGD (樣本 1)</td>
+<td>∇L₁(0)=2(0-1)</td>
+<td>-2</td>
+</tr>
+<tr>
+<td>SGD (樣本 2)</td>
+<td>∇L₂(0)=2(0+1)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Mini-batch B=2 (1,3)</td>
+<td>(1/2)(∇L₁+∇L₃)</td>
+<td>(1/2)(-2-4)=-3</td>
+</tr>
+<tr>
+<td>Mini-batch B=2 (2,4)</td>
+<td>(1/2)(∇L₂+∇L₄)</td>
+<td>(1/2)(2+4)=3</td>
+</tr>
+</tbody>
+</table>
+<p>Batch GD 給出精確梯度 0（已在極值點），SGD 在 -2 與 2 間搖擺，mini-batch 則介於兩者。這直觀展現了三者的雜訊特性與 batch size 的折衷。</p>
+<h2 id="學習率對二次函數的影響">學習率對二次函數的影響</h2>
+<p>用 f(x)=x², x₀=5 比較三種學習率：</p>
+<h3 id="η01適當">η=0.1（適當）</h3>
+<p></p><pre><code>x₀=5.000 → x₁=4.000 → x₂=3.200 → x₃=2.560 → ...</code></pre>
+穩定收斂，誤差每步乘 0.8。<p></p>
+<h3 id="η10邊界震盪">η=1.0（邊界震盪）</h3>
+<p></p><pre><code>x₀=5.000 → x₁=-5.000 → x₂=5.000 → x₃=-5.000</code></pre>
+x₁=x₀−1.0×2x₀=−x₀，精準在 ±5 間往返，不收斂亦不發散。<p></p>
+<h3 id="η100發散">η=10.0（發散）</h3>
+<p></p><pre><code>x₀=5.000, ∇f=10  → x₁=5-10×10=-95
+x₁=-95,   ∇f=-190 → x₂=-95-10×(-190)=1805
+x₂=1805,  ∇f=3610 → x₃=1805-10×3610=-34295</code></pre>
+參數與損失每一步都在爆炸。<p></p>
+<p>對於 f(x)=x²，穩定條件 |1−2η|&lt;1 即 0&lt;η&lt;1。η=1 在邊界震盪，η&gt;1 必然發散。這說明學習率的上限由損失函數的曲率（Hessian 的最大特徵值）決定。</p>
+<h2 id="與牛頓法的比較">與牛頓法的比較</h2>
+<p>牛頓法使用二階資訊：</p>
+<pre><code>θ_{t+1} = θ_t − H⁻¹ ∇L(θ_t)</code></pre>
+<h3 id="對-fxx²-的比較">對 f(x)=x² 的比較</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>更新</th>
+<th>從 x₀=10 出發</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>梯度下降 η=0.1</td>
+<td>x←x−0.2x</td>
+<td>約 30 步到 x≈0.014</td>
+</tr>
+<tr>
+<td>牛頓法</td>
+<td>x←x−(2x)/2=0</td>
+<td><strong>一步收斂</strong></td>
+</tr>
+</tbody>
+</table>
+<p>牛頓法對純二次函數一步收斂，因為二階資訊精確描述了曲率。</p>
+<h3 id="為什麼-llm-不能用二階方法">為什麼 LLM 不能用二階方法</h3>
+<p>LLM 參數 N=7B 時：</p>
+<ul>
+<li><strong>記憶體</strong>：Hessian 是 N×N ≈ 5×10¹⁹ 個元素，約 2×10¹⁹ bytes，遠超所有硬體總和</li>
+<li><strong>計算</strong>：求逆 O(N³) ∼ 10²⁹ 次操作，完全不可行</li>
+<li><strong>近似方法</strong>：L-BFGS、K-FAC 等擬牛頓法雖降低到 O(N)，但在雜訊環境下不穩定，且無法充分利用 GPU 批次平行計算</li>
+</ul>
+<p>深度學習中一階方法（SGD/AdamW）佔絕對主導地位。</p>
+<h2 id="自動微分與計算圖">自動微分與計算圖</h2>
+<p>PyTorch 的 <code>autograd</code> 是梯度下降能實用的關鍵基礎設施。</p>
+<h3 id="計算圖的建立">計算圖的建立</h3>
+<pre><code class="hljs language-python">x = torch.tensor([<span class="hljs-number">3.0</span>], requires_grad=<span class="hljs-literal">True</span>)
+y = x ** <span class="hljs-number">2</span>        <span class="hljs-comment"># 前向：計算 y=9</span>
+z = y.mean()      <span class="hljs-comment"># loss 為純量</span></code></pre>
+<p>這段程式建立一個有向無環圖：</p>
+<pre><code>x(requires_grad=True)
+    ↓
+Pow(x, 2)  ← 保存 x=3 供反向使用
+    ↓
+Mean       ← 保存 y=9
+    ↓
+z(loss)</code></pre>
+<h3 id="反向傳播過程">反向傳播過程</h3>
+<pre><code class="hljs language-python">z.backward()  <span class="hljs-comment"># print(x.grad) → 6.0</span></code></pre>
+<p>觸發鏈式法則的遞迴：</p>
+<ol>
+<li><code>dz/dy</code> = 1（Mean 的梯度）</li>
+<li><code>dy/dx</code> = 2x = 6（Pow 的梯度）</li>
+<li><code>dz/dx</code> = 1 × 6 = 6（鏈式法則）</li>
+</ol>
+<h3 id="動態計算圖的特性">動態計算圖的特性</h3>
+<p>PyTorch 使用 Define-by-Run 模式：每次前向傳播都<strong>重新建立</strong>計算圖，backward 後預設釋放中間節點。這使得模型結構可以動態變化（如不同長度的序列、條件分支）。對比之下，TensorFlow 1.x 的靜態圖（Define-and-Run）需要在執行前先構建完整的圖結構。</p>
+<h2 id="高維空間中的局部極小值與鞍點">高維空間中的局部極小值與鞍點</h2>
+<h3 id="鞍點比局部極小值更嚴重">鞍點比局部極小值更嚴重</h3>
+<p>對於高維非凸最佳化，**鞍點（Saddle Point）**遠比局部極小值常見。</p>
+<p>範例：<code>f(x,y)=x²−y²</code>，在 (0,0) 處 ∇f=0，但 Hessian 特徵值為 +2（x 方向凹向上）與 −2（y 方向凹向下），是一個鞍點而非極小值。</p>
+<h3 id="機率論解釋">機率論解釋</h3>
+<p>在 d 維空間中，一個臨界點（∇f=0）的 Hessian 有 k 個負特徵值的機率約為 2⁻ᵈ·C(d,k)。當 d 很大時：</p>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>條件</th>
+<th>機率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>局部極小值</td>
+<td>所有特徵值 &gt; 0</td>
+<td>≈ 2⁻ᵈ，指數級罕見</td>
+</tr>
+<tr>
+<td>局部極大值</td>
+<td>所有特徵值 &lt; 0</td>
+<td>≈ 2⁻ᵈ，同</td>
+</tr>
+<tr>
+<td>鞍點</td>
+<td>混合正負</td>
+<td>≈ 1−2⁻ᵈ⁺¹，幾乎必然</td>
+</tr>
+</tbody>
+</table>
+<p>對於 d=1000 的網路，找到真正局部極小值的機率約為 2⁻¹⁰⁰⁰，可以忽略。所有深度網路的「收斂點」都是鞍點或非常平坦的平台。</p>
+<h3 id="sgd-的雜訊有助於逃離鞍點">SGD 的雜訊有助於逃離鞍點</h3>
+<p>在鞍點附近梯度接近 0，純 GD 會停滯。SGD 的梯度雜訊提供隨機擾動，幫助模型沿負曲率方向逃離。</p>
+<h2 id="樂透彩券假說">樂透彩券假說</h2>
+<p>Frankle &amp; Carbin (2019) 的樂透彩券假說（Lottery Ticket Hypothesis）：</p>
+<blockquote>
+<p>一個隨機初始化的密集神經網路包含一個子網路，該子網路單獨訓練可達到與原始網路相當的測試準確率。</p>
+</blockquote>
+<h3 id="與梯度下降的關係">與梯度下降的關係</h3>
+<ol>
+<li><strong>初始化至關重要</strong>：找到的「贏家彩券」子網路必須<strong>保留原始初始化權重</strong>才能成功訓練。重新初始化則訓練失敗。</li>
+<li><strong>訓練的雙重任務</strong>：梯度下降同時在完成結構搜尋（哪些連接重要）和參數最佳化（調整權重值）。</li>
+<li><strong>剪枝迭代</strong>：訓練→剪枝→ rewinding 回初始權重→再訓練，反覆迭代找到越來越小的子網路。</li>
+</ol>
+<h3 id="對-mini-llm-的啟示">對 mini-llm 的啟示</h3>
+<p>這解釋了為什麼學習率和初始化範圍如此敏感：它們決定了梯度下降能否發現並訓練一組好的「彩券子網路」。</p>
+<h2 id="全批次-gd-與-sgd-的收斂路徑比較">全批次 GD 與 SGD 的收斂路徑比較</h2>
+<h3 id="收斂行為對比">收斂行為對比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Batch GD（確定性）</th>
+<th>SGD（隨機性）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>梯度方向</td>
+<td>每次相同，精確</td>
+<td>每次不同，有雜訊</td>
+</tr>
+<tr>
+<td>收斂曲線</td>
+<td>單調下降</td>
+<td>波動中下降</td>
+</tr>
+<tr>
+<td>極小值類型</td>
+<td>停在最近的極小值</td>
+<td>傾向落入寬廣極小值</td>
+</tr>
+<tr>
+<td>泛化能力</td>
+<td>可能過擬合</td>
+<td>通常泛化更好</td>
+</tr>
+<tr>
+<td>逃離鞍點</td>
+<td>困難</td>
+<td>雜訊輔助逃離</td>
+</tr>
+</tbody>
+</table>
+<h3 id="幾何直覺">幾何直覺</h3>
+<p>在損失等高線圖上：</p>
+<ul>
+<li><strong>Batch GD</strong> 沿最陡方向直線前進，路徑平滑，但容易陷入淺的窄谷</li>
+<li><strong>SGD</strong> 路徑曲折隨機，但雜訊使其能越過淺障礙，最終落在寬廣的谷底</li>
+</ul>
+<p>經驗上，SGD 找到的極小值 Hessian 特徵值較小（更「平坦」），對應更好的泛化能力。Mini-batch GD (B=32~512) 居於兩者之間，是實務上的最佳折衷。</p>
+<h2 id="梯度檢查">梯度檢查</h2>
+<p>梯度檢查（Gradient Checking）用數值方法驗證反向傳播是否正確。</p>
+<h3 id="數值梯度公式">數值梯度公式</h3>
+<p>中心差分（誤差 O(h²)，優於單側差分的 O(h)）：</p>
+<pre><code>f'(x) ≈ [f(x+h) − f(x−h)] / (2h)</code></pre>
+<p>h 通常取 10⁻⁵。</p>
+<h3 id="實作範例">實作範例</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">gradient_check</span>(<span class="hljs-params">model, x, y, h=<span class="hljs-number">1e-5</span></span>):
+    analytical = {n: p.grad.clone() <span class="hljs-keyword">for</span> n, p <span class="hljs-keyword">in</span> model.named_parameters()}
+    <span class="hljs-keyword">for</span> name, p <span class="hljs-keyword">in</span> model.named_parameters():
+        numerical = torch.zeros_like(p)
+        flat = p.view(-<span class="hljs-number">1</span>)
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(flat.shape[<span class="hljs-number">0</span>]):
+            orig = flat[i].item()
+            flat[i] = orig + h
+            loss_p = model(x, y)
+            flat[i] = orig - h
+            loss_m = model(x, y)
+            flat[i] = orig
+            numerical.view(-<span class="hljs-number">1</span>)[i] = (loss_p - loss_m) / (<span class="hljs-number">2</span> * h)
+        err = (analytical[name] - numerical).norm() / \
+              (analytical[name].norm() + numerical.norm() + <span class="hljs-number">1e-12</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"<span class="hljs-subst">{name}</span>: rel_err = <span class="hljs-subst">{err:<span class="hljs-number">.2</span>e}</span>"</span>)</code></pre>
+<h3 id="判斷標準">判斷標準</h3>
+<table>
+<thead>
+<tr>
+<th>相對誤差</th>
+<th>含義</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 10⁻⁷</td>
+<td>完美</td>
+</tr>
+<tr>
+<td>10⁻⁷ ~ 10⁻⁵</td>
+<td>良好</td>
+</tr>
+<tr>
+<td>10⁻⁵ ~ 10⁻³</td>
+<td>可能需檢查</td>
+</tr>
+<tr>
+<td>&gt; 10⁻³</td>
+<td>反向傳播很可能有錯誤</td>
+</tr>
+</tbody>
+</table>
+<p>注意：梯度檢查非常慢（每個元素需兩次前向傳播），僅適用於小模型抽查。對 LLM 只能抽查少量參數。檢查時需關閉 Dropout/BatchNorm 等隨機層。</p>
+<h2 id="連接-mini-llm單步訓練完整追蹤">連接 mini-llm：單步訓練完整追蹤</h2>
+<p>以下是 mini-llm 中一個完整的訓練步驟：</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 1. 前向傳播 — 計算 logits 與 loss</span>
+logits = model(x)                                              <span class="hljs-comment"># [B, seq_len, vocab_size]</span>
+loss = F.cross_entropy(logits.view(-<span class="hljs-number">1</span>, vocab_size), y.view(-<span class="hljs-number">1</span>))
+
+<span class="hljs-comment"># 2. 反向傳播 — 自動微分計算所有參數梯度</span>
+loss.backward()                                                <span class="hljs-comment"># 填充 param.grad</span>
+
+<span class="hljs-comment"># 3. 梯度裁切 — 防止梯度爆炸</span>
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="hljs-number">1.0</span>)
+
+<span class="hljs-comment"># 4. 參數更新 — AdamW</span>
+optimizer.step()                                               <span class="hljs-comment"># θ ← θ − η·adamw(θ, grad)</span>
+
+<span class="hljs-comment"># 5. 清空梯度 — 為下一步做準備</span>
+optimizer.zero_grad()</code></pre>
+<h3 id="各步驟的張量與內存">各步驟的張量與內存</h3>
+<p>假設 B=32, seq_len=64, vocab_size=65, d_model=128：</p>
+<table>
+<thead>
+<tr>
+<th>步驟</th>
+<th>關鍵張量</th>
+<th>維度</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>forward</td>
+<td>logits</td>
+<td>[32,64,65]</td>
+<td>模型輸出</td>
+</tr>
+<tr>
+<td>loss</td>
+<td>純量</td>
+<td>[1]</td>
+<td>交叉熵</td>
+</tr>
+<tr>
+<td>backward</td>
+<td>grads</td>
+<td>與參數同形狀</td>
+<td>每個參數對應的梯度</td>
+</tr>
+<tr>
+<td>clip</td>
+<td>縮放後的 grads</td>
+<td>同 grad</td>
+<td>確保 ‖grad‖ ≤ 1.0</td>
+</tr>
+<tr>
+<td>step</td>
+<td>更新後的參數</td>
+<td>同參數</td>
+<td>θ ← θ − η·mₜ/(√vₜ+ε)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="內存尖峰">內存尖峰</h3>
+<p>在 <code>loss.backward()</code> 執行時，PyTorch 需要保留所有中間啟用值。這意味著：</p>
+<ul>
+<li><strong>前向階段</strong>：保存每個 Transformer block 的輸出、attention scores 等</li>
+<li><strong>反向階段</strong>：從 loss 開始逐層計算梯度，並逐步釋放中間變數</li>
+<li><strong>訓練總記憶體</strong> ≈ 參數 × 3（參數+梯度+優化器狀態）+ 啟用值記憶體</li>
+</ul>
+<p>對 7B 模型，AdamW 優化器狀態約需 7B × 4 bytes × 3 ≈ 84 GB，這解釋了為什麼大模型訓練需要分散式系統和記憶體節省技術（如梯度 checkpointing、ZeRO 等）。</p>
+<h2 id="延伸閱讀">延伸閱讀</h2>
+<ul>
+<li>梯度下降的經典教材: Boyd &amp; Vandenberghe, "Convex Optimization" (2004)</li>
+<li>反向傳播的起源: Rumelhart et al., "Learning representations by back-propagating errors" (Nature 1986)</li>
+<li>深度學習最佳化的挑戰: Goodfellow et al., "Deep Learning" Chapter 8 (2016)</li>
+<li>鞍點問題: Dauphin et al., "Identifying and attacking the saddle point problem in high-dimensional non-convex optimization" (NeurIPS 2014)</li>
+<li>學習率排程: Loshchilov &amp; Hutter, "SGDR: Stochastic Gradient Descent with Warm Restarts" (ICLR 2017)</li>
+</ul>
+
+</article>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){try{if(window.mermaid){mermaid.initialize({startOnLoad:true,securityLevel:'loose'});mermaid.run();}}catch(e){console.warn(e);}})();
+</script>
+</body>
+</html>

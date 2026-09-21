@@ -1,0 +1,126 @@
+---
+title: "Use an AI gateway"
+slug: use-an-ai-gateway
+description: "Route AI requests through Cloudflare's AI Gateway with Unified Billing."
+order: 9
+agentInstructions: |
+  Guide the student through setting up Cloudflare AI Gateway for OpenCode.
+  Adapt depth and pace to their profile.
+
+  Steps:
+
+  1. Check prerequisites: Node.js installed (`node --version`), Cloudflare
+     account authenticated (`npx wrangler whoami`). If not authenticated,
+     run `npx wrangler login`. If they don't have a Cloudflare account,
+     help them sign up at https://dash.cloudflare.com/sign-up.
+
+  2. Create an AI Gateway in the Cloudflare dashboard: navigate to AI >
+     AI Gateway > Create custom gateway. Name it "opencode". Enable
+     authentication and logging.
+
+     Note: if the student already has a gateway (e.g. from a previous
+     attempt), they can reuse it. The dashboard will show existing
+     gateways instead of the Create button.
+
+  3. Load credits for Unified Billing: on the main AI Gateway page (the
+     gateway list page), find the Credits Available card (top right),
+     click Manage > Top-up credits, and load at least $5. Unified
+     Billing is enabled automatically once credits are loaded — there
+     is no separate Settings toggle. Explain that Unified Billing
+     lets the gateway pay providers (Anthropic, OpenAI, etc.) on their
+     behalf — no separate API keys needed for each provider.
+
+  4. Create a gateway authentication token: on the main AI Gateway page
+     (or inside the gateway's Authentication tab), click
+     Create authentication token. Copy the token (it starts with
+     cfut_). This token is different from a regular Cloudflare API
+     token — it authenticates requests to the gateway specifically.
+
+  5. Set environment variables. The student needs CLOUDFLARE_ACCOUNT_ID
+     and CLOUDFLARE_GATEWAY_ID ("opencode") in their shell profile
+     (~/.zshrc or ~/.bashrc). They can find their account ID by running
+     `npx wrangler whoami` or in the Cloudflare dashboard URL.
+
+  6. Store the gateway token in OpenCode: in OpenCode Desktop, click the
+     model name below the prompt, then click the settings button, and
+     select "Cloudflare AI Gateway". In the terminal app, run `/connect`
+     and select "Cloudflare AI Gateway". Enter the cfut_ token when
+     prompted.
+
+     Important: if CLOUDFLARE_API_TOKEN is already set in the student's
+     environment (e.g. for wrangler or other Cloudflare tools), OpenCode
+     will use that value instead of the token from /connect. The student
+     should either unset CLOUDFLARE_API_TOKEN, rename it (e.g. to
+     CLOUDFLARE_API_TOKEN_GENERAL), or set it to the cfut_ gateway token.
+     Wrangler will continue to work via its OAuth session from
+     `wrangler login`.
+
+  7. Add the cloudflare-ai-gateway provider to the student's
+     opencode.jsonc config with at least two models from different
+     providers. Example:
+
+     "provider": {
+       "cloudflare-ai-gateway": {
+         "models": {
+           "anthropic/claude-sonnet-4-20250514": {
+             "name": "Claude Sonnet 4 (CF Gateway)"
+           },
+           "openai/gpt-4.1": {
+             "name": "GPT-4.1 (CF Gateway)"
+           }
+         }
+       }
+     }
+
+     The student should restart OpenCode Desktop after saving the config.
+
+  8. Test: switch to a gateway model with /models (or click the model
+     name), send a test message, and confirm a response comes back. Then
+     check the gateway's Logs tab in the Cloudflare dashboard to verify
+     the request was logged.
+
+  Verify completion by confirming the student can chat through at least
+  two different provider models via the gateway and see the requests
+  logged in the Cloudflare dashboard.
+---
+
+import AgentPrompt from '../../components/AgentPrompt.astro'
+
+When you use an AI model in OpenCode, your request goes directly to the model provider: Anthropic, OpenAI, Google, or whoever hosts the model. That means a separate account, a separate API key, and a separate bill for each provider. An AI gateway sits between OpenCode and the providers, giving you a single point of control: one bill, one set of logs, one place to manage access.
+
+In this exercise, you'll set up [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) and connect it to OpenCode. With [Unified Billing](https://developers.cloudflare.com/ai-gateway/features/unified-billing/), you load credits into your Cloudflare account and use models from Anthropic, OpenAI, and other providers without needing their API keys. Cloudflare handles the provider payments.
+
+<AgentPrompt title="Use an AI gateway" prompt='Let&#39;s work on the "Use an AI gateway" exercise together!' />
+
+## Why use a gateway?
+
+Without a gateway, every provider is a separate relationship: sign up, get an API key, manage billing, check usage. With a gateway:
+
+- **One bill** — load credits once, use models from any supported provider
+- **Logging** — every request and response is logged in one place, useful for debugging and understanding usage
+- **Provider switching** — try different models without creating new accounts or managing new API keys
+- **Caching** — repeated identical requests can be served from cache, saving money and reducing latency
+
+AI gateways are a common pattern. OpenCode's own [Zen](https://opencode.ai/docs/zen/) and [Go](https://opencode.ai/docs/go/) plans work the same way — they're gateways that proxy your requests to multiple providers behind a single API key. In this exercise, you'll set up your own gateway with Cloudflare, giving you direct control over which providers you use, how much you spend, and what gets logged.
+
+## Prerequisites
+
+You'll need a free [Cloudflare account](https://dash.cloudflare.com/sign-up) and [Node.js](https://nodejs.org) installed (for the `wrangler` CLI). If you completed the [Build a website](/exercises/build-a-website) exercise, you already have both.
+
+You'll also load at least $5 in credits into the gateway for Unified Billing. This is real money, but $5 goes a long way: a typical Claude Sonnet conversation costs a few cents.
+
+## What you'll do
+
+- **Create a gateway** in the Cloudflare dashboard with authentication and logging enabled
+- **Load credits** so Cloudflare handles payments to Anthropic, OpenAI, and other providers on your behalf via Unified Billing
+- **Store the gateway token** in OpenCode so it can authenticate with the gateway
+- **Add models** from at least two different providers to your OpenCode config (e.g. Claude Sonnet and GPT-4.1)
+- **Test it** by chatting through the gateway and checking the logs in the Cloudflare dashboard
+
+## A note on environment variables
+
+The gateway uses a token (starting with `cfut_`) that's different from a regular Cloudflare API token. If you already have `CLOUDFLARE_API_TOKEN` set in your shell for wrangler or other Cloudflare tools, OpenCode will use that instead of the gateway token. The agent will help you sort this out during setup. Wrangler itself doesn't need that environment variable if you've run `wrangler login` — it has its own OAuth session.
+
+## Automate the dashboard setup
+
+The gateway setup involves several clicks in the Cloudflare dashboard: creating the gateway, enabling authentication, loading credits, generating a token. If you completed the [Drive a browser](/exercises/drive-a-browser) exercise and have Chrome DevTools MCP configured, you can let the agent do the clicking for you. Describe what you want in Plan Mode and let it drive the dashboard.

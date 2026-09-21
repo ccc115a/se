@@ -1,0 +1,83 @@
+---
+// Copyright (c) 2026 Cloudflare, Inc.
+// Licensed under the Apache 2.0 license found in the LICENSE file or at:
+//     https://opensource.org/licenses/Apache-2.0
+export const prerender = true;
+
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Tips and Tricks" description="Practical tips for getting better results with OpenCode and OpenCode School.">
+  <div class="mb-6">
+    <a href="/" class="text-sm text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+      &larr; All lessons
+    </a>
+  </div>
+
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold">Tips and Tricks</h1>
+    <p class="text-gray-600 dark:text-stone-400 mt-2">Practical ways to get better results with OpenCode.</p>
+  </header>
+
+  <article class="prose dark:prose-invert max-w-none">
+    <h2>Remember that OpenCode and OpenCode School are flexible systems</h2>
+    <p>
+      You can choose your own adventure. Paint outside the lines. Be silly. Be
+      bossy.
+    </p>
+    <ul>
+      <li>
+        Want to cut to the chase? Say so: "Let's skip the long-winded
+        descriptions and just get these changes made."
+      </li>
+      <li>
+        Want to review your progress? Easy: "Let's revisit what we've covered
+        so far in school."
+      </li>
+      <li>
+        Want to do your lessons in another language? No problem: "Let's do
+        everything in Spanish!"
+      </li>
+    </ul>
+
+    <h2>Describe the goal</h2>
+    <p>
+      Talk about the <em>what</em>, not the <em>how</em>. The agent may come up
+      with approaches that are simpler or more effective than the first idea
+      you had in mind.
+    </p>
+    <p>
+      Keeping the conversation open to alternatives often leads to better
+      outcomes. Describe what you are trying to accomplish, not only the exact
+      tools or steps you expect.
+    </p>
+
+    <h2>Know when to give up and start over</h2>
+    <p>
+      Sometimes you end up in a rabbit hole: the agent makes a mistake, you try
+      to correct it, and things get worse. This happens to everyone.
+    </p>
+    <p>
+      The important skill is knowing when to reset. Do not be afraid to stop a
+      session, reflect on what you learned, and start a fresh one with clearer
+      instructions.
+    </p>
+
+    <h2>Open a higher-level directory for broader access</h2>
+    <p>
+      OpenCode is scoped to the directory where you start it. If you have been
+      working in <code>~/projects/foo</code>, OpenCode can only see files in
+      that folder.
+    </p>
+    <p>
+      If you want to make changes across multiple projects at once, open a
+      higher-level directory like <code>~/projects</code> instead. OpenCode
+      will have access to every project inside it — useful for research,
+      refactoring, or making sweeping changes across repos.
+    </p>
+    <p>
+      You can even open your entire home directory (<code>~</code>) to give
+      OpenCode the broadest possible access.
+    </p>
+  </article>
+</Base>

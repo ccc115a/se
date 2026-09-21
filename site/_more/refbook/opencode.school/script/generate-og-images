@@ -1,0 +1,322 @@
+#!/usr/bin/env node
+
+// Generates all OG images into public/og/ before the Astro build.
+// Called by script/build automatically.
+//
+// Output:
+//   public/og/default.png           — homepage + fallback
+//   public/og/lesson/{slug}.png     — one per lesson
+//   public/og/exercise/{slug}.png   — one per exercise
+
+import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { join } from "node:path";
+import { Resvg } from "@resvg/resvg-js";
+import satori from "satori";
+
+const require = createRequire(import.meta.url);
+
+// --- Font loading ---
+const interRegular = await readFile(
+	require.resolve("@fontsource/inter/files/inter-latin-400-normal.woff"),
+);
+const interBold = await readFile(
+	require.resolve("@fontsource/inter/files/inter-latin-700-normal.woff"),
+);
+const jetbrainsMonoBold = await readFile(
+	require.resolve(
+		"@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff",
+	),
+);
+const jetbrainsMonoRegular = await readFile(
+	require.resolve(
+		"@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+	),
+);
+
+const fonts = [
+	{ name: "Inter", data: interRegular, weight: 400, style: "normal" },
+	{ name: "Inter", data: interBold, weight: 700, style: "normal" },
+	{
+		name: "JetBrains Mono",
+		data: jetbrainsMonoBold,
+		weight: 700,
+		style: "normal",
+	},
+	{
+		name: "JetBrains Mono",
+		data: jetbrainsMonoRegular,
+		weight: 400,
+		style: "normal",
+	},
+];
+
+const WIDTH = 1200;
+const HEIGHT = 630;
+
+// --- Rainbow gradient (hard-stop bands matching .rainbow-bg CSS) ---
+const RAINBOW = [
+	"#dc2626", "#ea580c", "#b45309", "#ca8a04", "#4d7c0f", "#15803d",
+	"#059669", "#0f766e", "#0e7490", "#0284c7", "#2563eb", "#4f46e5",
+	"#7c3aed", "#9333ea", "#c026d3", "#db2777", "#e11d48", "#dc2626",
+];
+
+function rainbowHardStops(angle = "-45deg") {
+	const colors = RAINBOW.slice(0, -1);
+	const bandSize = 100 / colors.length;
+	const stops = [];
+	for (let i = 0; i < colors.length; i++) {
+		const start = (i * bandSize).toFixed(2);
+		const end = ((i + 1) * bandSize).toFixed(2);
+		stops.push(`${colors[i]} ${start}%`);
+		stops.push(`${colors[i]} ${end}%`);
+	}
+	return `linear-gradient(${angle}, ${stops.join(", ")})`;
+}
+
+// --- Rendering ---
+async function renderPng(element) {
+	const svg = await satori(element, { width: WIDTH, height: HEIGHT, fonts });
+	const resvg = new Resvg(svg, { fitTo: { mode: "width", value: WIDTH } });
+	return resvg.render().asPng();
+}
+
+// --- Layout builders ---
+function defaultLayout() {
+	return {
+		type: "div",
+		props: {
+			style: {
+				display: "flex",
+				width: "100%",
+				height: "100%",
+				backgroundImage: rainbowHardStops("-45deg"),
+				alignItems: "center",
+				justifyContent: "center",
+				padding: "40px",
+			},
+			children: [
+				{
+					type: "div",
+					props: {
+						style: {
+							display: "flex",
+							flexDirection: "column",
+							backgroundColor: "rgba(28, 25, 23, 0.92)",
+							borderRadius: "24px",
+							padding: "70px 80px",
+							width: "100%",
+							height: "100%",
+							justifyContent: "space-between",
+						},
+						children: [
+							{
+								type: "div",
+								props: {
+									style: { display: "flex", flexDirection: "column" },
+									children: [
+										{
+											type: "div",
+											props: {
+												style: {
+													fontFamily: "JetBrains Mono",
+													fontSize: 88,
+													fontWeight: 700,
+													color: "#fafaf9",
+													letterSpacing: "-0.02em",
+												},
+												children: "OpenCode School",
+											},
+										},
+										{
+											type: "div",
+											props: {
+												style: {
+													fontFamily: "Inter",
+													fontSize: 34,
+													color: "#a8a29e",
+													marginTop: "24px",
+													lineHeight: 1.5,
+												},
+												children:
+													"A free, self-paced course for learning OpenCode, the open-source AI coding agent.",
+											},
+										},
+									],
+								},
+							},
+							{
+								type: "div",
+								props: {
+									style: {
+										fontFamily: "JetBrains Mono",
+										fontSize: 26,
+										color: "#57534e",
+									},
+									children: "opencode.school",
+								},
+							},
+						],
+					},
+				},
+			],
+		},
+	};
+}
+
+function contentLayout({ kicker, title, description }) {
+	return {
+		type: "div",
+		props: {
+			style: {
+				display: "flex",
+				width: "100%",
+				height: "100%",
+				backgroundImage: rainbowHardStops("-45deg"),
+				alignItems: "center",
+				justifyContent: "center",
+				padding: "40px",
+			},
+			children: [
+				{
+					type: "div",
+					props: {
+						style: {
+							display: "flex",
+							flexDirection: "column",
+							backgroundColor: "rgba(28, 25, 23, 0.92)",
+							borderRadius: "24px",
+							padding: "70px 80px",
+							width: "100%",
+							height: "100%",
+							justifyContent: "space-between",
+						},
+						children: [
+							{
+								type: "div",
+								props: {
+									style: { display: "flex", flexDirection: "column" },
+									children: [
+										{
+											type: "div",
+											props: {
+												style: {
+													fontFamily: "JetBrains Mono",
+													fontSize: 22,
+													color: "#78716c",
+													textTransform: "uppercase",
+													letterSpacing: "0.2em",
+												},
+												children: kicker,
+											},
+										},
+										{
+											type: "div",
+											props: {
+												style: {
+													fontFamily: "JetBrains Mono",
+													fontSize: 100,
+													fontWeight: 700,
+													color: "#fafaf9",
+													letterSpacing: "-0.02em",
+													marginTop: "16px",
+												},
+												children: title,
+											},
+										},
+										{
+											type: "div",
+											props: {
+												style: {
+													fontFamily: "Inter",
+													fontSize: 34,
+													color: "#a8a29e",
+													marginTop: "24px",
+													lineHeight: 1.5,
+												},
+												children: description,
+											},
+										},
+									],
+								},
+							},
+							{
+								type: "div",
+								props: {
+									style: {
+										fontFamily: "JetBrains Mono",
+										fontSize: 26,
+										color: "#57534e",
+									},
+									children: "opencode.school",
+								},
+							},
+						],
+					},
+				},
+			],
+		},
+	};
+}
+
+// --- Parse frontmatter from MDX files ---
+function parseFrontmatter(content) {
+	const match = content.match(/^---\n([\s\S]*?)\n---/);
+	if (!match) return {};
+	const fm = {};
+	for (const line of match[1].split("\n")) {
+		const colon = line.indexOf(":");
+		if (colon === -1) continue;
+		const key = line.slice(0, colon).trim();
+		let val = line.slice(colon + 1).trim();
+		// Strip surrounding quotes
+		if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+			val = val.slice(1, -1);
+		}
+		fm[key] = val;
+	}
+	return fm;
+}
+
+// --- Main ---
+const ROOT = new URL("..", import.meta.url).pathname;
+const lessonsDir = join(ROOT, "src/content/lessons");
+const exercisesDir = join(ROOT, "src/content/exercises");
+const outDir = join(ROOT, "public/og");
+
+await mkdir(join(outDir, "lesson"), { recursive: true });
+await mkdir(join(outDir, "exercise"), { recursive: true });
+
+// Default image
+console.log("  public/og/default.png");
+await writeFile(join(outDir, "default.png"), await renderPng(defaultLayout()));
+
+// Lessons
+const lessonFiles = (await readdir(lessonsDir)).filter((f) => f.endsWith(".mdx")).sort();
+for (const file of lessonFiles) {
+	const content = await readFile(join(lessonsDir, file), "utf-8");
+	const fm = parseFrontmatter(content);
+	if (!fm.slug || !fm.title) continue;
+	const order = Number(fm.order) || 0;
+	const kicker = `Lesson ${String(order).padStart(2, "0")}`;
+	const png = await renderPng(
+		contentLayout({ kicker, title: fm.title, description: fm.description || "" }),
+	);
+	console.log(`  public/og/lesson/${fm.slug}.png`);
+	await writeFile(join(outDir, "lesson", `${fm.slug}.png`), png);
+}
+
+// Exercises
+const exerciseFiles = (await readdir(exercisesDir)).filter((f) => f.endsWith(".mdx")).sort();
+for (const file of exerciseFiles) {
+	const content = await readFile(join(exercisesDir, file), "utf-8");
+	const fm = parseFrontmatter(content);
+	if (!fm.slug || !fm.title) continue;
+	const png = await renderPng(
+		contentLayout({ kicker: "Exercise", title: fm.title, description: fm.description || "" }),
+	);
+	console.log(`  public/og/exercise/${fm.slug}.png`);
+	await writeFile(join(outDir, "exercise", `${fm.slug}.png`), png);
+}
+
+console.log("Done!");

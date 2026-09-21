@@ -1,0 +1,21 @@
+<html>
+  <body>
+    <ol>
+      <li>item1.1</li>
+      <li>item1.2</li>
+    </ol>
+    <ol>
+      <li>item2.1</li>
+      <li>item2.2</li>
+    </ol>
+<script src="bdd.js"></script>
+<script src="myquery.js"></script>
+<script>
+$('ol').get('li').each((x) => {
+   console.log(expect(x.innerHTML).include('item1'))
+   // x.innerHTML = 'hi'
+    x.style.color = 'red'
+})
+</script>
+</body>
+</html>

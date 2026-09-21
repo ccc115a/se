@@ -1,0 +1,17 @@
+[package]
+name = "migrations"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "migrations"
+path = "src/lib.rs"
+
+[dependencies]
+sea-orm-migration = "2"
+sea-orm = { version = "2", features = [
+    "sqlx-sqlite",
+    "sqlx-postgres",
+    "runtime-tokio-rustls",
+] }

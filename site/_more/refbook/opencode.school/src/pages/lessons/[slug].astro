@@ -1,0 +1,218 @@
+---
+// Copyright (c) 2026 Cloudflare, Inc.
+// Licensed under the Apache 2.0 license found in the LICENSE file or at:
+//     https://opensource.org/licenses/Apache-2.0
+export const prerender = true;
+
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const lessons = await getCollection("lessons");
+  return lessons.map((lesson) => ({
+    params: { slug: lesson.data.slug },
+    props: { lesson },
+  }));
+}
+
+const { lesson } = Astro.props;
+const { Content } = await render(lesson);
+
+const allLessons = (await getCollection("lessons")).sort((a, b) => a.data.order - b.data.order);
+const currentIndex = allLessons.findIndex((l) => l.data.slug === lesson.data.slug);
+const next = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+---
+
+<Base title={lesson.data.title} description={lesson.data.description} ogImage={`/og/lesson/${lesson.data.slug}.png`}>
+  <div class="mb-6">
+    <a href="/" class="text-sm text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+      &larr; All lessons
+    </a>
+  </div>
+
+  <header class="mb-8">
+    <p class="text-sm font-mono text-gray-400 dark:text-gray-600 mb-1">Lesson {lesson.data.order}</p>
+    <h1 class="text-3xl font-bold">{lesson.data.title}</h1>
+    <p class="text-gray-600 dark:text-gray-400 mt-2">{lesson.data.description}</p>
+  </header>
+
+  <div id="lesson-completed-banner" class="theme-banner hidden mb-6 rounded-lg px-4 py-3 text-sm font-medium">
+    <span id="lesson-completed-text">You completed this lesson!</span>
+  </div>
+
+  <div id="lesson-enroll-nudge" class="hidden mb-8 rounded-lg border border-gray-200 dark:border-stone-700 px-4 py-3 text-sm text-gray-600 dark:text-stone-400">
+    <a href="/" class="theme-link font-medium underline underline-offset-2">Enroll for free</a> to track your progress through the course.
+  </div>
+
+  <article class="prose dark:prose-invert max-w-none">
+    <Content />
+  </article>
+
+  <!-- Agent-only notice: shown for lessons that can only be completed in OpenCode -->
+  {lesson.data.agentOnly && (
+    <div id="lesson-agent-only" class="mt-10 pt-6 border-t border-gray-200 dark:border-stone-800 hidden">
+      <p id="lesson-agent-only-text" class="text-center text-sm text-gray-500 dark:text-stone-500">
+        Complete this lesson in OpenCode to continue.
+      </p>
+      {next && (
+        <a
+          id="lesson-agent-only-next"
+          href={`/lessons/${next.data.slug}`}
+          class="theme-button mt-4 flex w-full justify-center cursor-pointer items-center gap-2 rounded-lg px-6 py-4 text-sm font-medium select-none hidden"
+        >
+          Next lesson: {next.data.title} &rarr;
+        </a>
+      )}
+    </div>
+  )}
+
+  <!-- Lesson action: combined mark-complete + next-lesson button -->
+  <div id="lesson-action" class="mt-10 pt-6 border-t border-gray-200 dark:border-stone-800 hidden">
+    {next ? (
+      <button
+        id="lesson-action-btn"
+        data-next-url={`/lessons/${next.data.slug}`}
+        class="theme-button flex w-full justify-center cursor-pointer items-center gap-2 rounded-lg px-6 py-4 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed select-none"
+      >
+        <span id="lesson-action-label">Next lesson: {next.data.title} &rarr;</span>
+      </button>
+    ) : (
+      <button
+        id="lesson-action-btn"
+        class="theme-button flex w-full justify-center cursor-pointer items-center gap-2 rounded-lg px-6 py-4 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed select-none"
+      >
+        <span id="lesson-action-label">Mark this lesson as complete</span>
+      </button>
+    )}
+  </div>
+
+  <script is:inline define:vars={{ lessonSlug: lesson.data.slug, agentOnly: lesson.data.agentOnly }}>
+    (function() {
+      var action = document.getElementById("lesson-action");
+      var btn = document.getElementById("lesson-action-btn");
+      var label = document.getElementById("lesson-action-label");
+      var banner = document.getElementById("lesson-completed-banner");
+      var bannerText = document.getElementById("lesson-completed-text");
+      var nudge = document.getElementById("lesson-enroll-nudge");
+      var agentOnlyBlock = document.getElementById("lesson-agent-only");
+      var agentOnlyText = document.getElementById("lesson-agent-only-text");
+      var agentOnlyNext = document.getElementById("lesson-agent-only-next");
+      if (!window.school) return;
+
+      // Show enroll nudge to unenrolled visitors, hide it once enrolled
+      if (!window.school.getStudentId()) {
+        if (nudge) nudge.classList.remove("hidden");
+        return;
+      }
+      if (nudge) nudge.classList.add("hidden");
+
+      // Record that this lesson has been visited
+      window.school.markLessonVisited(lessonSlug);
+
+      var wasAlreadyComplete = window.school.isLessonComplete(lessonSlug);
+
+      function formatBannerText(completion) {
+        var text = "You completed this lesson!";
+        if (completion && completion.completedAt) {
+          var date = new Date(completion.completedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+          var via = completion.source === "agent" ? "via OpenCode" : "in the browser";
+          text = "You completed this lesson on " + date + " " + via + ".";
+        }
+        return text;
+      }
+
+      function showBanner() {
+        if (!banner) return;
+        var completion = window.school.getLessonCompletion(lessonSlug);
+        if (bannerText) bannerText.textContent = formatBannerText(completion);
+        banner.classList.remove("hidden");
+      }
+
+      // Agent-only lessons: show the agent-only block instead of the action button
+      if (agentOnly && agentOnlyBlock) {
+        agentOnlyBlock.classList.remove("hidden");
+
+        if (window.school.isLessonComplete(lessonSlug)) {
+          showBanner();
+          if (agentOnlyText) agentOnlyText.textContent = "You completed this lesson in OpenCode.";
+          if (agentOnlyNext) agentOnlyNext.classList.remove("hidden");
+        }
+
+        var origUpdateAgentOnly = window.school.updateAllCheckmarks.bind(window.school);
+        window.school.updateAllCheckmarks = function() {
+          origUpdateAgentOnly();
+          if (nudge && window.school.getStudentId()) nudge.classList.add("hidden");
+          if (window.school.isLessonComplete(lessonSlug)) {
+            showBanner();
+            if (agentOnlyText) agentOnlyText.textContent = "You completed this lesson in OpenCode.";
+            if (agentOnlyNext) agentOnlyNext.classList.remove("hidden");
+            // Auto-navigate if just completed by agent during this page session
+            if (!wasAlreadyComplete && agentOnlyNext) {
+              window.location.href = agentOnlyNext.getAttribute("href");
+            }
+          }
+        };
+        return;
+      }
+
+      // Standard lessons: show the action button
+      if (!action || !btn) return;
+      action.classList.remove("hidden");
+
+      var nextUrl = btn.getAttribute("data-next-url");
+      var originalLabel = label.textContent;
+
+      function setCompleted() {
+        showBanner();
+        if (nextUrl) {
+          window.location.href = nextUrl;
+        } else {
+          label.textContent = "Lesson complete!";
+          btn.disabled = true;
+        }
+      }
+
+      // If already complete, show the banner and make the button navigate directly
+      if (window.school.isLessonComplete(lessonSlug)) {
+        showBanner();
+        if (nextUrl) {
+          btn.addEventListener("click", function() { window.location.href = nextUrl; });
+        } else {
+          label.textContent = "Lesson complete!";
+          btn.disabled = true;
+        }
+      } else {
+        btn.addEventListener("click", async function() {
+          btn.disabled = true;
+          label.textContent = "Saving...";
+          var progress = await window.school.markComplete(lessonSlug);
+          if (progress) {
+            window.school.updateAllCheckmarks();
+            setCompleted();
+          } else {
+            btn.disabled = false;
+            label.textContent = originalLabel;
+          }
+        });
+      }
+
+      // Update after progress fetch completes (in case cached state was stale)
+      var origUpdate = window.school.updateAllCheckmarks.bind(window.school);
+      window.school.updateAllCheckmarks = function() {
+        origUpdate();
+        if (nudge && window.school.getStudentId()) nudge.classList.add("hidden");
+        if (window.school.isLessonComplete(lessonSlug)) {
+          showBanner();
+          // Only auto-navigate if the lesson just became complete during this
+          // page session (i.e. it was completed by an agent while the student
+          // had this page open). If it was already complete when the page
+          // loaded, the student navigated here intentionally and we should
+          // not redirect them away.
+          if (nextUrl && !wasAlreadyComplete && label.textContent === originalLabel) {
+            setCompleted();
+          }
+        }
+      };
+    })();
+  </script>
+</Base>

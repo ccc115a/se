@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>写新文章</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    input, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; }
+    textarea { height: 200px; }
+    .btn { padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    a { text-decoration: none; color: #0066cc; }
+  </style>
+</head>
+<body>
+  <a href="/">← 返回首页</a>
+  <h1>✍️ 写新文章</h1>
+  
+  <form action="/posts" method="POST">
+    <label>标题：</label>
+    <input type="text" name="title" required placeholder="请输入标题">
+    
+    <label>内容：</label>
+    <textarea name="content" required placeholder="请输入内容"></textarea>
+    
+    <button type="submit" class="btn">发布文章</button>
+  </form>
+</body>
+</html>

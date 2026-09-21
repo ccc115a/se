@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [options] <input.mp4>
+
+Encode a green-screen video to transparent WebM and MOV for the web.
+
+Outputs two files in the current directory:
+  <name>.webm  VP9 with alpha (Chrome, Firefox, Edge)
+  <name>.mov   HEVC with alpha (Safari)
+
+Options:
+  -o, --output <name>      Output filename stem (default: input basename)
+  -c, --color <hex>        Green screen color, e.g. 97c64c (default: auto-detect)
+  -s, --similarity <float> Color match tolerance, 0.0-1.0 (default: 0.12)
+  -b, --blend <float>      Edge blend amount, 0.0-1.0 (default: 0.05)
+  -h, --help               Show this help message
+
+Examples:
+  $(basename "$0") recording.mp4
+  $(basename "$0") -o intro recording.mp4
+  $(basename "$0") -c 97c64c -s 0.15 recording.mp4
+EOF
+  exit 0
+}
+
+detect_color() {
+  local input="$1"
+  ffmpeg -i "$input" -vframes 1 -vf "crop=200:200:50:50,format=rgb24" \
+    -f rawvideo -pix_fmt rgb24 pipe: 2>/dev/null | \
+    python3 -c "
+import sys
+data = sys.stdin.buffer.read()
+pixels = [(data[i], data[i+1], data[i+2]) for i in range(0, len(data), 3)]
+r = sum(p[0] for p in pixels) // len(pixels)
+g = sum(p[1] for p in pixels) // len(pixels)
+b = sum(p[2] for p in pixels) // len(pixels)
+print(f'{r:02x}{g:02x}{b:02x}')
+"
+}
+
+output_name=""
+color=""
+similarity="0.12"
+blend="0.05"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -o|--output) output_name="$2"; shift 2 ;;
+    -c|--color) color="$2"; shift 2 ;;
+    -s|--similarity) similarity="$2"; shift 2 ;;
+    -b|--blend) blend="$2"; shift 2 ;;
+    -h|--help) usage ;;
+    -*) echo "Unknown option: $1" >&2; exit 1 ;;
+    *) break ;;
+  esac
+done
+
+if [[ $# -lt 1 ]]; then
+  echo "Error: no input file specified" >&2
+  echo "Run '$(basename "$0") --help' for usage" >&2
+  exit 1
+fi
+
+input="$1"
+if [[ ! -f "$input" ]]; then
+  echo "Error: file not found: $input" >&2
+  exit 1
+fi
+
+if [[ -z "$output_name" ]]; then
+  output_name="$(basename "${input%.*}")"
+fi
+
+webm_out="${output_name}.webm"
+mov_out="${output_name}.mov"
+
+if [[ -z "$color" ]]; then
+  echo "Detecting green screen color..."
+  color=$(detect_color "$input")
+  echo "Detected: #${color}"
+fi
+
+filter="colorkey=0x${color}:${similarity}:${blend}"
+
+echo "Encoding WebM (VP9 with alpha)..."
+ffmpeg -y -i "$input" \
+  -vf "scale=1280:720,fps=30,${filter}" \
+  -c:v libvpx-vp9 -pix_fmt yuva420p -crf 40 -b:v 0 -cpu-used 4 \
+  "$webm_out"
+
+echo "Encoding MOV (HEVC with alpha)..."
+ffmpeg -y -i "$input" \
+  -vf "scale=1280:720,fps=30,${filter}" \
+  -c:v hevc_videotoolbox -alpha_quality 0.75 -tag:v hvc1 \
+  "$mov_out"
+
+echo ""
+echo "Done:"
+echo "  ${webm_out} ($(du -h "$webm_out" | cut -f1 | xargs))"
+echo "  ${mov_out}  ($(du -h "$mov_out" | cut -f1 | xargs))"
+echo ""
+echo "Run 'script/publish-video ${webm_out} ${mov_out}' to upload to R2."

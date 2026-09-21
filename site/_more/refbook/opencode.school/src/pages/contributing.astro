@@ -1,0 +1,133 @@
+---
+// Copyright (c) 2026 Cloudflare, Inc.
+// Licensed under the Apache 2.0 license found in the LICENSE file or at:
+//     https://opensource.org/licenses/Apache-2.0
+export const prerender = true;
+
+import Base from "../layouts/Base.astro";
+
+const issuesBase = "https://github.com/opencodeschool/opencode.school/issues";
+const newIssue = `${issuesBase}/new`;
+
+const bugTitle = encodeURIComponent("Something isn't working or is confusing: ");
+const bugBody = encodeURIComponent(
+  [
+    "What happened:",
+    "",
+    "What I expected:",
+    "",
+    "Where (lesson, exercise, or page):",
+    "",
+  ].join("\n"),
+);
+
+const ideaTitle = encodeURIComponent("Idea: ");
+const ideaBody = encodeURIComponent(
+  [
+    "What would make OpenCode School better:",
+    "",
+    "Why this would help students:",
+    "",
+  ].join("\n"),
+);
+
+const exerciseTitle = encodeURIComponent("Exercise idea: ");
+const exerciseBody = encodeURIComponent(
+  [
+    "What the exercise would teach or let students build:",
+    "",
+    "A prompt or starting point that worked well for me:",
+    "",
+    "Who this would be useful for:",
+    "",
+  ].join("\n"),
+);
+
+const bugUrl = `${newIssue}?title=${bugTitle}&body=${bugBody}`;
+const ideaUrl = `${newIssue}?title=${ideaTitle}&body=${ideaBody}`;
+const exerciseUrl = `${newIssue}?title=${exerciseTitle}&body=${exerciseBody}`;
+---
+
+<Base title="Contributing" description="Share ideas, report issues, and help improve OpenCode School for future students.">
+  <div class="mb-6">
+    <a href="/" class="text-sm text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+      &larr; All lessons
+    </a>
+  </div>
+
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold">Contributing</h1>
+    <p class="text-gray-600 dark:text-stone-400 mt-2">Share ideas and help improve the course for future students.</p>
+  </header>
+
+  <article class="prose dark:prose-invert max-w-none">
+    <p>
+      Your experience shapes this course. If something is confusing, broken, or
+      missing, or if you come up with an idea that would make OpenCode School
+      better, we want to hear about it.
+    </p>
+    <p>
+      The most valuable thing you can do is <strong>tell us about it on GitHub</strong>.
+      You don't need to know Git or how to code. A free GitHub account and a
+      short description is all it takes. If you don't have an account yet, you
+      can create one at
+      <a href="https://github.com/signup" target="_blank" rel="noopener noreferrer">github.com/signup</a>.
+    </p>
+
+    <h2 id="something-isnt-working"><a href="#something-isnt-working" class="heading-anchor">Something isn't working or is confusing</a></h2>
+    <p>
+      Hit a wall? Instructions that didn't match what you saw? A lesson step
+      that didn't work? Let us know what happened, where, and what you expected
+      instead. Even a one-line description is useful.
+    </p>
+    <p>
+      <a href={bugUrl} target="_blank" rel="noopener noreferrer">Report an issue &rarr;</a>
+    </p>
+
+    <h2 id="suggest-an-idea"><a href="#suggest-an-idea" class="heading-anchor">You have an idea for improving the school</a></h2>
+    <p>
+      Wish a lesson explained something differently? Want a new topic covered?
+      Think the site could do something it currently doesn't? Open an issue
+      describing the idea and why it would help.
+    </p>
+    <p>
+      <a href={ideaUrl} target="_blank" rel="noopener noreferrer">Suggest an idea &rarr;</a>
+    </p>
+
+    <h2 id="share-an-exercise"><a href="#share-an-exercise" class="heading-anchor">You came up with a prompt or exercise worth sharing</a></h2>
+    <p>
+      If you discovered a prompt that worked surprisingly well, or built
+      something with OpenCode that other students would find interesting,
+      describe it in an issue. Maintainers can help shape the idea into a new
+      exercise. You don't have to write the exercise yourself.
+    </p>
+    <p>
+      <a href={exerciseUrl} target="_blank" rel="noopener noreferrer">Propose an exercise &rarr;</a>
+    </p>
+
+    <h2 id="let-opencode-help"><a href="#let-opencode-help" class="heading-anchor">Let OpenCode help you file it</a></h2>
+    <p>
+      If you're already in a session with OpenCode and something comes up that
+      you'd like to report, just say so. OpenCode can draft the issue title and
+      body based on the conversation and hand you a prefilled link, so all you
+      have to do is review and click Submit.
+    </p>
+
+    <h2 id="going-further"><a href="#going-further" class="heading-anchor">Going further: submit a pull request</a></h2>
+    <p>
+      Filing an issue is the most valuable thing you can do, and it's where
+      most contributions start. If you want to go further and fix or build the
+      thing yourself, the <a href="/exercises/use-git-and-github">Use Git and GitHub</a>
+      exercise walks through forking this repository, making a change, and
+      opening a pull request.
+    </p>
+    <p>
+      For the full details on the development setup, lesson authoring
+      conventions, and how the site is put together, see
+      <a href="https://github.com/opencodeschool/opencode.school/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">CONTRIBUTING.md</a>
+      and
+      <a href="https://github.com/opencodeschool/opencode.school/blob/main/AGENTS.md" target="_blank" rel="noopener noreferrer">AGENTS.md</a>
+      in the repository.
+    </p>
+  </article>
+</Base>

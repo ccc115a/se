@@ -1,0 +1,47 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "opencodeschool",
+  "compatibility_date": "2026-03-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+  },
+  // Public, non-secret values read by `astro.config.mjs` at build time and
+  // inlined into the prerendered HTML. These are read once at build time, not
+  // exposed at runtime, so changing them requires a redeploy.
+  //   - SITE_URL drives canonical URLs, OG image URLs, the sitemap, and the
+  //     RSS feed. Change this when deploying to a different domain.
+  //   - AI_SEARCH_API_URL is the Cloudflare AI Search instance the search
+  //     widget queries. Leave it empty to disable the search UI entirely.
+  //     Manage the instance at:
+  //       https://dash.cloudflare.com/?to=/:account/ai/ai-search
+  "vars": {
+    "SITE_URL": "https://opencode.school",
+    "AI_SEARCH_API_URL": "https://c16d5e20-b6d1-427a-bdcc-83cf6059d16e.search.ai.cloudflare.com",
+  },
+  // The R2 bucket and KV namespace below are for the production deployment.
+  // You only need these if you're deploying to your own Cloudflare account.
+  // Local dev (`script/dev`) works fine without them.
+  "r2_buckets": [
+    {
+      "binding": "ASSETS_BUCKET",
+      "bucket_name": "opencodeschool-assets",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "PROGRESS",
+      "id": "8ff29749cd3f4b95ba6245727b7ba5e0",
+    },
+  ],
+  "env": {
+    "production": {
+      "routes": [
+        {
+          "pattern": "opencode.school",
+          "custom_domain": true,
+        },
+      ],
+    },
+  },
+}

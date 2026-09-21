@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>互動：觀察與動作空間的擴展</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+<style>
+body{margin:0;background:#fff}
+.wrap{display:flex;min-height:100vh}
+nav.site{width:260px;min-width:200px;border-right:1px solid #d0d7de;padding:16px;position:sticky;top:0;height:100vh;overflow:auto;background:#f6f8fa}
+nav.site .home{font-weight:700;margin-bottom:8px;display:block;color:#1f2328;text-decoration:none}
+ul.site-nav{list-style:none;margin:0;padding:0}
+ul.site-nav li{margin:2px 0}
+ul.site-nav a{color:#0969da;text-decoration:none;font-size:.9em}
+ul.site-nav a:hover{text-decoration:underline}
+article{flex:1;min-width:0;box-sizing:border-box;max-width:980px;padding:24px}
+.markdown-alert{padding:.5rem 1rem;margin-bottom:1rem;border-left:.25em solid #888;border-radius:6px;background:#f6f8fa}
+.markdown-alert-title{font-weight:600;margin:0 0 .25rem}
+.markdown-alert-note{border-color:#0969da}.markdown-alert-tip{border-color:#1a7f37}
+.markdown-alert-important{border-color:#8250df}.markdown-alert-warning{border-color:#9a6700}
+.markdown-alert-caution{border-color:#d1242f}
+pre.mermaid{background:#f6f8fa;padding:16px;border-radius:6px}
+@media (max-width:767px){nav.site{display:none}article{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="site"><a class="home" href="../../../index.html">⌂ 首頁</a><ul class="site-nav">
+<li><a href="../../../_more/code/傳統軟體工程/_case/blog/_doc/docker_run.html">docker run</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/blog/_doc/wsl.html">wsl</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/blog/README.html">Blog -- Classic</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/docker101/ccc_log.html">docker101</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/docker101/README.html">docker101</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/compose/gitea-postgres/README.html">docker-compose gitea+postgresql</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/config.html">config</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/fail2ban.html">fail2ban</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/linode.html">用 docker compose 在 linode 上安裝 gitea</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/README.html">doc</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/reverse_proxy.html">reverseproxy</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/windows.html">windows.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/gitea/wsl.html">wsl</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/nextcloud/README.html">nextcloud</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/nginx/programmermedia.org.html">programmermedia.org.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/nginx/README.html">nginx</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_case/pub6/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/_Footer.html">_Footer.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/_Sidebar.html">軟體工程</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/01-preface.html">第 1 章 -- 軟體工程簡介</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/02-test.html">第 2 章 -- 測試與 TDD</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/03-npm.html">第 3 章 -- NPM 套件</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/04-git.html">第 4 章 -- Git 合作</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/05-quality.html">第 5 章 -- 軟體品質</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/06-project.html">第 6 章 -- 軟體專案</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/07-analysis.html">第 7 章 -- 系統分析</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/08-design.html">第 8 章 -- 系統設計</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/09-implement.html">第 9 章 -- 實作</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/10-verify.html">第 10 章 -- 驗證 整合測試</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/11-operation.html">第 11 章 -- 上線與維護</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/A1-uml.html">UML 圖形建模</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/A2-designPattern.html">設計模式 -- 以 JavaScript 為例</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/A3-refactor.html">代碼重構 Refactor</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/book.html">book.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/C1-blogMvc.html">案例 1.1 -- 網誌經典版</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/C2-blogAjax.html">案例 2 -- AJAX 網誌</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/C3-WebPos.html">案例 3 -- WebPos 系統分析、設計與實作</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/directory.html">軟體工程 -- 以 node.js 為例</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/git.html">git / github 的用法</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/Home.html">軟體工程 -- 以 Node.js 為例</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/mylodash.html">mylodash 的 github pull request 練習</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/note.html">JavaScript 與軟體工程</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/README.html">陳鍾誠的軟體工程課程地圖</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/Reference.html">參考文獻</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/rule.html">軟體法則</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/SUMMARY.html">軟體工程 -- 以 node.js 為例</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_doc/tool.html">Tool</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/ai/autograd/README.html">autograd</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/ai/cuda/README.html">cuda</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/co/attack/README.html">attack</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/co/riscv/README.html">riscv CPU</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/dasm/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/docker/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/elf/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/fs/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallc/README.html">deno 呼叫 C</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/bash_run_fail.html">bash_run_fail.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/docker_run_fail.html">docker_run_fail.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/powershell_fail.html">powershell_fail.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/denocallrust/README.html">deno call rust</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/_more/v8/README.html">v8 interaction</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/c_to_wasm/README.html">c to wasm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_call_py/README.html">deno call python</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_call_shell/README.html">deno call shell</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_call_wasm/README.html">deno call wasm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_embed/README.html">deno embedding</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/deno_use_npm/README.html">deno use npm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/dotnet_call_wasm/README.html">dotnet call wasm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/python_call_wasm/README.html">python call wasm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/README.html">deno core</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/rust_call_wasm/README.html">rust call wasm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/interop/rust_to_wasm/README.html">rust to wasm</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/loader/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/os/os/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/os/README.html">OS</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_domain/sp/vm/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/git/action/README.html">github action</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/git/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/github/README.html">github</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/gitter/README.html">gitter</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/app/README.html">app</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/01-op/databaseVsBigData.html">databaseVsBigData.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/01-op/README.html">sqlite</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/02-blog/README.html">Blog -- Classic</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/01-sqlite/README.html">sqlite</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/02-session/02-blogLogin/README.html">Blog -- Classic</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/02-session/03-blogSignup/README.html">Blog -- Classic</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/02-session/README.html">Session</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/database/README.html">database</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/deno-sqlite/CONTRIBUTING.html">Contribute to SQLite for Deno</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/_more/deno-sqlite/README.html">Deno SQLite Module</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/blog/README.html">Blog -- Classic</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/blog/wsl.html">wsl run deno blog</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/build-deno/README.html">build deno</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/git-server/README.html">deno git server</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/git-server/test/test.html">test.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_case/README.html">case</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/網站的軟體工程.html">網站的軟體工程</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/deploy/README.html">deno deploy</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/e2e/README.html">puppeteer</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/gendoc/README.html">GenDoc</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/package/README.html">deno 套件</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/performance/README.html">效能問題</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/postman/README.html">postman</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/_more/test/README.html">Test</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/00-callback/01-basic/README.html">設計模式</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/00-callback/02-promise/README.html">模式 -- callback Promise</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/01-chain/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/02-pubsub/README.html">pub-sub</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/03-middleware/README.html">middle ware</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/04-mvc/README.html">MVC -- Model/View/Controller</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/bundle/README.html">deno bundle</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/pattern/README.html">設計模式</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/js/README.html">deno</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/pm/README.html">Project Management</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/_more/test/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/c/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/00-uselodash/README.html">uselodash</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/01a-mylodashjs/README.html">練習 -- 模仿 lodash 套件實作</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/01b-mylodashts/README.html">練習 -- 模仿 lodash 套件實作</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/02-helloTest/README.html">學習使用 deno test 進行測試</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/03-lodashTest/README.html">練習 -- 模仿 lodash 套件實作</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/04-tdd/README.html">練習 -- TDD</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/05-tdd2/README.html">練習 -- TDD2</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/06-bdd/README.html">練習 -- BDD</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/07-bdd2/code.html">練習 -- BDD</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/07-bdd2/README.html">練習 -- BDD</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/08-bench/README.html">deno benchmark</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/09-metrics/README.html">deno metrics</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/js/README.html">測試 test</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/01-測試/README.html">測試 test</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/01-deno/01-use/README.html">lodash</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/01-deno/02-publish/README.html">deno 的套件出版</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/01-deno/03-install/README.html">install</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/01-deno/04-package-manager/README.html">package-manager</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/01-deno/README.html">deno package</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/02-team/README.html">兩人的專案</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/03-model/agile.html">敏捷軟體製程 Agile</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/03-model/README.html">軟體開發模式</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/04-workflow/README.html">GithubFlow</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/05-platform/README.html">確認開發工具</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/06-pm/README.html">Project Management</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/07-github/README.html">github</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/02-合作/08-redmine/README.html">Redmine</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/00-readable/history.html">history</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/01-cache/README.html">效能</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/02-constantFolding/README.html">Constant Folding</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/03-loopInvariant/README.html">Loop Invariant -- 迴圈不變量</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/04-volatile/README.html">volatile</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/05-jumpTableSwitch/jumpTable.html">JumpTable</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/06-struBits/README.html">bits struct</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/08-valgrind/README.html">debug</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/編譯器優化.html">編譯器優化</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/gcc編譯器的優化功能.html">gcc 編譯器的優化功能</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/gdb除錯工具.html">gdb 除錯工具</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/GNU工具的用法.html">GNU 工具的用法</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/c/README.html">軟硬體的效能</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/_more/00-standardjs/README.html">隨堂練習 -- StandardJS 標準語法</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/_more/03-throw/README.html">練習 throw -- bug 預防 及早警示</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/_more/04-assert/README.html">練習 assert -- bug 預防 及早警示</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/_more/09-modularize/exercise.html">練習 -- publish</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/_more/09-modularize/README.html">ccclodash</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/01-format/README.html">自動排版</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/02-debug/README.html">debug</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/03-guard/README.html">練習 -- 除錯 debug</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/05-catch/README.html">練習 catch -- bug 治療</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/06-pitfall/README.html">練習 Pitfall -- 語言的陷阱</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/07-profiling/README.html">效能地圖 -- Profiling</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/08-floatbug/README.html">Bug</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/doc/README.html">deno doc</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/garbage/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/lint/README.html">deno lint</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/README.html">程式品質 -- 避免 bug</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/js/style/README.html">deno style</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/03-品質/README.html">程式品質</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/04-分析/00-uml/README.html">UML</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/04-分析/01-usecase/README.html">iPos 使用者個案</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/04-分析/02-sequence/README.html">iPos 循序圖</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/04-分析/03-ui/README.html">介面分析設計</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/04-分析/README.html">系統分析與設計</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/01-class/README.html">iPos -- 類別圖</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/02-algorithm/caseAsm/asm/README.html">Assembler -- JavaScript</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/02-algorithm/caseAsm/README.html">Design 系統設計</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/02-algorithm/README.html">演算法</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/03-deploy/README.html">佈署</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/04-pattern/README.html">設計模式</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/05-設計/05-architect/README.html">軟件架構</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/01-classic/01-superdeno/README.html">練習 -- koa server 測試入門</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/01-classic/02-blogClassic/src/README.html">Blog -- Classic</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/01-classic/02-blogClassic/test/README.html">blog test</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/02-ajax/01-puppeteer/PdfTest_fail.html">PdfTest_fail.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/02-ajax/01-puppeteer/README.html">練習 e2e 測試 -- 使用 puppeteer</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/02-ajax/02-blogAjax/README.html">練習 -- 使用 puppeteer 測試你的 AJAX 程式 完整</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/02-ajax/c1-playweight/README.html">playweight</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/correct/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/loadTest.html">練習 : loadTest</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/_more/02-flash-messages/README.html">Flash</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/_more/03-csrf/README.html">CSRF</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/_more/10-helmet/README.html">koa-helmet 套件</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/網站漏洞.html">網站漏洞</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/翻牆.html">翻牆</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/CORS.html">CORS</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/Fail2ban防護程式.html">Fail2ban 防護程式</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/hack.html">破解密碼</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/07-驗證/security/README.html">安全性議題</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/devops/README.html">DevOps</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/入門必看.html">入門必看</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/compose/deno/README.html">docker compose -- deno</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/compose/gitea-postgres/README.html">docker-compose gitea+postgresql</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/compose/README.html">docker compose</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/deno/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/gitea/linode.html">用 docker compose 在 linode 上安裝 gitea</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/gitea/windows.html">windows.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/gitea/wsl.html">gitea</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/hello/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/images.html">images.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/README.html">docker</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/docker/windows/README.html">docker for windows</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/installer/README.html">Installer Builder</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/kubernetes/README.html">kubernetes</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/linux/ps.html">ps</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/08-佈署/linux/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/09-自動化/deno/README.html">deno auto</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/09-自動化/githook/example.html">example.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/09-自動化/githook/README.html">githook</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/09-自動化/github_action/README.html">github action</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/軟體工程.html">軟體工程.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/04-inherit/hillClimbingFramework/實作：通用的爬山演算法架構.html">實作：通用的爬山演算法架構</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/04-inherit/hillClimbingFramework/實作：通用的模擬退火法架構.html">模擬退火法 Simulated-Annealing</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/04-inherit/README.html">繼承</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/05-pattern/README.html">設計模式</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/全錄PARC的Alto電腦.html">全錄PARC的Alto電腦.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/事件驅動EventDriven.html">事件驅動EventDriven.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/視窗GUI與物件導向.html">視窗GUI與物件導向.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/提高可理解性.html">提高可理解性</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/結構化程式興起.html">結構化程式興起.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/賈伯斯AppleII與LisaMac.html">賈伯斯AppleII與LisaMac.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/模組化.html">模組化</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/避免重複的程式碼.html">避免重複的程式碼</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/Church與LambdaCalculus.html">Church與LambdaCalculus.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A1-模組化/Dijkstra的goto有害論.html">Dijkstra的goto有害論.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/bash.html">~/.bashprofile</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/deno.html">deno</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/dot_圖形繪製工具.html">dot 圖形繪製工具</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/figma介面設計工具.html">figma介面設計工具.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/gcc.html">gcc.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/git.html">git.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/gitbash.html">gitbash.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/github相關工具.html">Github</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/linux.html">linux.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/mermaid_UML流程圖繪製工具.html">mermaid UML 流程圖繪製工具</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/README.html">《軟體工程與演算法》課程使用環境</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/riscv.html">riscv.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/tex數學式撰寫工具.html">tex</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A2-工具/wsl.html">WSL -- Windows Subsystem for Linux</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/flow.html">git flow</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/gitHook.html">git hook</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/github.html"> Git 教學和 GitHub 設定指引https://hackmd.io/@sysprog/git-with-github</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/githubAction.html">github action</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/githubflow.html">git 與 github 使用</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/gitlab.html">gitlab</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/A3-git/submodule.html">git submodule</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/map.html">軟體工程課程地圖</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/installer/README.html">pyinstaller</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/publish/ai6.html">ai6.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/publish/ai6/README.html">ai6 -- Artificial Intelligence Code Examples</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/publish/README.html">unittest</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/test1/pytest-bdd/README.html">README.md</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/test1/pytest/README.html">pytest</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/test1/README.html">python test framework</a></li>
+<li><a href="../../../_more/code/傳統軟體工程/python/test1/unittest/README.html">unittest</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/_doc/run.html">run.md</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/_more/agentOllama.html">Agent with Memory — XML-based Tool Use + 記憶系統</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/_more/blog/server.html">Express + SQLite 部落格伺服器（XML Agent 測試目標）</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent1prompt/agent1.1image.html">agent1.1image.md</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_bigpickle/session-ses_f9f8.html">agent1prompt.py 改為 agent2context.py 並加入 SQLite 機制</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/AGENT.html">AGENT.md — 長期記憶</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/memory/AGENT.html">AGENT.md — 長期記憶</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/memory/skills/system_info/SKILL.html">技能：系統資訊查詢</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/README_memory.html">記憶功能說明</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent2context_claude/SKILL.html">技能：系統資訊查詢</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent3harness/agent3harness.html">系統服務與配置</a></li>
+<li><a href="../../../_more/code/agent/_more/_bak/v2-agent-claude/agent4loop/agent4loop.html">-- coding: utf-8 --</a></li>
+<li><a href="../../../_more/code/agent/_more/_doc/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/_doc/安全規劃.html">Agent0 安全規劃</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/_doc/run.html">run.md</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/agent0.html">Agent in Docker — 容器隔離執行 Agent</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/blog/server.html">Express + SQLite 部落格伺服器（Docker 測試目標）</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/test_docker.html">Python 3.12.8 已安裝！</a></li>
+<li><a href="../../../_more/code/agent/_more/A1-agent_in_docker/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/_more/mini-openclaw.html">mini-openclaw — 最小化 AI Agent 框架（OpenClaw 克隆版）</a></li>
+<li><a href="../../../_more/code/agent/_more/v1-mini-opencraw/agent0.html">Agent0 — JSON-based Tool Use Agent（OpenClaw 簡化版）</a></li>
+<li><a href="../../../_more/code/agent/_more/v1-mini-opencraw/agent0test/hello.html">Hello World — Agent 測試腳本</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/_doc/run.html">run.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/agent0.html">Agent with Security Reviewer — XML-based Tool Use Agent</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/blog/server.html">Express + SQLite 部落格伺服器 — Agent 工具測試目標</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/hello.html">Hello World — Agent 測試用目標腳本</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/test_reviewer.html">安全審查者測試工具</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-reviewer/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/_doc/run.html">run.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/agent0.html">Agent with Security — LLM 安全審查 + 目錄存取控制</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/blog/server.html">Express + SQLite 部落格伺服器（安全 Agent 測試目標）</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/hello.html">Hello World — Agent 安全測試腳本</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/test_reviewer.html">安全審查者測試（含目錄存取測試）</a></li>
+<li><a href="../../../_more/code/agent/_more/v3-agent-secure/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/harnessEngineering.html">harnessEngineering.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/run.html">run.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/team規劃書.html">Agent0 Team 規劃書</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/team測試計劃.html">Agent0Team 測試計劃</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/team測試案例.html">Agent0Team 測試案例 - Case 1</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/_doc/team詳細計劃.html">Agent0Team 詳細程式規格書</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/agent0.html">Agent0 Class — 物件導向 Agent 框架</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/test_reviewer.html">安全審查者測試（v4 類別版本）</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v4-agent-class/test0.html">Agent0 互動測試 — 匯入 Agent0 類別</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/修改報告.html">修改報告</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/harnessEngineering.html">harnessEngineering.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/run.html">run.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/session-ses_2b40.html">New session - 2026-04-02T02:22:06.018Z</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/team_test_case.html">team_test_case.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/team規劃書.html">Agent0 Team 規劃書</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/team測試計劃.html">Agent0Team 測試計劃</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/team測試案例.html">Agent0Team 測試案例 - Case 1</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/_doc/team詳細計劃.html">Agent0Team 詳細程式規格書</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/agent0.html">Agent0 Class（v5 基礎類別）</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/agent0team.html">Agent Team — Planner/Generator/Evaluator 團隊協作框架</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/test_reviewer.html">安全審查者測試（v5 版本）</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/test_team_case1.html">測試個案 1：FastAPI + SQLite 網誌系統</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/test_team_case2.html">測試個案 2：伊朗戰情報告</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/test_team.html">團隊功能測試</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/_more/v5-agent-team/test0.html">Agent0 互動測試（v5 版本）</a></li>
+<li><a href="../../../_more/code/agent/ai_chat.html">ai_chat.md</a></li>
+<li><a href="../../../_more/code/agent/v0-hello/_more/chat0.html">Chat0 — 純對話 LLM 客戶端（無工具）</a></li>
+<li><a href="../../../_more/code/agent/v0-hello/_more/kimiResponse.html">kimiResponse.md</a></li>
+<li><a href="../../../_more/code/agent/v0-hello/helloOllama.html">helloOllama.md</a></li>
+<li><a href="../../../_more/code/agent/v0-hello/helloPicture.html">helloPicture.md</a></li>
+<li><a href="../../../_more/code/agent/v0-hello/picture1.html">picture1.md</a></li>
+<li><a href="../../../_more/code/agent/v1-chat/chatOllama.html">1. 相對論（Theoretical Physics）</a></li>
+<li><a href="../../../_more/code/agent/v1-chat/chatThinking.html">我能为你做什么？</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/agent1prompt/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/agent2context/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/agent3harness/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/agent4loop/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/agent4loop2/test.html">test.md</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/agent5claw/test.html">事實</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/AGENTS.html">AGENTS.md</a></li>
+<li><a href="../../../_more/code/agent/v2-agent/session-ses_f9f6.html">AGENTS.md creation for repo onboarding</a></li>
+<li><a href="../../../_more/code/mini-llm/_doc/_ai.html">_ai.md</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/adamw-optimizer.html">AdamW Optimizer — AdamW 最佳化器</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/autoregressive-language-model.html">Autoregressive Language Model — 自迴歸語言模型</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/causal-self-attention.html">Causal Self-Attention — 因果自注意力</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/character-level-tokenizer.html">Character-Level Tokenizer — 字元級分詞器</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/cross-entropy-loss.html">Cross-Entropy Loss — 交叉熵損失函數</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/gradient-clipping.html">Gradient Clipping — 梯度裁切</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/gradient-descent.html">Gradient Descent — 梯度下降</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/index.html">mini-llm Wiki</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/knowledge-distillation.html">Knowledge Distillation — 知識蒸餾</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/pretraining-finetuning.html">Pretraining + Fine-tuning — 預訓練與微調範式</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/rmsnorm.html">RMSNorm — Root Mean Square Normalization</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/rotary-position-embedding.html">Rotary Position Embedding RoPE</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/swiglu.html">SwiGLU — Swish-Gated Linear Unit</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/synthetic-data-augmentation.html">Synthetic Data Augmentation — 合成資料擴增</a></li>
+<li><a href="../../../_more/code/mini-llm/_wiki/weight-tying.html">Weight Tying — 權重共享</a></li>
+<li><a href="../../../_more/code/mini-llm/AGENTS.html">mini-llm — AGENTS.md</a></li>
+<li><a href="../../../_more/code/mini-llm/README.html">mini-llm — 微型語言模型訓練流程</a></li>
+<li><a href="../../../_more/code/mini-llm/v1-pretrain/mini-llm.html">mini-llm.md</a></li>
+<li><a href="../../../_more/code/mini-llm/v2-finetune/run.html">mini-llm v2 -- run.sh</a></li>
+<li><a href="../../../_more/code/mini-llm/v3-distill/run.html">mini-llm v3 -- run.sh</a></li>
+<li><a href="../../../_more/code/nn0/nn0js/README.html">README.md</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/examples/ex1-grad.html">ex1-grad.py — 基礎自動微分運算</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/examples/ex2-linear.html">ex2-linear.py — 線性回歸訓練</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/examples/ex3-xor.html">ex3-xor.py — 多層感知器 MLP 訓練 XOR</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/examples/ex4-classify.html">ex4-classify.py — Softmax 與 Cross-Entropy Loss</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/examples/ex5-charpredicate.html">ex5-charpredicate.py — 迷你字元預測器</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/examples/gpt0demo.html">gpt0demo.py — 教學演示</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/gpt0.html">gpt0.py — GPT 模型實現</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/nn0.html">nn0.py — 自動微分引擎</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/README.html">gpt.py</a></li>
+<li><a href="../../../_more/code/nn0/nn0py/test.html">test.md</a></li>
+<li><a href="../../../_more/homework/hw1-curl/_doc/session-ses_f71a.html">規劃Rust版curl專案功能</a></li>
+<li><a href="../../../_more/homework/hw1-curl/_doc/v0.1.html">rurl v0.1.0 — Phase 1</a></li>
+<li><a href="../../../_more/homework/hw1-curl/AGENTS.html">AGENTS.md</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/plan.html">金門大學校務系統 MVP 實作規劃</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/session-v0.1.html">NQU ERP MVP Rust 後端實作</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/session-v0.3.html">Create or update AGENTS.md</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/v0.1.html">NQU-ERP v0.1 Release Notes</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/v0.2.html">NQU-ERP v0.2 Release Notes</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/v0.3.1.html">NQU-ERP v0.3.1 Release Notes</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/_doc/v0.3.html">NQU-ERP v0.3 Release Notes</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/AGENTS.html">AGENTS.md — NQU-ERP 開發指南</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/run.html">run.md</a></li>
+<li><a href="../../../_more/homework/hw2-nqu-erp/target/debug/build/rust_decimal-1f3ee603002b6b55/out/README-lib.html">Installing</a></li>
+<li><a href="../../../_more/homework/hw3-opencode-telegram-bot/_doc/install.html">install.md</a></li>
+<li><a href="../../../_more/homework/hw3-opencode-telegram-bot/_doc/success_log.html">success_log.md</a></li>
+<li><a href="../../../_more/homework/hw3-opencode-telegram-bot/_doc/telegram-bot.html">Telegram Bot × opencode 除錯紀錄（2026-09-20）</a></li>
+<li><a href="../../../_more/homework/hw3-opencode-telegram-bot/README.html">說明</a></li>
+<li><a href="../../../_more/homework/hw3-opencode-telegram-bot/student/README.html">手機呼叫 opencode：Telegram Bot（學生版）</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/1.1.html">1.1 淘寶初期的 Web 架構：單機 Tomcat + 資料庫</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/1.2.html">1.2 第一次演進：Web 伺服器與資料庫分離部署</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/1.3.html">1.3 應用伺服器的效能瓶頸：CPU、內存與 I/O 競爭</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/1.4.html">1.4 單體什麼時候不夠用：擴展性 vs 效能</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/10.1.html">10.1 Service：ClusterIP / NodePort / LoadBalancer</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/10.2.html">10.2 對外入口：Ingress 與雲原生網關</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/10.3.html">10.3 服務網格：Istio 無侵入治理與 mTLS</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/10.4.html">10.4 儲存與配置：PV / PVC / StorageClass / ConfigMap / Secret</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/11.1.html">11.1 自癒：Liveness 與 Readiness 探針</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/11.2.html">11.2 應對大促：HPA / Cluster Autoscaler / KEDA</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/11.3.html">11.3 資源治理：Requests &amp; Limits 與 OOM 防護</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/11.4.html">11.4 多機房多集群：Affinity / Taints / Tolerations / Karmada</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/12.1.html">12.1 微服務過度拆分的技術債</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/12.2.html">12.2 模組化單體的復興：幾時該拆、幾時該合</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/12.3.html">12.3 全面 Serverless 化：Knative 與冷啟動優化</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/12.4.html">12.4 從微服務到 FaaS：前端與業務平台實踐</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/13.1.html">13.1 GitOps 持續部署：ArgoCD 實戰</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/13.2.html">13.2 可觀測性三支柱：Log / Metric / Trace 與 OpenTelemetry</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/13.3.html">13.3 成本治理 FinOps：混部與資源利用率</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/13.4.html">13.4 公有雲託管 K8s：ACK / EKS / GKE 最佳實踐</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/14.1.html">14.1 從千人千面到生成式 UI 與 AI Agent 導購</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/14.2.html">14.2 K8s 調度 GPU：vGPU / MIG / RDMA 高速網路</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/14.3.html">14.3 推理服務雲原生部署：vLLM / Triton + K8s</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/14.4.html">14.4 邊緣與 WASM：輕量容器在邊緣路由的應用</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/14.5.html">14.5 雲原生 AI 推理棧新進展：AI Serving Stack / 機密推理 / GPU 共享與彈性</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/15.1.html">15.1 從雲原生到 AI 原生：2025 白皮書與雲智一體</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/15.2.html">15.2 AgentRun 八大組件：AI 運行時 / AI 網關 / AI MQ / Memory / 可觀測 / 評估 / 安全</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/15.3.html">15.3 FunctionAI 與 Agent Infra：AWS AgentCore / Azure / FunctionAI 長時運行與會話親和</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/15.4.html">15.4 MCP / A2A / Kagent on Knative：Agent 協議的 Serverless 託管</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/16.1.html">16.1 AI 網關：推理路由、Token 限流、多模型協議適配與 Gateway API</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/16.2.html">16.2 AI 中間件演進：Spring AI Alibaba / Higress / MSE / RocketMQ</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/16.3.html">16.3 淘寶 AI OS 實戰：搜索推薦全圖架構、RTP / XDL / OpenSearch 百萬 QPS</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/16.4.html">16.4 淘寶最新落地：Node.js Serverless 核心鏈路、智能客服亞秒級、Wenwen 生成式導購</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/17.1.html">17.1 ACK 2025–2026 新能力：Auto Mode / Virtual Node / ACK One 多集群 / AI Assistant</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/17.2.html">17.2 全景複盤：單體 → 分散式 → 微服務 → 雲原生 → AI 原生</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/17.3.html">17.3 技術選型白皮書：避免為了雲原生 / AI 而雲原生 / AI</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/17.4.html">17.4 架構設計原則：N+1、回滾、禁用、監控、多活、水平擴展、FinOps 與 AI 安全</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/2.1.html">2.1 資料庫讀寫瓶頸與快取救星</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/2.2.html">2.2 本地快取與分散式快取：Memcached / Redis / Tair</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/2.3.html">2.3 快取實戰痛點：穿透、擊穿、雪崩與熱點失效</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/2.4.html">2.4 快取與資料庫的一致性難題</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/3.1.html">3.1 反向代理與 Web 集群：Nginx / HAProxy</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/3.2.html">3.2 無狀態設計與 Session 共享：Redis / JWT / 黏性會話</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/3.3.html">3.3 四層與七層的搭配：LVS / F5 + Keepalived</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/3.4.html">3.4 機房入口：DNS 輪詢、CDN 與異地多活基礎</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/4.1.html">4.1 讀寫分離與主從同步：Mycat 與資料一致性</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/4.2.html">4.2 按業務垂直分庫：降低資源競爭</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/4.3.html">4.3 大表拆小表：Hash / 時間分片與水平擴展</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/4.4.html">4.4 拆分後的代價：分散式事務、跨庫 Join 與 MPP</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/5.1.html">5.1 大應用拆小應用：業務邊界與 DDD 簡介</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/5.2.html">5.2 公共模組服務化：Dubbo / Spring Cloud RPC</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/5.3.html">5.3 分散式協調：Zookeeper / Nacos 配置中心與服務發現</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/5.4.html">5.4 微服務三板斧：限流、熔斷與降級</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/6.1.html">6.1 異構儲存：HDFS / HBase / Elasticsearch / 大數據場景</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/6.2.html">6.2 訊息佇列：RocketMQ / Kafka 異步解耦與削峰</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/6.3.html">6.3 ESB 與 API Gateway：統一協議與路由</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/6.4.html">6.4 傳統微服務運維地獄：環境不一致與部署死胡同</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/7.1.html">7.1 虛擬機 vs 容器：本質差異與隔離模型</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/7.2.html">7.2 Docker 三要素：Image / Container / Repository</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/7.3.html">7.3 編寫 Dockerfile：把微服務打包為標準單元</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/7.4.html">7.4 Docker Compose 實戰：一鍵啟動 微服務 + Redis + MySQL + Nginx</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/8.1.html">8.1 Docker 網路模型：Bridge / Host / Overlay</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/8.2.html">8.2 數據持久化：Volume 與 Bind Mount</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/8.3.html">8.3 單機容器的極限：成百上千容器誰來管</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/9.1.html">9.1 為什麼需要容器編排</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/9.2.html">9.2 K8s 架構解密：Control Plane 與 Worker Node</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/9.3.html">9.3 核心物件入門：Pod / ReplicaSet / Deployment</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/9.4.html">9.4 重新定義部署：滾動更新與版本回滾</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/A.1.html">A.1 本地實驗環境：Docker Desktop / kind / minikube</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/A.2.html">A.2 Dockerfile 與 Compose 速查</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/A.3.html">A.3 kubectl 與 YAML 速查</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/B.1.html">B.1 淘寶 14 次演進 vs 本書章節對照總表</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/B.2.html">B.2 雙十一大促案例：預熱、削峰、降級與彈性擴縮</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/B.3.html">B.3 2025–2026 新名詞表：AI 原生 / AgentRun / FunctionAI / MCP / A2A / AI Serving Stack</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/B.4.html">B.4 架構演進教學指引：如何用本書上課</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/README.html">演進式架構實戰：從單體、微服務到 Docker、Kubernetes 與 AI 雲原生轉型</a></li>
+<li><a href="../../../_more/mybook/向淘寶學習網站架構演進/ref.html">ref.md</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/1.1.html">1.1 什麼是軟體工程</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/1.2.html">1.2 軟體的複雜性與本質性困難</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/1.3.html">1.3 人月神話與 Brooks 法則</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/1.4.html">1.4 AI 時代：附屬性困難的消亡與本質性困難的永存</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/1.5.html">1.5 軟體工程師的角色轉變</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/10.1.html">10.1 為什麼沒有度量就沒有改進</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/10.2.html">10.2 評估資料集的設計原則</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/10.3.html">10.3 對比實驗與消融實驗</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/10.4.html">10.4 Agent 的持續進化閉環</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/10.5.html">10.5 從經驗中學習：學習訊號與更新載體</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/11.1.html">11.1 事件驅動與非同步架構</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/11.2.html">11.2 即時互動：語音、Computer Use 與物理世界</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/11.3.html">11.3 多 Agent 協作的分類框架</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/11.4.html">11.4 協作拓撲：對等、管理者與去中心化</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/12.1.html">12.1 從瀑布到敏捷到 AI 增強的 SDLC</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/12.2.html">12.2 多人 + AI 的協同開發</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/12.3.html">12.3 統一 AI 的全局認知：Shared Context</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/12.4.html">12.4 自動化品質護欄與 CI/CD</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/13.1.html">13.1 提示注入與防禦</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/13.2.html">13.2 工具安全與權限控制</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/13.3.html">13.3 AI 的偏見、幻覺與責任歸屬</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/13.4.html">13.4 合規與隱私保護</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/14.1.html">14.1 模型即 Agent：RL 內化工具呼叫決策</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/14.2.html">14.2 模型與 Harness 的共同演進飛輪</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/14.3.html">14.3 兩朵烏雲：即時互動與持續學習</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/14.4.html">14.4 軟體工程師的未來：從建築工到指揮官</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/2.1.html">2.1 需求的本質：從模糊意圖到精確規格</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/2.2.html">2.2 需求挖掘與訪談技巧</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/2.3.html">2.3 用例建模與使用者故事</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/2.4.html">2.4 邊界條件與 Edge Cases</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/2.5.html">2.5 AI 輔助需求分析：Red Teaming Prompting</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/2.6.html">2.6 Spec-Driven Development：可執行的規格</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/3.1.html">3.1 設計思維：抽象、模組化與資訊隱藏</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/3.2.html">3.2 架構模式：從單體到微服務</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/3.3.html">3.3 API 與介面設計（ACI vs HCI）</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/3.4.html">3.4 設計原則：SOLID、DRY 與 KISS</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/3.5.html">3.5 AI 時代的系統設計：高內聚低耦合的新意義</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/4.1.html">4.1 程式碼品質與可讀性</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/4.2.html">4.2 重構：改善既有設計的藝術</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/4.3.html">4.3 設計模式的實用指南</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/4.4.html">4.4 Agentic Coding：人機協同的程式碼生成</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/4.5.html">4.5 Code Review 在 AI 時代的演變</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/5.1.html">5.1 測試金字塔與測試策略</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/5.2.html">5.2 單元測試與 TDD</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/5.3.html">5.3 整合測試與端到端測試</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/5.4.html">5.4 AI 自動生成測試</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/5.5.html">5.5 LLM-as-a-Judge：用模型評判模型</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/5.6.html">5.6 迴歸測試與持續驗證</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/6.1.html">6.1 CI/CD 管線設計</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/6.2.html">6.2 DevOps 與基礎設施即程式碼</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/6.3.html">6.3 監控、日誌與可觀測性</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/6.4.html">6.4 AI 驅動的異常偵測與自癒系統</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/7.1.html">7.1 提示工程的基礎與進階</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/7.2.html">7.2 上下文工程：決定 AI 能力上限的關鍵</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/7.3.html">7.3 API 的上下文結構：訊息列表的角色</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/7.4.html">7.4 上下文壓縮與管理策略</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/7.5.html">7.5 知識庫與 RAG：跨會話的記憶體系</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/8.1.html">8.1 工具設計的通用原則（ACI）</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/8.2.html">8.2 五類工具的分類與設計</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/8.3.html">8.3 MCP 協定：工具互操作標準</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/8.4.html">8.4 ReAct 迴圈：思考→行動→觀察</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/8.5.html">8.5 Coding Agent 與程式碼生成的元能力</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/9.1.html">9.1 Harness 的五要素：Context、Tools、Constrain、Verify、Correct</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/9.2.html">9.2 約束機制：故障安全預設值</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/9.3.html">9.3 驗證機制：輸入隔離與結果校驗</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/9.4.html">9.4 糾正機制：熔斷器與錯誤恢復</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/9.5.html">9.5 從提示工程到 Loop 工程到 Graph 工程</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/A.1.html">A.1 版本控制的本質：為什麼需要 Git</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/A.2.html">A.2 Git 基礎操作：init、add、commit、branch、merge</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/A.3.html">A.3 分支策略：Git Flow 與 Trunk-Based Development</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/A.4.html">A.4 GitHub 協作：Pull Request、Code Review、Issue</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/A.5.html">A.5 GitHub Actions：自動化 CI/CD 入門</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/A.6.html">A.6 Git 進階：rebase、cherry-pick、bisect</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.1.html">B.1 OpenCode 是什麼：從 CLI 到 Desktop</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.2.html">B.2 安裝與設定 OpenCode Desktop</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.3.html">B.3 AGENTS.md：為 AI 寫一份崗位說明書</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.4.html">B.4 權限控制：讓 AI 能做什麼、不能做什麼</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.5.html">B.5 MCP Servers：擴展 AI 的工具箱</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.6.html">B.6 Skills：教 AI 新技能</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/B.7.html">B.7 實戰：用 OpenCode 完成一個小專案</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.1.html">C.1 需求發掘與產品驗證案例</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.2.html">C.2 破壞性創新與創意生態案例</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.3.html">C.3 軟體缺陷與安全關鍵系統案例</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.4.html">C.4 架構演進與技術債案例</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.5.html">C.5 網站與服務營運失敗案例</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.6.html">C.6 趣味歷史軼事與其時代啟示</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/C.7.html">C.7 案例集目錄與教學指引</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/outline.html">《現代軟體工程：從基礎到 AI Agent 實踐》大綱</a></li>
+<li><a href="../../../_more/mybook/現代軟體工程/README.html">現代軟體工程：從基礎到 AI Agent 實踐</a></li>
+<li><a href="../../../_more/mybook/README.html">README.md</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/afterword.zhtw.html">後記：回到 Agent = LLM + 上下文 + 工具 {.unnumbered}</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter1.zhtw.html">AI Agent 入門</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter10.zhtw.html">多 Agent 協作</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter2.zhtw.html">上下文工程</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter3.zhtw.html">使用者記憶和知識庫</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter4.zhtw.html">工具</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter5.zhtw.html">Coding Agent 與程式碼生成</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter6.zhtw.html">互動：觀察與動作空間的擴展</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter7.zhtw.html">Agent 的評估</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter8.zhtw.html">模型後訓練</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/chapter9.zhtw.html">Agent 的持續進化</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/introduction.zhtw.html">引言 {.unnumbered}</a></li>
+<li><a href="../../../_more/refbook/agent-book-zhtw/reference-answers.zhtw.html">思考題參考答案</a></li>
+<li><a href="../../../_more/refbook/chat/案例集.html">案例集.md</a></li>
+<li><a href="../../../_more/refbook/chat/agent工程.html">==========================================</a></li>
+<li><a href="../../../_more/refbook/chat/ai軟體工程.html">Domain Glossary</a></li>
+<li><a href="../../../_more/refbook/opencode.school/agent-plan.html">agent-plan.md</a></li>
+<li><a href="../../../_more/refbook/opencode.school/AGENTS.html">Project overview</a></li>
+<li><a href="../../../_more/refbook/opencode.school/CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li><a href="../../../_more/refbook/opencode.school/CONTRIBUTING.html">Contributing to OpenCode School</a></li>
+<li><a href="../../../_more/refbook/opencode.school/human-plan.html">opencode.school</a></li>
+<li><a href="../../../_more/refbook/opencode.school/README.html">OpenCode School</a></li>
+<li><a href="../../../_more/refbook/opencode.school/src/content/pages/cheatsheet.html">Slash commands</a></li>
+<li><a href="../../../_more/refbook/opencode.school/src/content/pages/glossary.html">agent</a></li>
+<li><a href="../../../_more/wiki/軟體工程/人機協作模式.html">人機協作模式</a></li>
+<li><a href="../../../_more/wiki/軟體工程/上線營運.html">上線營運</a></li>
+<li><a href="../../../_more/wiki/軟體工程/公司登記與開業.html">公司登記與開業</a></li>
+<li><a href="../../../_more/wiki/軟體工程/安全開發.html">安全開發 Secure Development</a></li>
+<li><a href="../../../_more/wiki/軟體工程/技術債.html">技術債 Technical Debt</a></li>
+<li><a href="../../../_more/wiki/軟體工程/災難復原.html">災難復原：確保業務連續性</a></li>
+<li><a href="../../../_more/wiki/軟體工程/版本控制.html">版本控制</a></li>
+<li><a href="../../../_more/wiki/軟體工程/金流整合.html">金流整合</a></li>
+<li><a href="../../../_more/wiki/軟體工程/金流整合範例.html">金流整合範例</a></li>
+<li><a href="../../../_more/wiki/軟體工程/持續部署.html">持續部署</a></li>
+<li><a href="../../../_more/wiki/軟體工程/持續整合.html">持續整合</a></li>
+<li><a href="../../../_more/wiki/軟體工程/容器編排.html">容器編排 Container Orchestration</a></li>
+<li><a href="../../../_more/wiki/軟體工程/效能優化.html">效能優化 Performance Optimization</a></li>
+<li><a href="../../../_more/wiki/軟體工程/訊息佇列.html">訊息佇列：異步通信與事件驅動</a></li>
+<li><a href="../../../_more/wiki/軟體工程/敏捷開發.html">敏捷開發</a></li>
+<li><a href="../../../_more/wiki/軟體工程/設計模式.html">設計模式</a></li>
+<li><a href="../../../_more/wiki/軟體工程/軟體工程的歷史.html">軟體工程的歷史</a></li>
+<li><a href="../../../_more/wiki/軟體工程/軟體生命週期.html">軟體生命週期</a></li>
+<li><a href="../../../_more/wiki/軟體工程/軟體度量.html">軟體度量 Software Metrics</a></li>
+<li><a href="../../../_more/wiki/軟體工程/軟體架構.html">軟體架構</a></li>
+<li><a href="../../../_more/wiki/軟體工程/測試.html">測試</a></li>
+<li><a href="../../../_more/wiki/軟體工程/程式碼品質.html">程式碼品質 Code Quality</a></li>
+<li><a href="../../../_more/wiki/軟體工程/雲端架構.html">雲端架構：現代雲計算服務</a></li>
+<li><a href="../../../_more/wiki/軟體工程/雲端原生.html">雲端原生 Cloud-Native</a></li>
+<li><a href="../../../_more/wiki/軟體工程/微服務架構.html">微服務架構：服務拆分與協作</a></li>
+<li><a href="../../../_more/wiki/軟體工程/監控與日誌.html">監控與日誌 Monitoring &amp; Logging</a></li>
+<li><a href="../../../_more/wiki/軟體工程/需求工程.html">需求工程：系統開發的起點</a></li>
+<li><a href="../../../_more/wiki/軟體工程/領域驅動設計.html">領域驅動設計：複雜系統的設計方法</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Agent發展史.html">Agent 發展史</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Agentic工程.html">Agentic Engineering（智慧體工程）</a></li>
+<li><a href="../../../_more/wiki/軟體工程/API設計.html">API 設計</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Context工程.html">Context Engineering 上下文工程</a></li>
+<li><a href="../../../_more/wiki/軟體工程/DevOps.html">DevOps</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Docker.html">Docker</a></li>
+<li><a href="../../../_more/wiki/軟體工程/E2E測試.html">端到端測試（E2E Testing）</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Git.html">Git</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Harness工程.html">Harness Engineering 馭繮工程</a></li>
+<li><a href="../../../_more/wiki/軟體工程/index.html">軟體工程</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Jenkins.html">Jenkins</a></li>
+<li><a href="../../../_more/wiki/軟體工程/karpathy.html">Andrej Karpathy</a></li>
+<li><a href="../../../_more/wiki/軟體工程/KarpathySkill.html">Skill 文檔 Claude Skills</a></li>
+<li><a href="../../../_more/wiki/軟體工程/log.html">日誌</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Loop工程.html">Loop Engineering（反饋迴圈工程）</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Pay4自建金流系統.html">Pay4 自建金流系統</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Prompt工程.html">Prompt Engineering 提示詞工程</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Rust軟體工程.html">Rust 在軟體工程的應用</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Rust測試.html">Rust 測試</a></li>
+<li><a href="../../../_more/wiki/軟體工程/Skill文檔.html">Skill 文檔 Claude Skills</a></li>
+<li><a href="../../../01-overview/大綱.html">現代軟體工程</a></li>
+<li><a href="../../../01-overview/前線部署工程師.html">前線部署工程師.md</a></li>
+<li><a href="../../../01-overview/海嘯第一排.html">海嘯第一排.md</a></li>
+<li><a href="../../../01-overview/黃金時代.html">黃金時代.md</a></li>
+<li><a href="../../../01-overview/閱讀程式.html">閱讀程式.md</a></li>
+<li><a href="../../../01-overview/難不難.html">難不難.md</a></li>
+<li><a href="../../../01-overview/LLM特性.html">LLM特性.md</a></li>
+<li><a href="../../../01-overview/note.html">note.md</a></li>
+<li><a href="../../../01-overview/README.html">閱讀</a></li>
+<li><a href="../../../02-classical/01-使用者需求.html">01-使用者需求.md</a></li>
+<li><a href="../../../02-classical/02-系統分析.html">02-系統分析.md</a></li>
+<li><a href="../../../02-classical/03-系統設計.html">03-系統設計.md</a></li>
+<li><a href="../../../02-classical/04-程式撰寫.html">04-程式撰寫.md</a></li>
+<li><a href="../../../02-classical/05-除錯.html">05-除錯.md</a></li>
+<li><a href="../../../02-classical/06-系統測試.html">06-系統測試.md</a></li>
+<li><a href="../../../02-classical/07-部署上線.html">07-部署上線.md</a></li>
+<li><a href="../../../02-classical/08-維護.html">08-維護.md</a></li>
+<li><a href="../../../02-classical/README.html">測試</a></li>
+<li><a href="../../../03-tool/00-editor/README.html">README.md</a></li>
+<li><a href="../../../03-tool/01-test/README.html">README.md</a></li>
+<li><a href="../../../03-tool/02-git/branch.html">branch.md</a></li>
+<li><a href="../../../03-tool/02-git/README.html">README.md</a></li>
+<li><a href="../../../03-tool/02-git/worktree.html">基本流程單一分支,不用 worktree</a></li>
+<li><a href="../../../04-opencode/README.html">opencode</a></li>
+<li><a href="../../../05-agent/00-agent.html">ccc: 請說明 agent, prompt, context, harness, loop engineering</a></li>
+<li><a href="../../../05-agent/01-prompt.html">01-prompt.md</a></li>
+<li><a href="../../../05-agent/02-context.html">02-context.md</a></li>
+<li><a href="../../../05-agent/03-harness.html">opencode</a></li>
+<li><a href="../../../05-agent/04-loop.html">04-loop.md</a></li>
+<li><a href="../../../05-agent/05-graph.html">ccc: loop engineering 之後，又有 graph engineering ，那是什麼？</a></li>
+<li><a href="../../../05-agent/06-deepeval.html">06-deepeval.md</a></li>
+<li><a href="../../../05-agent/反蒸餾.html">反蒸餾.md</a></li>
+<li><a href="../../../05-agent/多Agent協作.html">多Agent協作.md</a></li>
+<li><a href="../../../05-agent/推理模型.html">推理模型.md</a></li>
+<li><a href="../../../05-agent/提示注入.html">提示注入.md</a></li>
+<li><a href="../../../05-agent/AblationStudy消融实验.html">消融基础设施：理解每个特性的真实贡献</a></li>
+<li><a href="../../../05-agent/agent狀態欄.html">agent狀態欄.md</a></li>
+<li><a href="../../../05-agent/COT思維鏈.html">COT思維鏈.md</a></li>
+<li><a href="../../../05-agent/FewShot.html">FewShot.md</a></li>
+<li><a href="../../../05-agent/HermesAgent.html">HermesAgent.md</a></li>
+<li><a href="../../../05-agent/KV_cache.html">KV_cache.md</a></li>
+<li><a href="../../../05-agent/LLM.html">预训练在做什么：预测下一个词</a></li>
+<li><a href="../../../05-agent/LongHorizon-Harness.html">LongHorizon-Harness.md</a></li>
+<li><a href="../../../05-agent/loopx.html">loopx.md</a></li>
+<li><a href="../../../05-agent/openclaw.html">openclaw.md</a></li>
+<li><a href="../../../05-agent/ReAct.html">ReAct.md</a></li>
+<li><a href="../../../05-agent/README.html">Agent</a></li>
+<li><a href="../../../05-agent/Skill.html">Skill.md</a></li>
+<li><a href="../../../05-agent/tools工具專屬欄位傳入與回覆.html">tools工具專屬欄位傳入與回覆.md</a></li>
+<li><a href="../../../06-engineering/新軟體工程.html">新軟體工程.md</a></li>
+<li><a href="../../../大綱.html">現代軟體工程</a></li>
+<li><a href="../../../問答：Agent工程.html">問答：Agent工程.md</a></li>
+<li><a href="../../../問答：AI軟體工程.html">AI 版的瀑布螺旋模式</a></li>
+<li><a href="../../../教材.html">現代軟體工程 -- 教材 115 下學期</a></li>
+<li><a href="../../../README.html">課程：現代軟體工程 -- 教材</a></li>
+</ul></nav>
+<article class="markdown-body">
+<h1 id="互動觀察與動作空間的擴展">互動：觀察與動作空間的擴展</h1>
+<p>第一章提出過一個論斷：在底層模型固定時，提升 Agent 任務表現最主要的系統工程手段，往往是重新定義或擴展<strong>觀察空間</strong>與<strong>動作空間</strong>。第二至五章一直在兌現這句話——上下文工程決定觀察裡裝什麼，記憶與知識庫把觀察延伸到跨會話，工具定義 Agent 能做什麼，程式碼生成則讓它自己創造新的動作。</p>
+<p>但這些擴展都發生在同一個前提之下：<strong>Agent 與世界輪流發言</strong>。使用者說完一句，Agent 想一段、呼叫幾個工具，再回一句；在它思考的這段時間裡，世界被預設為靜止的。這個前提如此自然，以至於很少被當成一個假設寫出來。</p>
+<p>這一章要撤掉的正是這個前提。</p>
+<h2 id="兩根軸模態與時機">兩根軸：模態與時機</h2>
+<p>把觀察空間和動作空間攤開，會發現它們各有兩個可以擴展的方向。</p>
+<ul>
+<li><strong>模態</strong>決定觀察和動作的<strong>形式</strong>：Agent 是只讀文字，還是也能聽見聲音、看見螢幕、感知力矩；是只能輸出 token，還是也能發聲、點擊、驅動關節。</li>
+<li><strong>時機</strong>決定觀察和動作的<strong>節奏</strong>：觀察是 Agent 主動去取，還是世界主動推來；動作是必須在一個回合內做完，還是可以跨越回合、中途被打斷、被更緊急的事搶佔。</li>
+</ul>
+<p>前面幾章擴展的是這兩個空間的<strong>內容</strong>，這一章擴展的是它們的<strong>模態</strong>和<strong>時機</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>觀察空間的擴展</th>
+<th>動作空間的擴展</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>內容</strong>（第二至五章）</td>
+<td>上下文工程、記憶與知識庫</td>
+<td>工具、程式碼生成</td>
+</tr>
+<tr>
+<td><strong>模態</strong>（本章）</td>
+<td>語音、螢幕、物理感測器</td>
+<td>說話、點擊、關節運動</td>
+</tr>
+<tr>
+<td><strong>時機</strong>（本章）</td>
+<td>世界主動推送、連續流</td>
+<td>跨回合、可打斷、可搶佔</td>
+</tr>
+</tbody>
+</table>
+<p>模型的訓練語料幾乎全是回合式的——問題後面接著答案，工具呼叫後面接著工具結果，一個說話者先說完，另一個才開始。於是模型學到的策略，預設世界會等它。但真實環境不會等模型反應：郵件在它思考時送達，使用者在它說到一半時插話，兩次截圖之間頁面已經改變，機械臂伸手去拿杯子時，杯子卻先被碰倒了。</p>
+<table>
+<thead>
+<tr>
+<th>尺度</th>
+<th>場景</th>
+<th>觀察側的變化</th>
+<th>動作側的變化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>秒 — 天</td>
+<td>非同步與事件驅動</td>
+<td>世界主動喚醒 Agent（郵件、計時器、回呼）</td>
+<td>動作跨回合：先發起，後續靠事件收尾</td>
+</tr>
+<tr>
+<td>10 毫秒 — 1 秒</td>
+<td>語音</td>
+<td>邊說邊聽，不等一句說完</td>
+<td>邊想邊說，可被打斷、可中途改口</td>
+</tr>
+<tr>
+<td>亞秒 — 秒</td>
+<td>Computer Use</td>
+<td>螢幕在兩幀之間持續變化</td>
+<td>動作後必須重新確認現實是否仍符合計畫</td>
+</tr>
+<tr>
+<td>毫秒</td>
+<td>機器人</td>
+<td>感測器連續回流</td>
+<td>動作分塊：一次規劃一小段，可被搶佔</td>
+</tr>
+</tbody>
+</table>
+<h2 id="非同步與事件驅動當世界主動找上門">非同步與事件驅動：當世界主動找上門</h2>
+<p>第四章討論的感知、執行、協作三類工具都由 Agent 主動呼叫。Agent 如何回應隨時可能到達的外部事件？這需要事件驅動的非同步架構來支撐；第一章五類工具中剩下的兩類——事件觸發工具與使用者溝通工具——正是依託這一架構發揮作用的，因此也放在本節一併討論。</p>
+<p>這一節裡模態沒有變化，仍然是文字，變的只有時機。它是從前五章的回合制世界邁出的第一步。</p>
+<h3 id="為什麼需要非同步">為什麼需要非同步</h3>
+<p>先用一個比喻說明為什麼需要非同步。同步（Synchronous）意味著「做完一件事才能做下一件」，非同步（Asynchronous）意味著「多件事可以同時進行」。傳統的同步 Agent 架構就像一個只會排隊的櫃檯——每次只能處理一個顧客，處理完才能叫下一個號；而真正智慧的助手更像一個靈活的秘書——桌上擺著多個待處理的事項（郵件、電話、來訪者），秘書根據緊急程度決定先處理哪個，處理一半如果有更緊急的事情也可以暫停切換。在同步模式下，Agent 要麼等待後臺任務完成才能與使用者對話，要麼等對話結束才能處理達的事件，無法應對真實助理場景所需的幾項核心能力：</p>
+<ul>
+<li><strong>非同步執行是常態</strong>——許多工需要長時間執行，不應阻塞使用者互動。</li>
+<li><strong>事件優先順序的動態判斷</strong>——不是所有事件都同等重要，Agent 需要智慧地選擇處理策略：取消當前操作（緊急）、加入佇列（常規）、還是並行處理（獨立的輕量級查詢）。</li>
+<li><strong>中斷和恢復的流暢性</strong>——被打斷的對話或任務應該能夠自然恢復。</li>
+</ul>
+<p>而非同步範式落地到當前 LLM 時遭遇的根本矛盾在於：LLM 的訓練範式假設同步——發出工具呼叫後，下一條訊息必須是工具結果；而真實部署卻要求非同步——使用者隨時可能打斷，多個任務可能並行推進，外部事件可能在工具尚未返回時就抵達。這一「訓練同步 / 部署非同步」的矛盾貫穿了本節後續討論的所有工程取捨。</p>
+<p>為此我們需要<strong>事件驅動的非同步 Agent 架構</strong>。技術上，這意味著系統不再主動地反覆檢查「有沒有新訊息」（這叫輪詢，效率低），而是在新訊息到達時自動觸發處理邏輯。所有的輸入、輸出、思考過程和外部互動都被統一建模為事件流——一條時間線上依次排列的事件記錄。圖 6-1 給出了事件驅動非同步 Agent 的整體架構，展示事件源、事件佇列與 Agent 處理流程之間的關係。</p>
+<p><img src="images/fig6-1.svg" alt="圖 6-1 事件驅動的非同步 Agent 架構"></p>
+<h3 id="openclaw-的事件驅動機制實現">OpenClaw 的事件驅動機制實現</h3>
+<p>開源框架 OpenClaw（第五章將詳細介紹其架構）透過 Gateway 控制平面接收多渠道訊息並路由到 Agent 執行時。它提供了三種內建的自動化機制：</p>
+<ul>
+<li><strong>Hooks（事件掛鉤）</strong>：響應 Agent 生命週期中的事件，如會話建立、重置等，類似 GitHub Actions 中的事件觸發器</li>
+<li><strong>Cron（定時排程器）</strong>：按 cron 表示式（Unix 系統廣泛使用的定時任務語法，如 <code>0 9 * * 5</code> 代表每週五上午 9 點）執行週期性任務，如每週五生成周報、每月初彙總資料</li>
+<li><strong>Heartbeat（心跳守護程序）</strong>：每隔 N 分鐘喚醒一次 Agent，檢查是否有需要關注的事項，憑藉判斷力來避免警報疲勞</li>
+</ul>
+<p>這三種機制賦予了 OpenClaw Agent「自主」的外觀——即使使用者不線上，Agent 也能定時生成報告、檢查系統狀態、處理例行事務。但仔細審視會發現一個根本的侷限。需要先釐清一點：Gateway 對內建渠道（如 IM、Web 介面）的訊息本身是<strong>推送式</strong>的，訊息一到就路由給 Agent；三種自動化機制裡，真正讓 Agent 在沒有使用者訊息時「自己動起來」的只有 Cron 和 Heartbeat，而它們都是<strong>時間驅動</strong>的——Heartbeat 每隔固定間隔檢查一次，Cron 按預設時間觸發，Hooks 則只是被動響應框架內部的生命週期事件，並不能引入外部世界的新變化。真正的短板在於：對於內建渠道之外的任意第三方事件源——一封新郵件到達、一個外部 API 回呼推送、一個緊急通知需要立即處理——OpenClaw 缺乏即時接入的通道，Agent 無法在事件發生的瞬間做出響應，只能等到下一個 Cron/Heartbeat 週期才可能察覺。</p>
+<p>真正的短板在於：對於內建管道之外的第三方事件來源，例如一封新郵件到達、一個外部 API 回呼推送、一個緊急通知需要立即處理，OpenClaw 缺乏即時接入的管道，Agent 無法在事件發生後立即做出回應，只能等到下一個 Cron/Heartbeat 週期才可能察覺。</p>
+<p>這種延遲在許多場景下是不可接受的。以 <strong>PineClaw</strong>（Pine AI 的 OpenClaw 外掛）為例：Pine AI 是代替使用者打真實電話的 AI 助手，典型場景包括協商帳單、取消訂閱和處理保險理賠。當使用者透過 OpenClaw Agent 發起一個 Pine 電話任務後，Pine 的語音 AI 會代表使用者撥打電話，但通話過程中可能隨時需要使用者介入：</p>
+<ul>
+<li><strong>即時身份驗證</strong>：客服要求驗證帳戶持有人身份，Pine 需要使用者立即提供安全碼或 OTP（拋棄式密碼）驗證碼</li>
+<li><strong>三方通話確認</strong>：客服要求與帳戶持有人直接對話，Pine 需要使用者在幾秒內接聽電話</li>
+<li><strong>進展同步與決策確認</strong>：協商到關鍵節點（如對方提出降價方案），Pine 需要使用者確認是否接受</li>
+</ul>
+<p>如果依靠 Heartbeat 的定時輪詢——假設心跳間隔為 5 分鐘——使用者可能在客服等待驗證碼時遲遲收不到通知，導致客服結束通話、通話失敗。而將輪詢間隔縮短到秒級又會造成大量的無效請求和資源浪費。</p>
+<p>PineClaw 的解決方案是引入 <strong>Channel 機制</strong>——在 OpenClaw 的 Gateway 和 Pine API 之間建立即時的事件通道。當電話接通、需要使用者輸入、通話結束等關鍵事件發生時，訊息被即時推送到 OpenClaw Agent，Agent 立即處理並通知使用者，響應延遲從分鐘級降到了秒級。</p>
+<p>這個案例揭示了事件驅動架構對 Agent 框架的核心價值：<strong>真正的「主動服務」不僅需要 Agent 能定時檢查事件，更需要事件能主動通知 Agent</strong>。將所有輸入——使用者訊息、工具返回、外部回呼、定時觸發——統一建模為事件流，透過事件迴圈驅動 Agent 的思考和行動，是實現這一目標的架構基礎。在這一架構之下，下面先介紹兩類與事件直接相關的工具，以及支撐 Agent 獨立行動的虛擬身份與隔離執行環境，再討論事件處理機制的具體設計。</p>
+<h3 id="事件觸發工具">事件觸發工具</h3>
+<p>事件觸發工具是外部事件驅動 Agent 行動的入口。如果沒有事件觸發工具，Agent 只能連續迴圈思考、呼叫工具，最後輸出一個結果，然後等待使用者的下一步輸入。要讓世界的變化轉化為 Agent 可以處理的事件，常見的事件觸發工具有三類。</p>
+<p><strong>定時器</strong>（set_timer）處理依賴物理時間的事件。例如，傳送了一封郵件但對方沒有回覆，那麼過一段時間應該再發一封郵件詢問進展；打了一個電話但對方不在工作時間內，那麼需要到下一個工作時間再嘗試撥打。為此，OpenClaw、Claude Code 等工具都支援定時器工具，在指定的物理時間喚醒自己。<strong>拋棄式定時器</strong>用於有明確時間點的任務：例如使用者要求「給 DMV 打電話」，當前是週六，Agent 就設定「下週一上午 10:00 致電 DMV」，定時器觸發後自動撥打。<strong>迴圈定時器</strong>用於週期性的任務：比如每小時檢查一次伺服器健康狀況，每週五傳送進展報告。一些外部服務不支援主動推送進展，只能主動查詢進展，此時就需要用迴圈定時器定時反覆查詢——上一節 OpenClaw 的 Heartbeat 正是這種機制的系統化，也是 OpenClaw 具備「主動服務」能力的根源。</p>
+<p><strong>後臺任務監控</strong>（monitor_shell）處理來自非同步執行的工具或命令列任務的事件。一些命令列任務需要長時間在後臺執行，Agent 需要監控執行進展。如果讓 Agent 不斷“盯著命令列看”，也就是不斷呼叫工具查詢當前進展，會浪費太多的 token；如果讓命令列任務完全執行完成後再讓 Agent 開始思考行動， Agent 將無法及時發現執行過程中的嚴重問題，甚至在命令列卡死的情況下無法介入，導致整個任務卡死。Claude Code 解決這個問題的方法是引入 monitor（監控）工具，允許 Agent 監控命令列的新增輸出或者包含特定關鍵詞的輸出。</p>
+<p><strong>外部事件通道</strong>（connect_channel）把新郵件到達、API 回呼、IM 訊息等外部事件即時推送給 Agent，上一節 PineClaw 的 Channel 機制就是典型實現。</p>
+<p>在設計層面，事件觸發工具應定義清晰的觸發條件和過濾規則，避免無關事件喚醒 Agent 浪費算力；事件載荷（payload）應包含足夠的上下文資訊，減少 Agent 被喚醒後還需要額外查詢的次數。</p>
+<h3 id="使用者溝通工具">使用者溝通工具</h3>
+<p>使用者溝通工具是為了適應 Agent 與使用者之間日益多元的溝通管道而產生的。許多 Agent（如 Claude Code、Manus）採用原生 ReAct 迴圈，Agent「說」的所有話（即 assistant 訊息）都直接傳送給使用者，使用者必須在應用程式中開啟指定的工作階段才能與 Agent 對話。使用者在工作階段中往往可以看到 Agent 呼叫工具的過程。</p>
+<p>OpenClaw 打破了這一人機溝通典範。使用者無需感知工作階段的存在，也無需關心 Agent 呼叫工具的細節；使用者和 Agent 都可以隨時給對方傳送訊息，而不是使用者發一條、Agent 回一條。因此，很多人評價 OpenClaw 具備 <strong>「活人感」</strong>，就像一個祕書一樣透過文字訊息與使用者非同步溝通。OpenClaw 並不是直接把模型輸出的 assistant 訊息呈現給使用者，而是使用專門的工具傳送訊息。這些訊息還可以附帶圖片和檔案，並可根據緊急程度附加推播提醒。</p>
+<p>除了透過文字方式與使用者溝通，越來越多的 Agent 具備多模態溝通能力，例如傳送結構化卡片訊息、傳送提醒郵件。一些 Agent 已經開始嘗試生成式 UI，即使用 HTML 等方式生成互動式的介面，以更友好的方式展示資訊給使用者。在設計層面，使用者溝通工具應支援非同步訊息模式（使用者不一定線上），提供已讀/未讀狀態追蹤，並在多渠道場景下保持訊息的一致性。</p>
+<p><strong>多渠道的使用者溝通與召回。</strong></p>
+<p><strong>Agent 的響應不應侷限於單一渠道，通知機制同時也是使用者召回機制</strong>。訊息傳送擴展到即時通訊、簡訊、郵件、電話、推送等多種渠道。Agent 根據緊急程度、使用者狀態、內容性質、使用者偏好綜合決定渠道的選擇，既保證不錯過重要的訊息，又避免重複打擾。</p>
+<p>對於長時間執行的任務，Agent 需要在完成時主動通知使用者，召回使用者的注意力。對於定期性的任務（如每日總結、週報），通知可以幫助使用者建立固定的互動習慣。</p>
+<p>使用者溝通工具解決了「如何觸達使用者」。但 Agent 以什麼身份出現在這些渠道上、在什麼環境中代表使用者執行操作，還需要一層身份與環境的基礎設施，這就是下一節的主題。</p>
+<h3 id="虛擬身份與隔離執行環境">虛擬身份與隔離執行環境</h3>
+<p>第四章開頭以《Her》中的 Samantha 為例，說明 Agent 如何藉助工具與真實數位世界互動。要實現這樣的通用助理，首先面臨一個關鍵的架構選擇：Agent 應該直接管理使用者的個人帳號，還是擁有自己的虛擬身份？直接管理看似便捷，但一旦 Agent 出現錯誤或被攻破，使用者的全部數字身份將會暴露。更穩妥的方案是賦予 Agent 一套獨立的虛擬身份——如同秘書擁有自己的辦公電話和郵箱。這套虛擬身份包括專屬的通訊帳號、儲存空間、計算環境，使 Agent 能以透明的身份代表使用者工作。身份的明確性不僅沒有削弱信任，反而增強了溝通的真實性。</p>
+<p>虛擬身份需要落地在隔離的執行環境上。<strong>虛擬電腦</strong>（VM/容器）和<strong>虛擬手機</strong>（Android 模擬器）為 Agent 提供作業系統級的隔離和完整的桌面/移動操作能力：Agent 在其中擁有自己的使用者帳號、家目錄和登入憑證，所有操作可追溯、可審計；即使執行了錯誤操作，也不會影響宿主系統和使用者的真實裝置。這是前文執行工具一節討論的沙盒思想在「數字身份」維度的延伸——沙盒隔離的是程式碼執行，虛擬電腦和虛擬手機隔離的是整個數字身份。</p>
+<p>獨立身份也帶來兩個現實挑戰。一是<strong>反自動化機制</strong>：許多網站用 CAPTCHA 驗證碼和 IP 信譽偵測攔截自動化訪問，來自資料中心 IP 的虛擬環境很容易被識別，實踐中往往需要配置住宅代理網路（使用真實家庭 IP）才能正常訪問。二是<strong>訪問使用者真實帳號的場景</strong>：當任務必須以使用者本人的身份登入時，應採用 Human-in-the-Loop 認證——透過 VNC/RDP 遠端桌面讓使用者在視覺化環境中親自完成登入，使用者能看到 Agent 正在操作的完整介面，理解為什麼需要認證；認證後的會話令牌在有效期內複用，避免頻繁打斷使用者，在自主性與安全性之間取得平衡。</p>
+<p>主 Agent 與虛擬環境之間的資料交換透過<strong>共享檔案系統</strong>完成：以卷掛載的方式（如 <code>/workspace/shared</code>）連線主 Agent、虛擬電腦和虛擬手機，資料以檔案路徑引用傳遞而非內容複製，避免佔用上下文視窗。以一個資料分析任務為例：使用者上傳 CSV 檔案到共享目錄，虛擬電腦中的 Agent 讀取檔案、執行分析、生成圖表並儲存回共享目錄，主 Agent 只需將圖表的檔案路徑返回給使用者——各方之間傳遞的始終只是輕量級的路徑字串。</p>
+<p>事件觸發工具讓世界能夠喚醒 Agent，使用者溝通工具讓 Agent 能夠觸達使用者，虛擬身份與隔離執行環境讓 Agent 能以獨立、可審計的身份行動。剩下的問題是：當多個事件同時湧向同一個 Agent 實例時，應該如何處理？</p>
+<h3 id="事件處理機制">事件處理機制</h3>
+<p>一個 Agent 實例可能同時面對多個事件：使用者的新訊息、工具返回的結果、定時器到期、另一個 Agent 的協作請求。如何高效而正確地處理這些事件，直接影響著效能和使用者體驗。</p>
+<p>這套機制的骨架是並行程式設計裡的<strong>事件迴圈</strong>（event loop）。可以把非同步 Agent 看作一個長期執行的迴圈：每一輪從輸入佇列取出若干事件，追加到軌跡，呼叫一次 LLM，執行它決定的工具，再回到迴圈開頭等待下一批事件——這與 Go 的 goroutine 從 channel 讀取訊息、在 <code>for { select { ... } }</code> 中逐輪處理是同一個結構。</p>
+<p>這個模型有一個關鍵性質：<strong>事件只在每輪迴圈的邊界被消費</strong>。當 LLM 正在推理、工具正在執行時，新到達的事件不會憑空插入、打亂當前這一步，而是先在佇列中等待，待本輪到達一個<strong>安全點</strong>（一段推理結束、一次工具返回）再統一處理。取消也遵循同樣的紀律：不在任意時刻強行掐斷，而是在安全點檢查「是否被要求停止」——這正是 Go 中 <code>ctx.Done()</code> 所扮演的角色。</p>
+<p>理解了這一點，下面三種處理策略的區別就只在於對待安全點的方式：讓事件等到下一個自然出現的安全點（佇列式）、主動提前製造一個安全點（取消式），還是乾脆另起一個迴圈、不必等待主迴圈的安全點（並行式）。</p>
+<p><strong>事件的結構化建模。</strong></p>
+<p>處理的前提是理解。通用 Agent 面對的輸入不只來自使用者一個人——第三方發來的訊息不是使用者發給 Agent 的，但 Agent 需要理解它、評估其重要性、決定如何介入。這要求將每個輸入都建模為包含豐富語義的<strong>結構化事件</strong>：</p>
+<ul>
+<li><strong>來源（誰）</strong>：使用者本人、聯絡人、陌生人、系統通知</li>
+<li><strong>渠道（方式）</strong>：電話語音、簡訊、即時訊息、郵件、社交媒體、定時器觸發、非同步工具呼叫結果、命令列監控狀態更新</li>
+<li><strong>內容（什麼）</strong>：訊息文字、情感色彩、緊急程度、是否需要回復</li>
+<li><strong>上下文（背景）</strong>：是對之前某個對話的回覆還是新發起的溝通，與當前任務的關聯</li>
+</ul>
+<p>以一封客戶退款請求郵件為例，結構化事件的具體形式如下：</p>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"source"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"email"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"sender"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"client@example.com"</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"channel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"gmail_webhook"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"content"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">"subject"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"退款請求"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"body"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"訂單 #12345 希望退款..."</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"context"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">"priority"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"high"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"customer_tier"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"vip"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"related_orders"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"#12345"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></code></pre>
+<p>只有當這些維度被清晰地建模為結構化事件，Agent 才能在多方通訊中保持清晰的認知，避免將使用者輸入誤當成工具結果，或將藏有指令的工具結果誤認為使用者指令而導致提示注入。多執行緒上下文管理的複雜性還要求 Agent 理解多個對話執行緒之間的關聯——來自第三方的訊息如何影響使用者的情緒，使用者在多個對話中的角色轉換，何時需要將不同執行緒的資訊綜合起來提供建議。</p>
+<p>從 n8n 等工作流平台的觸發器生態可以看到，Webhook、定時器、郵件、資料庫變更、檔案監聽——每一種觸發器都是 Agent 感知世界的一個「感官」。當這些異質的事件被統一建模為結構化格式之後，Agent 就能以一致的方式處理來自不同來源的刺激，下文的緊急度判定和處理策略也都建立在這一統一建模之上。</p>
+<p><strong>基於緊急度的動態處理策略。</strong></p>
+<p>人類在處理多個任務時，會根據緊急程度採取不同的策略。面對突發的緊急情況，會立即停下手頭的工作；面對常規的待辦事項，則加入任務列表稍後處理。Agent 的事件處理也應體現這種智慧性。</p>
+<p><img src="images/fig6-2.svg" alt="圖 6-2 非同步事件處理的三種策略"></p>
+<p><strong>取消式處理（Cancellation-Based）<strong>用於緊急事件，其本質是為緊急事件</strong>提前製造一個安全點</strong>：主動中斷當前步驟，把這一刻變成可以消費新事件的邊界。當緊急事件到達時（如使用者點選「停止」或監督系統發來高優先順序指令）：(1) 停止當前操作——如果 LLM 正在推理，立即取消流式響應；如果有同步工具在執行，傳送取消訊號；(2) 清空待處理佇列，將所有事件取出；(3) 將佇列中的事件和緊急事件一起追加到軌跡末尾；(4) 立即重新呼叫 LLM，以更新後的完整軌跡為輸入來評估局勢。例如，使用者在 Agent 執行可能錯誤的操作時輸入「停止！我說錯了」，Agent 會立即看到這條新輸入，重新理解真實意圖，從而避免執行錯誤的操作。</p>
+<p>**佇列式處理（Queued）**用於常規事件。當非緊急事件到達時（如非同步工具返回結果或使用者發來補充資訊）：(1) 將事件放入佇列末尾，不打斷當前操作；(2) 等待當前操作完成——讓 LLM 完成推理，讓同步工具執行完畢；(3) 當任何工具呼叫完成並返回 <code>tool.result</code> 時，檢查佇列，如果佇列非空則將所有事件拋棄式追加到軌跡；(4) LLM 綜合處理更新後的軌跡。這實現了批次處理，提高了效率——例如 Agent 呼叫搜尋工具後，在等待期間使用者補充了「只看最近一個月的結果」，這條補充資訊進入佇列，搜尋結果返回時兩個事件一起呈現給 LLM，避免了不必要的往返。</p>
+<p>**並行處理（Parallel）**用於獨立的輕量級查詢。比如 Agent 正在分析大量資料時，使用者突然問「今天天氣怎麼樣？」此類查詢具有三個特徵：與主任務無關、需要快速響應、執行成本低。既不應該用取消式處理（會打斷重要的主任務），也不應該用佇列式處理（讓使用者等太久）。系統首先判斷查詢的獨立性和複雜度，然後在一個並行的推理會話中獨立執行，呼叫必要的工具生成響應後立即返回。查詢和響應會追加到主任務的軌跡中，並明確標記為「與主任務並行執行」，以避免 LLM 混淆。</p>
+<p><strong>緊急度的判定。</strong></p>
+<p>緊急事件：使用者中斷（<code>user.interrupt</code>）、監督指令（<code>supervisor.instruction</code>）、Agent 間中斷（<code>agent.interrupt</code>）、標記為緊急的外部觸發器（如系統告警、支付失敗）。</p>
+<p>非緊急事件：常規使用者輸入（<code>user.input</code>）、Agent 輸入（<code>agent.input</code>）、工具結果（<code>tool.result</code>）、定時器觸發（<code>timer.trigger</code>）、常規外部觸發器。</p>
+<p>編死的規則有其侷限性，事件的語義決定了處理方式——「馬上停下來」用取消式、「今天天氣怎麼樣」用並行式、「報告需要用中文發給我」用佇列式。<strong>建議使用輕量級的分類 LLM 作為事件路由器</strong>，在事件到達時快速判斷應該採用哪種策略。</p>
+<p>取消點必須是工具或推理能夠安全收尾的位置；未完成的工具結果用顯式佔位符表示，不能偽造成功。</p>
+<p>下面透過一個事件驅動的郵件處理 Agent 實驗，將上述事件處理策略落地為可執行的實現。</p>
+<blockquote>
+<p><strong>實驗 6-1 ★★★：事件驅動的郵件處理 Agent</strong></p>
+<p><img src="images/fig6-3.svg" alt="圖 6-3 實驗 6-1 事件驅動 Agent 架構"></p>
+<p>本實驗建構一個最簡單的事件驅動 Agent：<strong>自動郵件處理助手</strong>。Agent 監聽郵件收件箱，每當收到新郵件時自動觸發處理流程——分類、摘要、起草回覆，必要時通知使用者。這是事件驅動 Agent 最直觀的入門場景：一個外部事件（新郵件到達）觸發一次完整的 Agent 思考迴圈。</p>
+<p><strong>實驗目標</strong>是理解事件驅動的核心概念：Agent 不再只是被動地等待使用者輸入，而是可以響應外部事件來主動行動。透過這個實驗，讀者將掌握事件源註冊、事件佇列、以及「事件到達 → Agent 處理 → 結果輸出」的基本閉環。</p>
+<p><strong>事件源與事件佇列。</strong></p>
+<p>系統支援多種事件源的統一接入：</p>
+<ul>
+<li><strong>郵件事件</strong> (<code>on_email_received</code>)：透過定期檢查收件箱或接收推送通知，在新郵件到達時觸發</li>
+<li><strong>IM/簡訊訊息</strong> (<code>on_im_message</code>，<code>on_sms_message</code>)：即時通訊訊息觸發</li>
+<li><strong>GitHub 事件</strong> (<code>on_github_pr_update</code>，<code>on_github_issue_update</code>)：PR review 意見、狀態變化</li>
+<li><strong>定時器觸發</strong> (<code>on_timer_expire</code>)：定時任務（如每日摘要、週報生成）</li>
+<li><strong>Webhook</strong> (<code>on_webhook_received</code>)：通用的外部系統回呼</li>
+<li><strong>系統事件</strong> (<code>on_user_inactive</code>，<code>on_process_timeout</code>，<code>on_resource_alert</code>)：內部狀態變化</li>
+</ul>
+<p>所有事件進入一個統一的<strong>事件佇列</strong>，按到達順序依次處理。每個事件觸發一次獨立的 Agent 思考迴圈：Agent 讀取事件內容，呼叫相關的工具（如查詢知識庫、讀取附件、搜尋相關的郵件歷史），生成處理結果（分類標籤、摘要、草稿回覆），最後透過通知工具告知使用者或直接執行操作。</p>
+<p><strong>驗證場景</strong>：配置 Agent 監聽測試郵箱。模擬收到三封郵件——一封會議邀請、一封客戶投訴、一封行銷廣告。Agent 依次處理：為會議邀請自動檢查日曆衝突並起草接受/拒絕回覆；為客戶投訴提取關鍵資訊並標記為高優先順序，通知使用者處理；將營銷廣告自動歸檔。整個過程無需使用者介入。</p>
+</blockquote>
+<p>實驗 6-1 展示了最簡單的事件驅動模式——事件進入佇列，Agent 依次處理。但當 Agent 需要在長時間執行的工具執行過程中響應打斷，或同時管理多個並行任務時，簡單的事件佇列就不夠用了。接下來討論更深層的工程挑戰。</p>
+<h3 id="工程實現如何讓同步模型支援非同步打斷">工程實現：如何讓同步模型支援非同步打斷</h3>
+<p>實驗 6-1 只處理序列事件——事件依次進入佇列，Agent 一個接一個處理完畢。現在回到本節開頭提出的「訓練同步 / 部署非同步」矛盾：當工具尚未返回時使用者突然打斷，同步格式該如何容納？本節給出當前業界的工程解法。</p>
+<p>先用一個具體場景說明這個矛盾。假設 Agent 正在幫使用者起草一封郵件（工具呼叫：搜尋聯絡人資訊），搜尋還沒返回結果時，使用者突然說「等一下，先幫我查一下明天的天氣」。在同步的 ReAct 迴圈中，Agent 必須等搜尋返回後才能處理下一條訊息——因為 API 要求「發出工具呼叫後，下一條訊息必須是工具結果」。但在非同步的真實世界裡，事件隨時可能打斷正在進行的任務。如何在「同步格式」的約束下表達「非同步打斷」的語義，正是下面這套工程方案要回答的問題。</p>
+<p><strong>工程權宜之計：模擬同步的非同步實現。</strong></p>
+<p>核心思想是：<strong>在沒有打斷發生的常態下，讓 LLM 看到標準的同步軌跡，只在打斷時才插入佔位符來修復格式</strong>。以下是五條關鍵規則：</p>
+<p><strong>規則 1</strong>：LLM 輸出時立即記錄 assistant message（包含 thinking、content 和 tool call）。</p>
+<p><strong>規則 2</strong>：工具呼叫完成時才記錄 tool result。執行中軌跡處於 「部分完成」 狀態。</p>
+<p><strong>規則 3</strong>：工具執行中的打斷需要佔位符。為未完成的工具生成佔位符響應（如「工具正在後臺執行，請優先處理新事件」），追加打斷事件，重新呼叫 LLM。從 LLM 的視角看，assistant message 仍然有配對的 tool result。</p>
+<p><strong>規則 4</strong>：LLM 思考中的打斷直接丟棄當前思考。不寫入軌跡，新事件直接追加後啟動新一輪思考。</p>
+<p><strong>規則 5</strong>：非打斷事件進入佇列等待批次處理。當前週期完成後才拋棄式追加。</p>
+<p>以 Agent 正在起草郵件時使用者打斷詢問天氣為例，這五條規則的運作過程如下：</p>
+<ol>
+<li>Agent 呼叫 <code>search_contacts</code> 搜尋聯絡人資訊，assistant message 立即寫入軌跡（規則 1）。</li>
+<li>搜尋工具尚未返回結果時，使用者發來「先幫我查一下明天的天氣」。由於這是使用者打斷，系統為未完成的 <code>search_contacts</code> 生成佔位符 tool result（「工具正在後臺執行，請優先處理新事件」，規則 3），然後將使用者的天氣查詢追加到軌跡，重新呼叫 LLM。此刻 LLM 看到的軌跡格式完全合法——assistant message 與 tool result 配對完好。</li>
+<li>天氣查詢完成並回覆使用者後，原先的 <code>search_contacts</code> 結果到達，作為新事件追加到軌跡（規則 2），Agent 讀取聯絡人資訊後繼續起草郵件。</li>
+</ol>
+<p>這套方案的核心優勢是：<strong>常態下 LLM 看到的是完美的同步軌跡</strong>——assistant message 與 tool result 嚴格配對，時間順序清晰，沒有任何佔位符或異常狀態。這對當前基於同步訓練範式的 LLM 最為友好，最大程度地保證了思考品質。只有在確實需要打斷時才引入佔位符這個「必要的妥協」。</p>
+<p>但仍存在加劇幻覺的風險。在這個場景中，儘管佔位符明確說明工具「尚未完成」，系統仍可能在後續思考中「編造」一個工具結果，誤以為工具已經返回了有效資料，基於這個虛構的結果做出不恰當的決策。這是因為模型在訓練時見到的絕大多數軌跡中，工具呼叫之後緊接著就是真實的結果，它從未學會如何處理「結果還沒回來」的情況。因此實踐中只在真正緊急時（使用者明確請求停止）才打斷，非緊急的事件則放入佇列批次處理。</p>
+<p><strong>適合現有模型的非同步工具介面。</strong></p>
+<p>既然模型的同步假設難以突破，一個更根本的策略是<strong>從工具介面的設計層面擁抱非同步語義</strong>。</p>
+<p>傳統的工具設計隱含了「呼叫即完成」的語義。例如 <code>phone_call</code> 這個名字暗示「呼叫將撥打電話並等待通話結束，返回通話記錄」。在非同步範式下應該將「啟動」和「完成」解耦：</p>
+<ul>
+<li><code>initiate_phone_call</code>：啟動電話呼叫，立即返回任務識別符號和初始狀態（如「呼叫已發起，正在撥號」）</li>
+<li>通話進展透過事件通知（<code>phone_call_connected</code>、<code>phone_call_ended</code>）</li>
+</ul>
+<p>關鍵在於工具的名稱和描述本身就要傳達非同步的語義。當模型看到 <code>initiate_phone_call</code> 時，其語言理解能力會自然推斷這是「發起」而非「完成」。工具描述應進一步強化這一點：「此工具將啟動由子 Agent 處理的電話任務。任務成功發起後立即返回任務 ID，您可繼續處理其他事項。通話結束後會收到單獨的通知事件。」</p>
+<p><strong>佇列式處理中的注意力分散問題。</strong></p>
+<p>在批次事件處理時，模型往往只關注最後一個事件。根源在於<strong>模型被訓練為對最新的輸入反應，而批次事件打破了這一假設</strong>。</p>
+<p>可以從兩個層面進行干預：</p>
+<p><strong>提示詞層面</strong>：告知模型「當收到多個連續事件時，請確保全面考慮所有資訊」。</p>
+<p><strong>Agent 狀態列標記</strong>：在每個事件前新增顯式標記：</p>
+<pre><code class="hljs language-text">[未處理事件 1/4] Tool result from database_query：...
+[未處理事件 2/4] User 補充說明：只看北京地區的資料
+[未處理事件 3/4] 系統提醒：報告截止時間還有 30 分鐘
+[未處理事件 4/4] User 詢問：進度如何？</code></pre>
+<p>在末尾新增彙總：「上面有 4 個未處理事件，包括 1 個工具結果、2 條使用者訊息、1 個系統提醒。請確保回應涵蓋所有資訊。」</p>
+<h3 id="深層矛盾與未來方向">深層矛盾與未來方向</h3>
+<p><img src="images/fig6-4.svg" alt="圖 6-4 同步訓練範式與非同步部署現實"></p>
+<p>歸根結底，前幾節的佔位符、非同步工具介面、狀態列標記，都是在用提示工程彌補同一個「訓練同步 / 部署非同步」的矛盾（圖 6-4）——這一矛盾的成因已在本節開頭詳述，此處不再重複，只聚焦它的根本解法。</p>
+<p><strong>期待模型進化：從同步到非同步。</strong></p>
+<p>上述工程技巧本質上是<strong>用提示工程來彌補模型訓練的不足</strong>，是過渡期的權宜之計。真正的解決方案需要在模型訓練層面發生範式轉變。</p>
+<p>機器人領域的 VLA（Vision-Language-Action，視覺～語言～動作，詳見第六章）模型已經開始面對類似的挑戰：感知和動作之間存在不可避免的延遲。VLA 的成功為 Agent 模型的進化指明瞭方向。下一代模型需要透過非同步環境中的強化學習獲得三種核心能力：</p>
+<ol>
+<li><strong>理解軌跡中事件的非同步穿插</strong>：這是最核心的能力缺陷。當前模型期望嚴格的同步序列，但在真實的非同步環境中，tool call 之後可能不是 tool result 而是新的 user 訊息；thinking 進行到一半可能被打斷，但中間狀態應保留在軌跡中，新訊息處理完後繼續思考而非從頭開始。模型需要在這種「亂序」的軌跡中保持清晰的認知——哪些工具呼叫還在等待結果，哪些思考是未完成的片段。</li>
+<li><strong>恢復被打斷的任務和思考</strong>：當被打斷去處理緊急事件後，仍然記得未完成的任務。例如 Agent 在執行資料分析工具時使用者突然問天氣，回答後應該自然地等待資料分析結果，而不是忘記還有工具在執行。特別要避免產生幻覺，誤以為被打斷的工具呼叫已經完成。</li>
+<li><strong>批次事件的綜合處理</strong>：多個事件批次追加到軌跡時，不能只關注最後一個，必須綜合考慮所有未處理的資訊。</li>
+</ol>
+<p>實現這種非同步 RL 訓練需要新的基礎設施：非同步環境模擬器（生成工具延遲返回、使用者隨機打斷等場景）和非同步能力的專項獎勵（正確理解亂序軌跡、成功恢復被打斷的思考、避免幻覺、綜合處理批次事件）。</p>
+<p>不過，「持續思考」並不必等到下一代模型才能擁有。用一層約兩百行的編排邏輯，就能讓一個<strong>現成的</strong>文字思考模型變成<strong>持續思考（continuous-time）<strong>的 Agent，恰好把上面「工程權宜」和「模型進化」兩半接了起來。它的機制正是前面規則 4 的升級版：與其在被打斷時</strong>丟棄</strong>半截思考，不如把整個互動建成<strong>一條不間斷的思維流</strong>——隨時可以強行合上模型正在寫的 <code>&lt;think&gt;</code> 區塊，把新到達的觀察（一條工具返回、一次使用者打斷、一段新的辨識結果）作為普通訊息注入，再讓模型接著往下解碼。</p>
+<p>它利用了一個常被浪費的資源：模型每秒能生成上百個 token，而一次工具呼叫、一段使用者說話往往要花好幾秒。這些「等待」都可以拿來思考。由此 Agent 可以產生兩種行為：<strong>邊等邊想</strong>，不等工具返回、不等使用者說完，就基於已有的半截資訊往下思考，甚至提前把下一步工具調起來；以及<strong>邊做邊想</strong>，一邊輸出、一邊繼續思考，並能在動作進行到一半時糾正自己。</p>
+<blockquote>
+<p><strong>實驗 6-2 ★★★：帶並行執行和打斷能力的非同步 Agent</strong></p>
+<p><img src="images/fig6-5.svg" alt="圖 6-5 實驗 6-2 非同步 Agent 打斷與恢復"></p>
+<p>在實驗 6-1 的簡單事件佇列基礎上，本實驗進入非同步 Agent 的深水區：<strong>並行工具執行、執行取消和狀態管理</strong>。Agent 不再只是逐個處理事件，而是需要同時管理多個並行的任務，處理打斷和恢復，並根據即時狀態做出動態的決策。</p>
+<p><strong>1. 非同步工具執行</strong>：支援耗時工具的非同步執行（至少 3-5 秒），啟動後立即返回佔位符。<strong>驗證場景</strong>：Agent 執行一個長時間的終端機命令，期間使用者問「現在幾點了？」，Agent 立即回應，等分析結果返回後再呈現。</p>
+<p><strong>2. 事件佇列與批次處理</strong>：累積非緊急事件，批次追加到軌跡。<strong>驗證場景</strong>：Agent 執行長任務，使用者連續傳送「記得用日語回覆」和「整理成網頁」，任務完成時拋棄式處理所有事件，生成日語網頁。</p>
+<p><strong>3. 打斷機制</strong>：使用者的「停止」立即終止執行流並取消非同步工具。<strong>驗證場景</strong>：Agent 執行長任務，使用者傳送「取消」，Agent 立即停止，軌跡記錄打斷事件和取消操作。</p>
+<p><strong>4. 並行工具的取消與狀態查詢</strong>：非同步工具完成後透過新事件將真實結果注入對話，支援透過任務 ID 取消或查詢進度。<strong>驗證場景</strong>：使用者請求「幫我同時執行這三個指令碼，哪個先完成了，就看看剩下的指令碼進度怎麼樣，如果還沒超過 50%，就取消」。三個指令碼模擬分析程序，執行時不斷輸出進度，速度分別為每秒 3%、2%、1%。Agent 同時啟動三個非同步終端機命令，當每秒 3% 的指令碼在約 33 秒後完成時，Agent 查詢剩下兩個終端機的狀態，發現一個執行到約 66%、另一個約 33%，於是取消不超過 50% 的那個。兩個終端機都完成後整合結果生成完整報告。</p>
+</blockquote>
+<p>非同步與事件驅動實現了「世界可以在任意時刻喚醒 Agent」，但它假設事件到達之後，模型可以從容地想完再回應。接下來三節將挑戰這個假設：當環境變化的速度達到甚至超過模型的生成速度時，「想完再說」本身就變成了不可接受的延遲。</p>
+<h2 id="語音最自然的人機介面">語音：最自然的人機介面</h2>
+<p>語音的價值不只是把文字換成聲音。正常說話的速度約為打字的四倍，而且不佔用雙手與視線，因此很適合把 Agent 放進持續運作、隨時可能被打斷的輸入輸出迴路。語音輸入法把口述轉成文字；語音 Agent 則讓使用者直接與 Agent 協作。兩者都能支援前言提到的 whisper coding。</p>
+<p>本節同時討論兩個方向：使用者對 Agent 說話，以及 Agent 代替使用者對外部世界說話。語音模型決定「能回答什麼」，互動架構決定「能否聽清楚、及時回應、自然交接發言，並在通話中完成確認與工具呼叫」。以下先討論互動時序，再討論認知時序與表達品質。</p>
+<h3 id="互動時序從級聯到全雙工">互動時序：從級聯到全雙工</h3>
+<p>OpenAI 在 GPT-Live 介紹中把語音互動概括為級聯、輪次式與全雙工三種範式<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。它們不是單純的新舊替代，而是在延遲、成本與可觀測性之間做不同取捨：</p>
+<table>
+<thead>
+<tr>
+<th>範式</th>
+<th>核心結構</th>
+<th>主要優勢</th>
+<th>主要限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>級聯</td>
+<td>VAD → ASR → LLM → TTS</td>
+<td>模組清楚、容易替換與除錯</td>
+<td>延遲累積，副語言資訊在介面處遺失</td>
+</tr>
+<tr>
+<td>端到端 Omni</td>
+<td>原生音訊輸入輸出，按輪次互動</td>
+<td>延遲較低，能保留語氣、情緒與環境聲</td>
+<td>仍依賴輪次，訓練與除錯成本較高</td>
+</tr>
+<tr>
+<td>全雙工</td>
+<td>原生音訊輸入輸出，持續聽、說和決策</td>
+<td>支援重疊說話、自然打斷與連續串流</td>
+<td>模型訓練、控制與評估更複雜</td>
+</tr>
+</tbody>
+</table>
+<p>三種範式的共同主線，是擺脫「必須輪流說話」的假設，以及 VAD 對發言權的猜測。級聯與 Omni 仍要劃分輪次；全雙工則把「誰該說話」變成模型持續做出的決策。</p>
+<h3 id="範式一-級聯流水線cascading">範式一 · 級聯流水線（Cascading）</h3>
+<p>大多數商用語音助理仍使用串行流水線（圖 6-6）：VAD 判斷使用者何時說完，ASR 把音訊轉成文字，LLM 理解並生成回覆，TTS 再把文字說出來。模組化讓每個元件可以獨立優化，但每個邊界都可能增加等待時間。</p>
+<p><img src="images/fig6-6.svg" alt="圖 6-6：串行語音 Agent 流水線"></p>
+<table>
+<thead>
+<tr>
+<th>模組</th>
+<th>作用</th>
+<th>常見瓶頸</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VAD</td>
+<td>判斷是否說完</td>
+<td>靜音閾值造成等待與誤切分</td>
+</tr>
+<tr>
+<td>ASR</td>
+<td>音訊轉文字</td>
+<td>識別延遲與上下文遺失</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>理解、思考與生成</td>
+<td>首 token 延遲；啟用 reasoning 後等待更久</td>
+</tr>
+<tr>
+<td>TTS</td>
+<td>文字轉語音</td>
+<td>首包合成與播放緩衝</td>
+</tr>
+</tbody>
+</table>
+<p>在一個簡短、不開啟 reasoning 的回覆中，VAD、ASR、LLM 和 TTS 的等待會串行累積（圖 6-7）。真實數值取決於輸入長度、模型、硬體、網路和負載。</p>
+<p><img src="images/fig6-7.svg" alt="圖 6-7：串行回覆的延遲瀑布"></p>
+<p>生產環境的排隊還會進一步放大空載延遲（圖 6-8），但這屬於服務容量規劃，本章不展開排隊模型。</p>
+<p><img src="images/fig6-8.svg" alt="圖 6-8：排隊延遲曲線"></p>
+<blockquote>
+<p><strong>實驗 6-3 ★：建立傳統語音 Agent</strong></p>
+<p>本實驗用 WebSocket 串起麥克風、Silero VAD、本地 Whisper、串流 LLM 和 Fish S1 TTS，建立後續方案的級聯基線（baseline）。</p>
+</blockquote>
+<h4 id="從串行到串流感知">從串行到串流感知</h4>
+<p>圖 6-7 描述的是 VAD、ASR、LLM、TTS 依序執行的完全串行情形，這種串行感知方案有三個問題：</p>
+<ol>
+<li><strong>延遲累積</strong>：必須等待一段靜音才能確認說完。</li>
+<li><strong>資訊遺失</strong>：有聲/無聲二值訊號無法表達猶豫、情緒、附和與環境聲。</li>
+<li><strong>上下文被切斷</strong>：電子郵件、人名與專有名詞可能被分片識別而出錯。</li>
+</ol>
+<p>為了解決這個問題，在保留模組化分工的前提下，一種優化方案是<strong>串流感知</strong>，讓各階段儘早產出增量結果：</p>
+<ul>
+<li><strong>ASR 邊聽邊轉</strong>：VAD 偵測到使用者開始說話後，就按固定時間間隔呼叫 ASR 模型，以串流方式生成暫時轉錄；VAD 偵測到使用者說完後，再確認最終文本。</li>
+<li><strong>LLM 推測執行</strong>：暫時轉錄一生成就送給 LLM；如果最終文本與暫時轉錄相同，就不再重新呼叫 LLM，否則取消前面推測執行的思考，重新呼叫 LLM。</li>
+<li><strong>LLM 分段輸出</strong>：第一段適合播報的文字一生成完就交給 TTS，不等完整回覆。</li>
+<li><strong>TTS 增量合成</strong>：持續返回音訊區塊，讓後續生成、合成與播放重疊進行。</li>
+</ul>
+<p>真正的串流 ASR 需要模型本身支援。Whisper 的解碼器雖然是自回歸的，但編碼器需要完整音訊片段，因此不能直接等同於串流模型。基於 LLM 的串流聽覺模型可以從連續音訊中輸出文字與語義事件，把「識別」和部分「理解」放進同一個模型，保留從對話開始到當前時刻的上下文，也能利用世界知識處理品牌、人名與專有名詞。</p>
+<p>如果只想解決「使用者是否說完」，也可以把輪次判斷直接做進串流識別器：模型綜合語義和靜音判斷一句話是否表達完整。端點判斷的訓練標籤必須只使用決策時刻可見的資訊，否則會因「上帝視角」產生線上無法重現的判斷。</p>
+<p>模型輸出的不僅是文字，還可以包含聲學事件標記：</p>
+<ul>
+<li><strong>speak_start/end、interrupt</strong>：說話起止與打斷意圖；</li>
+<li><strong>emotion</strong>：情感、猶豫等狀態；</li>
+<li><strong>laugh、sigh、noise</strong>：副語言和環境聲。</li>
+</ul>
+<p>這些標記和文字 token 形成統一事件流，Agent 可以據此識別猶豫、打斷和環境變化，而不必把所有聲音壓成純文字。</p>
+<blockquote>
+<p><strong>實驗 6-4 ★：使用 Qwen2-Audio 模擬串流語音感知</strong></p>
+<p>Qwen2-Audio 本身不是串流模型。本實驗用遞增音訊字首模擬連續感知，並與 600ms VAD + Whisper 對照。</p>
+</blockquote>
+<h3 id="範式二-端到端全模態模型omni">範式二 · 端到端全模態模型（Omni）</h3>
+<p>即使採用串流感知，級聯仍透過離散介面交接聽、想、說；音訊轉成純文字時，情緒、語調與環境聲可能遺失。Omni 方案用同一個模型直接聽音訊、生成回覆並輸出語音，因而有機會保留這些訊號，但訓練成本更高（圖 6-9）。相比範式一的級聯方案，Omni 的優勢主要體現在延遲，以及對非文字資訊的理解與生成上。</p>
+<p>在理解方面，Omni 模型能聽出聲音中的停頓。在生成方面，Omni 模型能傳遞更豐富的副語言資訊，例如唱歌、用特殊的語調講一句話。</p>
+<p>Omni 模型仍然假設輪流說話，通常要靠 VAD 劃分發言權。因此，使用者報數字時的中途停頓仍可能被誤判為說完。</p>
+<p><img src="images/fig6-9.svg" alt="圖 6-9：端到端全模態語音模型比較"></p>
+<blockquote>
+<p><strong>實驗 6-5 ★★：本地執行 MiniCPM-o 4.5——端到端與自級聯</strong></p>
+<p>本實驗使用本地 MiniCPM-o 4.5，關閉 thinking mode，比較直接從音訊作答與同模型自級聯先轉錄再作答。它測的是音訊資訊是否被保留，<strong>不是</strong>後文的「邊想邊說」。</p>
+</blockquote>
+<h3 id="範式三-全雙工互動模型">範式三 · 全雙工互動模型</h3>
+<p>Omni 仍把對話分成「使用者說」與「模型說」，但同聲傳譯等任務要求兩者重疊。全雙工模型不預設輪次，而是持續聆聽、持續說話，反覆決定繼續、停頓、打斷或呼叫工具。</p>
+<p>Kyutai 的 <strong>Moshi</strong>（2024）是早期研究案例。Thinking Machines Lab 將這條路線稱為<strong>互動模型（Interaction Model）</strong><sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>：互動性內建於模型，不再由 VAD 等外部 harness 拼接。微輪次機制以短音訊區塊推進，讓靜音、重疊與打斷保留在連續上下文中；它也能把完整對話委派給背景推理模型，同時維持話頭。</p>
+<p>Thinking Machines Lab 將這類路線稱為<strong>互動模型（Interaction Model）</strong><sup class="footnote-ref"><a href="#fn2" id="fnref2:1">[2:1]</a></sup>：互動性不再依靠 VAD 等外部 harness 拼裝實現，而是內建在模型中。其微輪次機制以短音訊塊持續推進，讓靜音、重疊和打斷都作為連續上下文保留。互動模型還可以把完整對話委派給後台推理模型，自己繼續維持話頭；後台結果返回後，前台再在合適時機接入。</p>
+<p>OpenAI 的 GPT-Live 則把全雙工路線帶到生產規模：模型持續處理輸入並生成輸出，能等待使用者、附和、被打斷，也能處理即時翻譯。它與互動模型一樣，把複雜任務委派給後台模型，前台繼續維持對話。</p>
+<h3 id="認知時序即時互動與深度思考">認知時序：即時互動與深度思考</h3>
+<p>互動品質與智能上限是不同維度。前台模型要在使用者仍在線時回應；背景模型可花更長時間思考。以下三種設計是取捨，不是線性演進；前兩種可以套在級聯或 Omni 上，第三種則把深度思考與即時表達統一在同一模型內部。</p>
+<h4 id="方案一快思考應付慢思考回答">方案一：快思考應付，慢思考回答</h4>
+<p>快思考可以在幾百毫秒內先給出即時回應，慢思考則在背景完成更深的推導。它的問題是簡單問題會被重複處理，複雜問題又可能出現前後不一致：快模型先建議購買，慢模型隨後發現方案缺少關鍵功能，使用者在幾秒內便聽到相互衝突的答案。根本原因是兩個實例各自完成了一次獨立思考。</p>
+<p><img src="images/fig6-10.svg" alt="圖 6-10：快慢思考架構與方案"></p>
+<h4 id="方案二快思考互動慢思考建議">方案二：快思考互動，慢思考建議</h4>
+<p>背景模型可透過狀態欄或專用介面傳送建議，前台模型維持對話並決定如何表達。通信仍是間接的：前台可能誤解建議，也看不到背景的中間思考，因此它能自然等待結果，卻不能真正邊想邊說。</p>
+<h4 id="方案三端到端統一思考與表達">方案三：端到端統一思考與表達</h4>
+<p>方案三把思考能力直接內化到端到端音訊模型中。Step-Audio R1 用兩個互補機制解決兩個問題：<strong>模態錨定思考蒸餾（MGRD）</strong> 讓模型根據聲學特徵思考，<strong>MPS 雙腦架構</strong>讓構思與表達並行。前者保證「想得對」，後者解決「說得及時」。</p>
+<p>理想情況下，模型應該從音高、節奏和語調判斷情緒，而不是只看轉錄文字。MGRD 篩選真正引用聲學特徵的思考過程，再用這些資料訓練模型，並透過強化學習防止模型跳過思考直接猜答案。MPS 讓構思腦持續產出思考片段，表達腦收到片段後結合已有回覆立即生成語音。兩者以流水線方式並行，因此不必等完整思考結束才讓使用者聽到第一句話。</p>
+<h4 id="快慢思考分離與端到端思考的取捨">快慢思考分離與端到端思考的取捨</h4>
+<p>統一模型最直接地實現「邊想邊說」，但思考與即時表達必須一起重訓；解耦設計更容易替換背景大腦。兩者是取捨，不是簡單替代。</p>
+<p>在前沿思考模型快速演進的當下，快慢分離有一個重要的工程優勢：它能直接承接慢模型的迭代紅利。前台快模型只負責低延遲地傾聽、回應和維持對話，背景慢模型負責推理、規劃和工具呼叫；更強的思考模型發布後，只需替換背景模型，不必重新訓練整套即時語音系統。統一路線則把推理與互動綁在同一個訓練週期中，每次升級都要重新兼顧智能水準、回應延遲和表達自然度。因此，快慢分離不只是對延遲的妥協，也是一種讓互動能力與智能上限分別演進的模組化選擇。</p>
+<p>這種分離也不必然犧牲任務效果。截至 2026 年 8 月，採用快慢思考分離架構的 Pine AI 語音 Agent 在 τ³-Voice Leaderboard 上取得第一名，超過 Grok Voice、GPT-Realtime-2 等即時語音系統。這個結果至少說明，在同時考察深度推理與即時對話的任務上，解耦架構並不天然落後於端到端模型。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
+<p>這裡需要釐清「端到端模型」常被賦予的兩個含義。第一是上一節所述的<strong>語音通路端到端</strong>：模型直接接收音訊、生成音訊，不再由多個模型透過離散文字串接。Omni 和互動模型都屬於這個意義上的端到端模型，但 Omni 模型通常仍按輪次推進，互動模型則可以邊聽邊說，兩者在架構上差異很大。第二是本節所述的<strong>認知架構端到端</strong>：即時互動與深度思考是在同一模型內部共享狀態、共同訓練，還是拆成前台快模型與背景慢模型。兩條軸彼此獨立，一個系統完全可以在語音通路上端到端，同時在認知架構上保持快慢分離；Thinking Machines Lab 把複雜任務委派給背景推理模型就是這種組合。</p>
+<h3 id="更像人的語音合成">更像人的語音合成</h3>
+<p>傳統 TTS 太過流暢、停頓太少，反而會暴露機器身份。停頓、填充詞與偶爾的重複，是人類語音中表達不確定與思考的訊號。</p>
+<p>主 LLM 除了文字外，也可以輸出 <strong>THINKING</strong>、<strong>EMO:happy</strong>、<strong>SPEED:0.8x</strong> 等控制標記；TTS 會將它們映射為停頓、韻律、語速、笑聲、嘆氣與其他非語言音訊。實作方式可以是訓練一個能理解控制標記的 TTS，也可以是透過 voice cloning，為不同情緒與風格準備參考片段。</p>
+<blockquote>
+<p><strong>實驗 6-6 ★★：以 Fish Audio 實作控制標記驅動的 TTS</strong></p>
+<p>使用 Fish Audio S1 建立多參考音訊庫，並比較三種設定：無控制標記、單一參考片段、以及多個參考片段。執行層會根據標記選擇相符的情緒、語速與風格。</p>
+</blockquote>
+<h2 id="computer-usegui-自動化-agent">Computer Use：GUI 自動化 Agent</h2>
+<p>語音把時機軸推到了毫秒級，但它的觀察仍是一維的聲音流。Computer Use 把同一個問題搬上二維的螢幕：觀察變成持續變化的像素，動作變成座標上的點擊與輸入。語音場景強調「何時開口」，Computer Use 則強調「下一步點哪裡」，以及一個語音互動中不存在的問題——動作執行之後，現實是否還與計畫一致。</p>
+<p>Computer Use（也稱 GUI 自動化 Agent）讓 AI 像人類一樣透過觀察螢幕、操作滑鼠鍵盤來使用軟體——比如開啟瀏覽器搜尋資訊、在表格軟體中填寫資料、或在系統設定中調整配置。其核心是<strong>感知～思考～行動</strong>的迴圈（圖 6-11）：</p>
+<ol>
+<li>Agent 對當前螢幕截圖</li>
+<li>多模態模型接收截圖和任務指令，輸出一段思考和一個具體動作</li>
+<li>執行層在真實環境中執行該動作（移動滑鼠、點選、輸入文字等）</li>
+<li>等待介面響應後再次截圖，進入下一輪迴圈</li>
+</ol>
+<p>這裡要區分<strong>看懂介面</strong>和<strong>完成任務</strong>。前者更接近多模態理解能力，可以用一次截圖問答來衡量；後者則要求模型把理解和動作生成放入閉環，處理頁面載入、狀態變化、誤操作和不可逆後果。因此，Computer Use 的難點不只是讓模型在截圖上答對，而是讓它在每一步之後重新確認現實是否仍符合計畫。</p>
+<p><img src="images/fig6-11.svg" alt="圖 6-11 Computer Use Agent 的感知～思考～行動迴圈"></p>
+<p>這個迴圈中有三個關鍵設計維度：<strong>動作空間</strong>（Agent 能執行哪些操作）、<strong>視覺定位</strong>（如何在截圖中找到目標元素）、以及<strong>模型架構</strong>（如何從截圖生成正確動作）。</p>
+<h3 id="動作空間設計">動作空間設計</h3>
+<p>Anthropic 的參考實作把完整互動能力分成三類工具（圖 6-12）。這是清楚的動作空間設計，但不是模型供應商必須遵循的私有協定：只要 Harness 能把相同的截圖、動作約束和執行結果轉換成目標模型支援的訊息與結構化輸出，Claude、開放權重視覺模型和自行託管的端點都能驅動同一個感知～思考～行動迴圈。</p>
+<p><img src="images/fig6-12.svg" alt="圖 6-12 Computer Use 動作空間"></p>
+<p><strong>GUI 操作工具</strong>（computer tool）：滑鼠操作包括移動（mouse_move）、左/右/中鍵點選、雙擊/三擊、拖拽（left_click_drag），以及更精細的按下/鬆開（left_mouse_down/up）。滾動（scroll）支援四個方向並可配合修飾鍵。鍵盤操作包括逐字輸入（type，每個字元間隔 12ms 模擬真實打字）、組合鍵（key，如 Ctrl+C）、長按（hold_key）。感知動作：截圖（screenshot）、獲取游標位置（cursor_position）、等待（wait）。</p>
+<p><strong>命令執行工具</strong>（bash tool）：提供長久的 bash 終端機會話，120 秒超時，透過哨兵字串偵測命令是否執行完畢，多次呼叫之間保持環境狀態（比如 cd 到某個目錄後下次呼叫還在那個目錄）。</p>
+<p><strong>檔案編輯工具</strong>（str_replace_editor）：透過字串匹配實現安全編輯，支援檢視、建立、替換、插入和撤銷操作，比直接覆蓋整個檔案更精確，不容易誤改其他內容。</p>
+<blockquote>
+<p><strong>實驗 6-7 ★：執行 Computer Use（Anthropic 參考路徑或開放模型路徑）</strong></p>
+<p>路徑 A 使用 Anthropic Computer Use Demo。其容器封裝了完整的 Ubuntu 桌面環境，包括瀏覽器、終端機與其他常用工具。前端接收任務，而後端將指令與截圖送給 Claude，接著執行模型回傳的滑鼠、鍵盤、終端機或編輯動作。</p>
+<p>路徑 B 使用 <a href="../chapter6/computer-use-open-model/"><code>chapter6/computer-use-open-model</code></a> 中的範例程式碼。預設情況下，它透過託管的 OpenRouter API 使用開放權重的 Qwen3-VL 32B Instruct 模型來驅動 browser-use，或透過自架的 vLLM/SGLang 及類似系統來執行。</p>
+</blockquote>
+<h3 id="視覺定位grounding">視覺定位（Grounding）</h3>
+<p>在迴圈的每一輪中，模型需要在截圖中準確定位目標元素——「搜尋框在哪裡？」「提交按鈕的座標是什麼？」這就是視覺定位（Grounding）問題。當前主要有<strong>兩大思路</strong>：一是把定位變成<strong>選擇題</strong>——先把介面元素標註好編號，模型只需從中選一個；二是<strong>純座標預測</strong>——讓模型像人一樣直接「看」著截圖報出座標。其中選擇題思路又有兩種實現方式：<strong>純視覺標註</strong>（原始的 Set-of-Mark，用分割模型在畫素上切出候選區域）和<strong>結構化元素索引</strong>（DOM/Accessibility Tree，直接讀取介面自帶的結構）。選擇題思路的共同優勢，是把開放式的「在截圖中找到按鈕並預測座標」轉化為封閉式的「從已標註好的元素中選一個」。就像考試中選擇題比填空題更容易答對一樣，模型只需說「點選 [123]」而不是「點選螢幕 (350, 464) 處的按鈕」。直接輸出座標對模型來說挑戰尤其大，需要大量訓練才能做準確，而且在不同螢幕解析度下很容易出錯。</p>
+<p><strong>Set-of-Mark：視覺標註法。</strong></p>
+<p>原始的 Set-of-Mark（SoM）由微軟研究院於 2023 年提出，最初是為了釋放 GPT-4V 的視覺定位能力。它是<strong>純視覺</strong>方法：用影像分割模型（SAM、SEEM 等）在截圖上自動切出候選區域，為每個區域疊加編號標記，模型看到的是一張帶編號的圖，只需報出編號，由系統換算成對應區域的中心座標。整個過程不需要 DOM，也不需要任何介面內部結構，因此原生桌面軟體、遊戲介面同樣適用——只要分割模型能把候選區域切出來。</p>
+<p><strong>結構化元素索引：SoM 思想在 Web 上的結構化實現。</strong></p>
+<p>當介面本身能提供結構化資訊時，標註可以做得更精確。現代網頁在渲染之前就已經定義了完整的元素結構（DOM 樹）和語義角色（哪個是按鈕、哪個是輸入框），無障礙介面（Accessibility Tree）為許多桌面應用提供了類似的資訊。以 browser-use 專案為代表的 Web Agent 方案正是這樣做的：從 DOM 中列舉可互動元素並編號，可以看作 SoM 思想在 Web 上的結構化實現（圖 6-13）。流程分四步：</p>
+<ol>
+<li>透過瀏覽器除錯介面（CDP，Chrome DevTools Protocol）獲取網頁的結構化表示（DOM 樹）和無障礙資訊</li>
+<li>自動偵測哪些元素可以互動（按鈕、輸入框、連結等）</li>
+<li>為每個可互動元素標註唯一 ID 並在截圖上繪製邊界框</li>
+<li>同時生成文字列表描述每個 ID 對應的元素</li>
+</ol>
+<pre><code class="hljs language-text">Screenshot: [圖片中關鍵元素標註了 [1]、[2]、[3]、[4] 等 ID]
+
+Elements:
+[1] &lt;input type="text" placeholder="Search" aria-label="Search" /&gt;
+[2] &lt;button id="submit-btn" aria-label="Submit form" /&gt;
+[3] &lt;input type="text" placeholder="Enter your name" value="" /&gt;
+[4] &lt;a href="/docs" aria-label="Documentation" /&gt;</code></pre>
+<p>模型只需要輸出一個 ID 號就行，系統自動用該元素的中心座標執行點選。這類方案不省 token（因為要把所有標註資訊都發給模型），但定位準確穩定，還免去了分割模型可能引入的漏檢和誤檢。</p>
+<p><img src="images/fig6-13.svg" alt="圖 6-13 Set-of-Mark 與結構化元素索引（browser-use 實現）"></p>
+<p><strong>純座標預測。</strong></p>
+<p>第三條路線不做任何標註，直接讓模型輸出座標。以 <strong>SeeClick</strong> 和 Claude 的 computer use 為代表：在海量 GUI 截圖和元素位置的配對資料上訓練視覺模型，讓它學會將自然語言描述（如「點選提交按鈕」）直接對映到截圖中的精確座標——就像人類使用者一樣，純粹靠「看」來找到要點選的位置。</p>
+<p>在座標預測方案中，模型對座標的理解高度依賴訓練時使用的解析度（圖 6-14）。Claude 訓練使用 XGA（1024x768）、WXGA（1280x800）、FWXGA（1366x768），如果輸入的截圖解析度不匹配，模型預測的座標就會系統性地偏移——就像在小地圖上量距離然後直接用到大地圖上一樣。因此，需要在工具層實現雙向座標縮放機制，而且要<strong>按寬高比選目標解析度</strong>，避免非等比拉伸把畫面壓變形、連帶把座標判斷也帶偏。例如，真實螢幕解析度為 2560×1440（16:9），就該在 Claude 支援的三檔裡挑一個寬高比同樣接近 16:9 的目標——FWXGA（1366×768）最匹配。截圖時把螢幕等比縮放到 1366×768 送入模型；模型輸出點選座標 (683, 384) 後，反向對映為真實座標 (683×2560/1366, 384×1440/768) ≈ (1280, 720)。反過來，若硬把 16:9 拉伸進 4:3 的 1024×768，畫面會被橫向壓扁，模型預測的座標就會系統性偏移。</p>
+<p><img src="images/fig6-14.svg" alt="圖 6-14 解析度匹配與雙向座標縮放"></p>
+<p>三條路線的選擇邏輯可以概括為：<strong>結構化資訊可得時，優先用 DOM/Accessibility Tree 索引</strong>，定位最精確穩定；<strong>不可得時</strong>（原生桌面軟體如 Photoshop、Canvas/WebGL 渲染的介面、遊戲），<strong>既可以用視覺標註（原始 SoM 路線），也可以用座標預測</strong>。視覺標註把定位變成選擇題，對未經專門訓練的通用模型更友好；座標預測省去標註步驟，對做過 GUI 定位訓練的模型更直接。兩者在小元素和密集介面上的精度都仍有差距。</p>
+<blockquote>
+<p><strong>實驗 6-8 ★：使用 browser-use 實現自動瀏覽器操作</strong></p>
+<p>基於 Playwright 瀏覽器自動化框架（一個用程式碼控制瀏覽器的工具庫），結合多模態大模型實現自然語言驅動的瀏覽器操作。啟用 SoM 視覺化模式，每次決策前儲存帶標註框的截圖。</p>
+<p>測試任務「開啟 Google 查詢舊金山天氣」：系統啟動後截圖顯示 Google 搜尋頁面，互動元素被編號，模型選擇搜尋框、輸入「San Francisco weather today」、提交搜尋，再從結果頁提取溫度和天氣狀況。</p>
+</blockquote>
+<h3 id="能看動畫能聽聲音的-computer-use-agent">能看動畫、能聽聲音的 Computer Use Agent</h3>
+<p>到目前為止，Computer Use 的感知都建立在一個隱含假設上：<strong>螢幕是靜止的</strong>——截一張圖、想一步、點一下，再截下一張圖。可現實裡的螢幕會放影片、會彈出轉瞬即逝的通知、會播放會議裡的人聲。一個每 3–5 秒才睜一次眼、而且完全沒有耳朵的 Agent，對這些「兩幀之間發生的事」既看不見也聽不到。</p>
+<p>這裡真正該被重新設計的，不是「動作介面」，而是「<strong>觀察介面</strong>」<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>。核心思想是建構 Agent–電腦觀察介面（AOI），把連續的環境觀察轉換成模型便於處理的離散事件。其中有幾個關鍵技術：第一，<strong>螢幕關鍵影格截圖</strong>——用一個小模型判斷螢幕是否發生了有意義的變化，只在明顯變化時才截圖，變化頻繁時每秒截圖 1 次就有不錯的效果；第二，<strong>音量門控的語音轉寫</strong>，有聲音時呼叫語音辨識，把辨識出的文字放入上下文，讓 Agent 能夠聽到聲音；第三，<strong>把畫面敘述成文字</strong>，讓模型把捕獲到的螢幕截圖描述成一句話，這樣即使原圖之後被清理出上下文，這句文字仍留在上下文裡，實現了多模態互動歷史壓縮的效果。</p>
+<h3 id="computer-use-的世界模型">Computer Use 的世界模型</h3>
+<p>上一節的觀察介面解決的是「螢幕中間發生了什麼」：透過關鍵影格、語音轉寫和持久文字，讓 Agent 不再只看到兩張相隔很久的截圖。但觀察介面並不會消除規劃延遲，Agent 仍然是串列的「截圖—思考—點擊」迴圈，每執行一個動作都重新觀察、思考下一步。<strong>OSWorld-Human</strong> 的效率研究顯示，即使任務最終成功，Agent 的操作步驟和等待時間仍明顯多於人類；準確率達到人類水準，並不等於已經足夠實用。</p>
+<p>人類操作電腦時並不是點擊之後才開始想下一步，而是會先對動作後果作出預測：如果實際變化與預期一致，就沿著原定計畫繼續執行；只有發現頁面狀態偏離預期，才停下來重新觀察和規劃。世界模型讓 Agent 能夠在行動前預測桌面接下來可能變成什麼，從而實現這種類似人的「推測執行」機制，大幅提高效率。</p>
+<p>桌面狀態不只是一張像素圖，還包括視窗、焦點、捲動位置、輸入框內容、載入狀態、權限和網路回應；動作則包括點擊、鍵盤輸入、捲動、拖曳和等待。一個可用於 Computer Use 的世界模型至少要能編碼目前狀態、預測候選動作造成的狀態變化，並把預測交給規劃器決定下一步：</p>
+<pre><code class="hljs language-text">桌面狀態 + click/type/scroll/wait ──&gt; 下一狀態的表示</code></pre>
+<p>這樣，Agent 就能在真正點擊之前比較候選動作的後果，在頁面載入期間準備下一步，並在彈出視窗一閃而過時根據狀態差異恢復。例如任務是「在 VS Code 新建 Python 檔案並寫入 hello world」，模型可以先預測檔案樹和編輯器在成功後的關鍵狀態，再選擇點擊、輸入和儲存動作；如果任務是刪除檔案，則可以先在隔離的虛擬桌面中預測是否會出現不可逆的確認視窗，必要時請求使用者確認。這裡的重點不是讓模型生成一張逼真的未來截圖，而是預測完成任務所需的、可檢查的狀態差異。</p>
+<p>2026 年 7 月，Induction Labs 公布的 <strong>Photon-1</strong> 展示了這條路線的一種實作，僅用 3 萬小時的 H200 GPU 時間就完成了 computer use 世界模型的預訓練。它把每一影格壓縮為離散的潛在 token，自迴歸預測動作之後的下一狀態表示，而不是在預訓練階段逐像素生成截圖；另外接入的影像生成器只用於把潛在表示視覺化，並非推論的必要元件。給定一張種子截圖和後續動作，模型可以連續「想像」桌面狀態，再透過虛擬機上的線上訓練學會輸出 computer-use 動作。<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup></p>
+<h3 id="移動端生態壁壘比技術更難">移動端：生態壁壘比技術更難</h3>
+<p>Computer Use 也在向移動端擴展。移動端與桌面在技術上確有差異：動作空間通常不再是「滑鼠座標 + 鍵盤」，而是接入系統的無障礙服務 API（如 Android 的 AccessibilityService）來讀取介面元素、下發點選與文字輸入；互動方式也從滑鼠指標變成觸控手勢，座標的語義隨之改變——同一個 (x, y) 到底是手指的單擊、長按，還是滑動手勢的起點，需要額外的手勢型別來界定。第七章介紹的 AndroidWorld 等移動端基準，正是在這樣的動作空間上評測 Agent 完成真實 App 任務的能力。</p>
+<p>但真正卡住移動端的，往往不是這些技術差異，而是生態壁壘。曾有手機廠商嘗試在消費級手機中整合 AI 助手，讓它自動操作微信、淘寶、支付寶等日常應用，但很快遭遇平臺限制。</p>
+<p>這揭示了 Computer Use 面臨的一個獨特挑戰：<strong>生態壁壘</strong>。封殺背後的根本原因是商業模式衝突。傳統網際網路應用的核心變現邏輯是<strong>流量與注意力</strong>：使用者刷資訊流時看到廣告，搜尋商品時追蹤推薦演算法的引導，瀏覽頁面時產生衝動消費。而當 Agent 代替使用者操作時，這條變現鏈路被徹底繞過：AI 不會關注廣告，也不會衝動消費，直奔目標完成任務就走。對於靠廣告和流量變現的平臺來說，Agent 的每一次操作都在侵蝕其商業模式的根基。</p>
+<p>這意味著 Computer Use 面對的不僅是 CAPTCHA（驗證碼）等技術層面的對抗，更是<strong>結構性的利益衝突</strong>。這一矛盾在短期內難以調和，也讓 Computer Use 在消費級場景中的落地面臨比純技術問題更棘手的挑戰。</p>
+<h2 id="機器人操作以-xlerobot-整理桌面為例">機器人操作：以 XLeRobot 整理桌面為例</h2>
+<blockquote>
+<p><strong>閱讀提示</strong>：本節始終使用同一個任務——「把紅色杯子放進托盤，把黃色廢紙放進垃圾盒，最後重新觀察並確認桌面狀態」。實驗 6-9 和 9-9 是 XLeRobot 真機實驗，需要機械手臂、標定、緊急停止裝置和現場觀察員；實驗 6-10、9-10 和 9-11 是對應的本機 GPU 實驗。真機與模擬會明確分開報告，但任務目標、動作語意和成功條件保持一致。</p>
+</blockquote>
+<p>機器人操作比「看圖回答問題」難得多。模型不但要看懂畫面，還要在真實世界裡連續做出動作，而且每個動作都會改變下一刻的情況。XLeRobot 把這種區別變得很具體：同一台機械手臂既可以由人透過鍵盤、手把或 VR 裝置遙操作，也可以把攝影機觀察和一組受約束的動作工具交給 Agent 自主呼叫。硬體和任務都不變，改變的只是操作者——前者由人持續觀察和糾錯，後者必須由模型與控制系統完成同樣的工作。</p>
+<p>本節將用「整理桌面」貫穿五個實驗。先讓人遙操作真實 XLeRobot，測量真機在足夠強的操作者控制下能做到什麼；再在模擬器中建立同任務的理想控制上限。接著讓 Agent 自主控制真實 XLeRobot，觀察感知、規劃和失敗恢復如何影響結果；再把相同的工具契約放進模擬器，批次比較開環、逐步檢查和世界模型三種策略。最後改變背景、物體外觀、光照和視覺雜訊，檢查模擬中學到的視覺策略能否適應新的環境。</p>
+<p>這裡的瓶頸通常不是再給模型增加一個靜態問答基準，而是讓它在有限的感知和控制頻寬下持續完成閉環。一個能用的機器人系統，至少要回答四個問題：</p>
+<ol>
+<li>人想完成什麼任務？</li>
+<li>接下來先做哪個子任務？</li>
+<li>目前技能具體輸出哪些動作？</li>
+<li>動作執行後，現實是否仍符合原來的計畫？</li>
+</ol>
+<p>本節把這四個問題放在 XLeRobot 的同一個控制閉環中，並分別說明四種技術各自負責什麼：長程規劃安排先處理杯子還是廢紙，VLA 或動作原語完成抓取和放置，世界模型估計動作後果，從模擬環境遷移到現實環境則處理訓練畫面和真實攝影機、執行器之間的差異。即使高層模型已經具備足夠的知識和規劃能力，缺少其中任何一個回饋環節，系統仍可能無法把任務做完。</p>
+<h3 id="硬體與演算法的分工">硬體與演算法的分工</h3>
+<p>XLeRobot 最適合回答的第一個問題是：自主整理桌面失敗時，究竟是機械手臂本身做不到，還是演算法沒有把它用好？這裡有一個不能被弱化的事實：<strong>像 XLeRobot 這樣成本只有幾百美元的機械手臂，透過遙操作已經能夠完成本節這種連續的多步桌面任務</strong>——人看著攝影機畫面，抓起紅色杯子放進托盤，再把黃色廢紙放進垃圾盒，最後重新確認狀態。這個結果不是「硬體勉強具備可行性」而已，而是一個明確的診斷證據：<strong>對於這個任務，硬體本體不是瓶頸，演算法才是瓶頸。</strong></p>
+<p>診斷方法很直接：保持攝影機、機械手臂、夾爪、桌面佈置和成功條件不變，先讓人接管閉環。人類會持續修正物體定位、動作選擇、時機控制並處理抓取失敗；自主系統與人的差距，正落在這些閉環能力上。當然，這個判斷的範圍是本節的桌面任務：它說明硬體已經跨過了完成該任務所需的負載、精度和工作空間門檻，並不意味著幾百美元的機械手臂能夠勝任所有開放環境或更高難度的操作。</p>
+<p>XLeRobot 支援鍵盤、Xbox 手把、Switch Joy-Con 和 VR 裝置等遙操作入口。人類操作者會自然地做很多演算法必須顯式實作的事：夾爪靠近杯子時減速，杯子滑動時修正抓取點，第一次沒有夾住紙張時重新觀察，並在物體放入目標區域後檢查結果。遙操作因此不只是收集示範資料，也是一種「固定硬體、替換操作者」的診斷實驗。<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
+<blockquote>
+<p><strong>實驗 6-9 ★：真機遙操作 XLeRobot 整理桌面</strong></p>
+<p>在真實 XLeRobot 工作區內放置紅色杯子、托盤、黃色廢紙和垃圾盒。操作者透過一種已完成校正的遙操作方式執行固定任務：「把紅色杯子放進托盤，把黃色廢紙放進垃圾盒，最後重新觀察並確認桌面狀態。」實驗至少重複多輪，並記錄攝影機畫面、操作者輸入、機械手臂狀態、動作時間、抓取失敗、重試次數和最終狀態。</p>
+<p>驗收不能只看「最後桌面似乎收拾好了」。紅色杯子必須位於托盤內，黃色廢紙必須位於垃圾盒內，機械手臂回到安全姿態，而且全程沒有碰撞、越界或未經確認的人工代做。</p>
+</blockquote>
+<p>真機遙操作得到的是最有說服力的任務上限，但它不適合批次改變物體數量和位置。為了得到可重複、可統計的對照，下一步把同一個「物體歸位」問題搬進二維桌面模擬器，用理想控制器代表一個不會感知錯誤、不會選錯動作的強操作者。</p>
+<blockquote>
+<p><strong>實驗 6-10 ★：在模擬器中測量同任務的理想控制上限</strong></p>
+<p>在二維桌面模擬器中隨機擺放紅色杯子、黃色廢紙及其目標區域，由理想控制器依次接近物體、抓取並移動到正確位置。它不需要辨識影像，也不會選錯動作，因此代表「感知和決策都正確時，這個任務至少可以做到什麼」。</p>
+<p>實驗關注任務成功率、完成步數和路徑長度，並改變物體初始位置與任務規模，觀察理想上限是否穩定。它與實驗 6-9 使用相同的成功條件，但測量的是非致動模擬，不代表 XLeRobot 真機已經運行。二者共同建立後續自主控制的兩條參考線：實驗 6-9 是真實硬體上的人類閉環，實驗 6-10 是模擬環境中的理想閉環。</p>
+</blockquote>
+<h3 id="機器人控制的基本結構">機器人控制的基本結構</h3>
+<p>機器人系統通常會把不同時間尺度的工作分開：</p>
+<table>
+<thead>
+<tr>
+<th>層級</th>
+<th>核心問題</th>
+<th>輸出</th>
+<th>典型時間尺度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任務目標</td>
+<td>人想完成什麼</td>
+<td>「把杯子和廢紙歸位」</td>
+<td>分鐘級</td>
+</tr>
+<tr>
+<td>長程規劃</td>
+<td>先做什麼、後做什麼</td>
+<td>先處理杯子，再處理廢紙，最後檢查</td>
+<td>秒到分鐘</td>
+</tr>
+<tr>
+<td>基本技能</td>
+<td>目前要完成哪個狀態變化</td>
+<td><code>pick(red_cup)</code>、<code>place(red_cup, tray)</code></td>
+<td>約 1—3 秒</td>
+</tr>
+<tr>
+<td>VLA / 技能策略</td>
+<td>這個技能具體怎麼動</td>
+<td>XLeRobot 夾爪的一小段動作或連續軌跡</td>
+<td>約 1—10 Hz 推論</td>
+</tr>
+<tr>
+<td>底層控制與安全層</td>
+<td>如何穩定、及時地執行</td>
+<td>關節或末端控制量、限速與緊急停止</td>
+<td>約 50—1000 Hz</td>
+</tr>
+</tbody>
+</table>
+<p>這是一種常見的工程分工，不是唯一的模型架構。VLA 可以承擔一部分高層判斷，規劃器也可以是規則程式、VLM 或最佳化器。無論採用哪種實作，都應該把「任務順序」和「眼前動作」分開，否則高層模型的推論延遲會拖慢底層控制，底層的高頻控制也會讓高層模型處理大量無關細節。對 XLeRobot 來說，模型不應直接輸出任意關節角；它只選擇 <code>pick</code>、<code>place</code>、<code>verify_state</code> 或 <code>stop</code> 等有邊界的技能，經過標定、限速並帶逾時的執行器再把技能變成真實機械手臂動作。</p>
+<h3 id="長程規劃與任務分解">長程規劃與任務分解</h3>
+<p>使用者說「把桌面整理乾淨」時，系統不能把這句話直接交給動作模型。規劃器要先列出場景中的物體和目標，再決定先後順序，並為每一步寫清楚開始條件、完成條件和風險限制。例如：</p>
+<pre><code class="hljs language-text">處理紅色杯子 → 清理黃色紙張 → 檢查桌面</code></pre>
+<p>「處理紅色杯子」還要繼續拆成兩個動作和一次檢查：</p>
+<pre><code class="hljs language-text">pick(red_cup) → place(red_cup, tray) → verify_state()</code></pre>
+<p>每完成一個技能，就得到一個可以檢查的節點。如果抓取失敗，只重試目前這一步；如果物體被人挪動了，或者使用者改變了目標，只需要重新規劃受影響的後續步驟，不必把舊計畫全部重做。給智慧體的工具也應該足夠簡單：一次呼叫只做一件事，動作範圍固定，有逾時限制，執行後立即重新觀察。</p>
+<blockquote>
+<p><strong>實驗 6-11 ★★：使用 Gemini Robotics-ER 1.5 驅動 XLeRobot 自主整理桌面</strong></p>
+<p>保持實驗 6-9 的真實 XLeRobot、桌面佈置、任務指令和成功條件不變，把人類操作者替換為 Agent。可以使用 Gemini Robotics-ER 1.5 這類具身推論模型負責觀察和規劃，透過 RoboCrew 風格的智慧體迴圈只開放五個工具：<code>observe_scene</code>、<code>pick</code>、<code>place</code>、<code>verify_state</code> 和 <code>stop</code>。<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup></p>
+<p>模型先觀察桌面，決定處理順序，再呼叫經過標定的 XLeRobot 抓取和放置動作。每完成一個技能都必須重新觀察並檢查後置條件；抓取失敗時只能重試目前技能，使用者喊停、物體離開工作區或狀態無法確認時必須呼叫 <code>stop</code>。模型不能直接輸出任意關節角，也不能僅憑自己先前說過「已經完成」就跳過真實檢查。</p>
+<p>驗收標準與實驗 6-9 完全相同：杯子位於托盤內、廢紙位於垃圾盒內、機械手臂回到安全姿態且沒有碰撞或越界。區別在於，自主實驗的任務語意必須來自模型觀察，真實動作必須來自工具呼叫，最終狀態必須由新觀察確認；人只能負責啟動、緊急停止和安全監護，不能在中途代替 Agent 完成動作。這樣，實驗 6-9 與 9-9 才能直接比較「同一硬體、同一任務，人類閉環與模型閉環之間還差什麼」。</p>
+</blockquote>
+<p>真機實驗能暴露標定誤差、相機遮擋和夾爪失敗，卻很難安全、可控地重複大量故障。後面的模擬實驗會保留這五個工具和完全相同的任務狀態，只把真實執行器換成可注入失敗的桌面環境，用來拆解開環執行、逐步檢查和動作預測各自貢獻了什麼。</p>
+<h3 id="vla-控制">VLA 控制</h3>
+<p>VLA 是 Vision-Language-Action 的縮寫，中文可以理解為「視覺—語言—動作模型」。它接收目前畫面和一條技能指令，然後輸出機器人接下來要執行的動作：</p>
+<pre><code class="hljs language-text">當前觀察 + 技能指令 → 動作</code></pre>
+<p>在 XLeRobot 的例子裡，高層規劃器只提交 <code>pick(red_cup)</code>，VLA 或技能策略還要根據目前畫面決定從哪個方向接近杯子、夾爪何時閉合、手臂以什麼軌跡抬起。執行層完成這一小段運動後重新拍攝桌面，只有確認杯子確實被夾住，規劃器才允許提交 <code>place(red_cup, tray)</code>。因此，工具呼叫定義的是期望的狀態變化，VLA 定義的是如何透過連續動作實現這個狀態變化。</p>
+<p>RT-2 和 OpenVLA 把連續動作切成離散的 token，再像生成文字一樣逐個輸出；π₀ 則代表另一條路線，直接生成連續、平滑的動作軌跡。兩種方法沒有簡單的高下之分：離散 token 更容易和語言模型結合，連續軌跡通常更適合表達平滑運動。真正的取捨在於動作應該怎樣表示，而不只是模型大小。<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup></p>
+<p>大模型每秒通常只能推論 1—10 次，而傳統控制器每秒可能要更新幾十到上千次。工程上常用「動作分塊」：模型一次生成一小段未來動作，控制執行緒按較高頻率執行這一小段，模型則在背景準備下一段。這樣可以把一部分推論等待藏在動作執行時間裡。代價是，動作段越長，運動越平滑，模型在這段時間裡看到的新畫面卻越少；如果 XLeRobot 伸手抓杯子時杯子被碰動，它可能仍在執行根據舊畫面生成的動作。因此，動作分塊是在平滑性和反應速度之間做取捨，而不是沒有代價的加速。</p>
+<h3 id="vla-的局限">VLA 的局限</h3>
+<p>「長程規劃 + VLA」是一個實用的基本方案，但它仍然有幾個容易被忽略的問題：</p>
+<ul>
+<li><strong>訓練資料有限</strong>：機器人示範遠少於網際網路文字和影像資料。模型見過「杯子」這個詞，不代表它見過各種材質和摩擦條件下的杯子。</li>
+<li><strong>只學會模仿，不一定懂後果</strong>：行為複製主要學習「示範者下一步怎麼做」，並沒有明確要求模型回答「這個動作會造成什麼結果」。</li>
+<li><strong>機器人各不相同</strong>：不同機器人有不同的自由度、座標系、夾爪和執行器延遲，同一個動作不一定能直接搬到另一台機器人上。</li>
+<li><strong>觀察可能過時</strong>：動作塊開始執行後，物體可能被移動、遮擋或碰倒，但模型仍在依據上一幀畫面做決定。</li>
+</ul>
+<p>所以，語言模型知道「杯子」是什麼，並不代表它知道摩擦、接觸、液體晃動和電源線會怎樣改變未來狀態。VLA 主要回答「現在應該做什麼」，還需要另一類模型幫助判斷「做了之後可能發生什麼」。</p>
+<h3 id="世界模型">世界模型</h3>
+<p>可以把世界模型理解成一個「動作結果預測器」。它學習的是：在目前狀態下採取某個動作，下一刻的狀態可能怎樣變化。</p>
+<pre><code class="hljs language-text">當前狀態 + 候選動作
+    → 預測下一狀態或未來片段
+    → 比較候選結果
+    → 選擇動作、重新規劃或安全停止</code></pre>
+<p>一個能用於機器人的世界模型，至少要做好三件事：</p>
+<ul>
+<li>看懂目前狀態；</li>
+<li>預測不同動作可能帶來的結果；</li>
+<li>把這些預測交給規劃器或控制器，幫助它們做選擇。</li>
+</ul>
+<p>只會描述影片的 VLM，或者只會生成畫面的模型，並不會自動變成可靠的機器人世界模型。它還必須知道動作是什麼，並且能預測動作對物體和環境的影響。V-JEPA 2 代表在內部狀態中預測未來的一條路線，World-Action Model 則明確學習「動作—未來觀察」的關係。這些模型可以和 VLA 配合使用，不需要取代 VLA。<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup></p>
+<p>在實際系統中，世界模型通常有三種用法：</p>
+<ol>
+<li><strong>動手前</strong>：比較抓取、推動、等待等候選動作，優先選擇風險更小的方案；</li>
+<li><strong>執行時</strong>：把真實觀察和預測結果對照，發現偏差就縮短動作、停止或重新規劃；</li>
+<li><strong>訓練時</strong>：利用影片、模擬資料和失敗軌跡學習狀態變化，減少真機上的試錯次數。</li>
+</ol>
+<p>回到 XLeRobot 的桌面任務：如果黃色廢紙被紅色杯子部分遮住，系統可以比較「先抓紙」「先移動杯子」和「換一個抓取方向」幾個候選技能。世界模型不需要生成一段逼真的機器人影片，只要能預測哪些候選動作更可能讓紙張變得可抓取、哪些動作可能碰倒杯子，就已經能幫助規劃器排序。動作執行後，真實攝影機觀察仍然是最終事實；預測只能幫助選擇，不能代替驗收。</p>
+<p>世界模型給出的不是確定答案，而是「如果這樣做，可能會發生什麼」的可比較預測。預測得越遠，誤差通常越大；一段看起來逼真的未來畫面，也可能不符合真實的接觸和摩擦規律。因此，實際系統仍然需要短期預測、即時觀察、對不確定性的估計，以及獨立的硬體安全控制器。生成式世界模型可以用來做互動式模擬或視覺化，但不能把「會生成影片」和「能指導機器人動作」混為一談。<sup class="footnote-ref"><a href="#fn10" id="fnref10">[10]</a></sup></p>
+<blockquote>
+<p><strong>實驗 6-12 ★★：在模擬器中比較三種自主整理桌面的閉環</strong></p>
+<p>把實驗 6-11 的任務、物件狀態、成功條件和五個工具原樣放進桌面模擬器，只把真實 XLeRobot 執行器換成可控的模擬執行器，並讓抓取偶爾出現可恢復的瞬時失敗。這樣可以在不改變問題的前提下比較三種策略。</p>
+<p><strong>開環執行</strong>一次生成完整動作序列，中途不重新觀察；<strong>逐步檢查</strong>在每個 <code>pick</code> 和 <code>place</code> 之後重新讀取狀態，失敗時只重試目前技能；<strong>預測式執行</strong>再增加一個短期世界模型，先比較候選技能的預期結果，再選擇下一步。實驗比較任務成功率、工具呼叫開銷和失敗恢復能力，並檢查最終成功是否都由 <code>verify_state</code> 的新觀察確認。</p>
+<p>這個實驗不是為了證明小型模擬世界模型等同於真實機器人的物理模型，而是驗證一個更基礎的關係：開環計畫會把一次局部失敗帶到任務末尾，逐步檢查能夠恢復，動作預測則可以進一步幫助候選技能排序。最終是否真的完成，仍然必須由環境回饋決定。</p>
+</blockquote>
+<h3 id="從模擬環境到真實機器人">從模擬環境到真實機器人</h3>
+<p>實驗 6-12 即使在模擬器裡表現穩定，也不能直接推出實驗 6-11 的 XLeRobot 真機會同樣成功。從模擬環境走到真實機器人，並不是再換一種控制器，而是要處理兩個環境之間的差異。訓練時可以使用遙操作資料、影片資料或模擬互動資料；真正部署時，同一個紅色杯子、黃色廢紙、托盤和垃圾盒會出現在不同的背景、光照、相機位置和遮擋關係中，機械手臂還會遇到不同的摩擦、感測器雜訊和執行器延遲。只要這些差異足夠大，模擬中學會的動作就可能在現實中失效。</p>
+<blockquote>
+<p><strong>實驗 6-13 ★★★：同一桌面任務的 RGB 跨環境測試</strong></p>
+<p>在模擬環境中繼續使用「把物體移動到對應目標」的基本問題，把每個樣本理解為整理桌面中的一個局部決策：根據 RGB 畫面判斷應該向哪個方向接近物體，或是否已經可以抓取。訓練四種結構相同的視覺策略：一組只看固定畫面，一組改變背景，一組改變物體外觀，最後一組同時改變背景、外觀、光照和雜訊。</p>
+<p>所有策略都在原始環境和變化後的新環境中測試，比較視覺條件變化前後的動作判斷準確率。這個實驗要回答的不是「模擬器是否已經等於 XLeRobot 真機」，而是一個更窄的問題：訓練時主動擴大畫面變化範圍，是否有助於同一個杯子—托盤、廢紙—垃圾盒任務適應新的攝影機畫面。即使結果改善，真機部署仍然需要真實相機標定、執行器測試和完整的安全閉環。<sup class="footnote-ref"><a href="#fn11" id="fnref11">[11]</a></sup></p>
+</blockquote>
+<h2 id="本章小結">本章小結</h2>
+<p>順著<strong>模態</strong>和<strong>執行時機</strong>兩根軸看，<strong>非同步與事件驅動</strong>把觀察從「Agent 主動去取」擴展為「世界主動推來」，把動作從「回合內做完」擴展為「先發起、後續靠事件收尾」，模態沒變，變的只有時機。<strong>語音</strong>把尺度壓到毫秒，級聯、端到端 Omni 與全雙工三種範式的演進主線，就是從「輪流說話」逐步走向持續聽說，並在前台即時互動與後台深度思考之間做出分工。<strong>Computer Use</strong> 把同一個閉環搬到螢幕上，瓶頸已從「能否完成任務」擴展到操作效率、連續視覺理解和動作後的狀態確認。<strong>機器人</strong>則把它推到物理世界，動作分塊在平滑性與反應速度之間取捨，而最終是否完成，仍必須由新的觀察來判定。</p>
+<p>四節共享同一條控制骨架：</p>
+<pre><code class="hljs language-text">持續感知
+  → 判斷當前狀態與時機
+  → 選擇回覆或動作
+  → 讓輸出進入環境
+  → 觀察回饋
+  → 繼續、修正、重試、停止或重新規劃</code></pre>
+<p>也共享同一組原語——喚醒、安全點、取消、搶佔、快慢分離。</p>
+<p>本章完成了「建構 Agent」這一部分的最後一塊：觀察與動作空間在內容、模態和時機三個方向上都已經展開。接下來，第七章先回答如何判斷系統建構得對不對；第八章討論如何透過後訓練更新模型參數；第九章再把執行軌跡、評估與多種更新載體組織成持續進化閉環。第十章則在這個完整的單 Agent 基礎上轉向多 Agent 協作。</p>
+<h2 id="思考題">思考題</h2>
+<ol>
+<li>★★ 在非同步 Agent 架構中，事件佇列的優先順序策略需要在設計時確定。但如果優先順序判斷本身需要語義理解（比如判斷一條新訊息是否比當前任務更緊急），這個判斷應該由誰來做——規則引擎還是另一個 LLM 呼叫？各有什麼代價？</li>
+<li>★★ 在佇列式事件處理中，模型傾向於只關注最後一個事件，本章透過 Agent 狀態列標記和彙總來緩解。但如果佇列中積壓了 20 個事件（10 個工具結果 + 5 條使用者訊息 + 5 個系統提醒），你會如何組織這些事件的呈現順序和格式，使模型不遺漏關鍵資訊？</li>
+<li>★★★ Agent 代表使用者與外部世界互動時，本質上面臨一個身份選擇：是用獨立的虛擬身份（專屬郵箱和電話號碼）以第三方身份行動，還是直接以使用者本人的身份操作其個人帳號？前者可以在後臺自主操作，但第三方可能不信任一個非真人的身份；後者擁有更完整的上下文和權限，但引入了信任授權和安全邊界的問題。你認為在什麼場景下應該選擇哪種模式？</li>
+<li>★★ 語音 Agent 的端到端模型將 ASR-LLM-TTS 合併為單一模型，降低了延遲卻失去了模組化。如果端到端模型在某個環節（如語音識別）出錯，除錯和修復比序列管道困難得多。你會如何設計端到端語音 Agent 的可觀測性（observability）系統？</li>
+<li>★ Step-Audio R1 透過 MPS 雙腦架構實現「邊想邊說」。但人類在「邊想邊說」時經常會說出未經深思熟慮的話、自我糾正、或使用填充詞。Agent 的「邊想邊說」應該模仿人類的這些特徵嗎？</li>
+<li>★★ SoM（Set-of-Mark）及其結構化變體（DOM 元素索引）將 Computer Use 的視覺定位從開放座標預測轉為封閉 ID 選擇，但都需要先偵測和標註介面元素——無論靠分割模型還是靠 DOM。如果介面包含非標準控制項或動態變化的元素，標註就可能不完整或不準確。這種情況下應該回退到座標預測嗎？</li>
+<li>★★ XLeRobot 等千美元級機器人平臺讓遙運算元據收集變得廉價。但遙運算元據的品質高度依賴操作者的技能。一個不熟練的操作者提供的資料會如何影響 VLA 模型的訓練？如何在資料收集階段自動篩選低品質資料？</li>
+<li>★★★ 本章覆蓋了語音、Computer Use 和機器人三種互動形態。這三種形態的共同趨勢是從序列管道向端到端模型演進。如果這種趨勢繼續，五年後的 Agent 互動層會是什麼樣的？</li>
+<li>★★ DOM/Accessibility Tree 元素索引在標準 Web 應用上效果顯著，但越來越多的軟體介面（Canvas/WebGL 渲染、跨平臺自繪控制項）不提供可訪問的結構化資訊，只能依靠視覺標註或座標預測。你認為 Computer Use 應該押注純視覺路線，還是同時維護結構化和視覺兩條路徑？維護兩條路徑的成本和收益分別是什麼？</li>
+<li>★★ VLA 模型採用動作分塊（action chunking）——如正文所述，π₀ 的典型配置是一次生成 50Hz 頻率下 25-50 個未來動作——將推理延遲隱藏在執行時間裡。但如果執行過程中環境突變（如物體被移走），預生成的動作序列就會失效。如何在動作分塊的效率優勢和環境變化的響應速度之間取得平衡？</li>
+<li>★★★ 本章的三個場景（語音、Computer Use、機器人）都面臨「感知～思考～行動」迴圈的延遲問題，都朝著快慢思考並行化的方向演進。在語音場景中，這表現為「說錯了再糾正」；在 Computer Use 場景中，這表現為「先點再看」；在機器人場景中，這表現為「走一步看一步」。如何保證這些基於快思考的行動不會導致無法挽回的後果？</li>
+<li>★★★ 本章反覆出現同一組原語（喚醒、安全點、取消、搶佔、快慢分離）在不同時間尺度上的實作。請任選其中一個，說明它在事件驅動（秒—天）與機器人動作分塊（毫秒）兩處的實作差異；這種差異主要由什麼決定——環境變化的速度、動作的可逆性，還是觀察的取得成本？</li>
+</ol>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>OpenAI. <em>Introducing GPT-Live.</em> 2026-07-08. <a href="https://openai.com/index/introducing-gpt-live/%E3%80%82%E6%9C%AC%E7%AF%80%E7%9A%84%E3%80%8C%E7%B4%9A%E8%81%AF%EF%BC%8F%E8%BC%AA%E6%AC%A1%E5%BC%8F%EF%BC%8F%E5%85%A8%E9%9B%99%E5%B7%A5%E3%80%8D%E5%88%86%E9%A1%9E%E5%87%BA%E8%87%AA%E8%A9%B2%E6%96%87%E5%B0%8D">https://openai.com/index/introducing-gpt-live/。本節的「級聯／輪次式／全雙工」分類出自該文對</a> ChatGPT 語音三代演進的總結；文中的「端到端全模態（Omni）」對應「turn-based voice models」類別。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. <a href="https://thinkingmachines.ai/blog/interaction-models/">https://thinkingmachines.ai/blog/interaction-models/</a> <a href="#fnref2" class="footnote-backref">↩︎</a> <a href="#fnref2:1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p>Pine AI. “The Most Natural Human-Computer Interface Is Your Voice.” 2026-06-23（2026-08-06 更新）. <a href="https://www.19pine.ai/blog/pine-ai-the-most-natural-human-computer-interface-is-your-voice">https://www.19pine.ai/blog/pine-ai-the-most-natural-human-computer-interface-is-your-voice</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p>論文見 Li, Bojie and Noah Shi. <em>Agent-Computer Observation Interfaces Enable Dynamic Computer Use.</em> arXiv:2606.29472, 2026. <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p>David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. <a href="https://www.inductionlabs.com/news/scaling-video-pretraining">https://www.inductionlabs.com/news/scaling-video-pretraining</a> 。文中 Photon-1 的參數、資料規模、內部 benchmark 和成本比較均為公司揭露的結果。 <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p>XLeRobot, “Teleop 文件”. <a href="https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html">https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p>Google DeepMind, “Gemini Robotics-ER 1.5”. <a href="https://deepmind.google/models/gemini-robotics/gemini-robotics-er/%EF%BC%9BXLeRobot">https://deepmind.google/models/gemini-robotics/gemini-robotics-er/；XLeRobot</a>, “LLM Agent 控制”. <a href="https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html">https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html</a> 。XLeRobot 上游範例展示模型與工具呼叫的編排方式；本節保持同一編排原則，但把動作工具限定為經過標定的桌面抓取、放置、檢查和停止原語。 <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn8" class="footnote-item"><p>Moo Jin Kim et al. <em>OpenVLA: An Open-Source Vision-Language-Action Model.</em> arXiv:2406.09246, 2024. <a href="https://arxiv.org/abs/2406.09246">https://arxiv.org/abs/2406.09246</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn9" class="footnote-item"><p>Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. <a href="https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/">https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/</a>; V-JEPA 2 技術報告：arXiv:2506.09985, <a href="https://arxiv.org/abs/2506.09985">https://arxiv.org/abs/2506.09985</a> <a href="#fnref9" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn10" class="footnote-item"><p>Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. <a href="https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/">https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/</a>; Zachary Lin et al. <em>Cosmos World Foundation Model Platform for Physical AI.</em> arXiv:2501.03575, 2025. <a href="https://arxiv.org/abs/2501.03575">https://arxiv.org/abs/2501.03575</a> 。 <a href="#fnref10" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn11" class="footnote-item"><p>LeRobot, “Sim2Real 教學”. <a href="https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md">https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md</a> <a href="#fnref11" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+</article>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){try{if(window.mermaid){mermaid.initialize({startOnLoad:true,securityLevel:'loose'});mermaid.run();}}catch(e){console.warn(e);}})();
+</script>
+</body>
+</html>

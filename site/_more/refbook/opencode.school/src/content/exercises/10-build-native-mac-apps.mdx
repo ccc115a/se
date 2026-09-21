@@ -1,0 +1,158 @@
+---
+title: "Build native Mac apps"
+slug: build-native-mac-apps
+description: "Clone, build, and extend OpenCode Stats, a native macOS menu bar app, with the macos-app-skills skill."
+order: 10
+agentInstructions: |
+  Guide the student through cloning, building, running, and extending a real
+  native macOS app: OpenCode Stats (https://github.com/fayazara/opencode-stats),
+  a SwiftUI menu bar app that shows local OpenCode usage stats. Use the
+  macos-app-skills skill (https://github.com/fayazara/macos-app-skills) to do
+  the heavy lifting. Adapt depth and pace to the student's profile.
+
+  This exercise is macOS only. If the student is not on a Mac, explain that
+  building a native Mac app requires macOS and Xcode, and suggest they come
+  back to this one on a Mac. Do not try to fake it on another platform.
+
+  Steps:
+
+  1. Confirm the student is on macOS. Check that Git is available with
+     `git --version`. If it is missing, run `xcode-select --install` to
+     install the Command Line Tools from the session (this opens a system
+     dialog the student confirms once).
+
+  2. Explain the difference between Command Line Tools and full Xcode, plainly:
+     Command Line Tools give you git, clang, and the Swift compiler, but they
+     do NOT include `xcodebuild` or the macOS SDK needed to build an app. This
+     project is an Xcode `.xcodeproj` application, so it needs full Xcode.
+     Detect full Xcode by running `xcodebuild -version`. If it errors with
+     "tool 'xcodebuild' requires Xcode" or is not found, full Xcode is not
+     installed: tell the student to install Xcode 26 or newer from the Mac App
+     Store (a large one-time download), then re-run `xcodebuild -version` to
+     confirm before continuing. The app targets macOS 15.6+, so stable Xcode 26
+     is fine; no beta toolchain is required.
+
+  3. Install the macos-app-skills skill globally and non-interactively with
+     `npx skills add fayazara/macos-app-skills -g -y` (the `-g` flag installs
+     globally for all projects, and `-y` skips the confirmation prompts). Then
+     tell the student to quit and reopen OpenCode Desktop so the skill loads.
+     After restart, the agent should rely on the skill's `build` and
+     `macos-patterns` references rather than guessing at xcodebuild flags or
+     macOS APIs.
+
+  4. Clone the app with `gh repo clone fayazara/opencode-stats` (or
+     `git clone https://github.com/fayazara/opencode-stats`) and change into
+     the project directory. Note the project folder and the .xcodeproj are
+     named "OpenCode Stats" with a space, so quote the path in commands.
+
+  5. Build from source using the `build` skill. The scheme is "OpenCode Stats".
+     Two gotchas to handle:
+     - Signing: the project ships a hardcoded DEVELOPMENT_TEAM that will not
+       resolve on the student's machine. For a local build, either set the
+       student's own team, or disable signing for a debug build by passing
+       `CODE_SIGNING_ALLOWED=NO` to xcodebuild. The app intentionally disables
+       the sandbox, so an unsigned local debug build runs fine.
+     - Dependencies: the first build resolves the Sparkle Swift package, so it
+       needs network access and may take a moment.
+
+  6. Run the built app. It is a menu bar app with no main window, so tell the
+     student to look for its icon in the macOS menu bar and click it to open
+     the popover. The app reads `~/.local/share/opencode/opencode.db`, so it
+     only shows data if OpenCode has been used at least once. If the database
+     does not exist, explain why the stats are empty.
+
+  7. Help the student make a small change using the `macos-patterns` skill.
+     Good options: change what the menu bar label shows, tweak the popover
+     layout, add or relabel a stat, or adjust a time filter. Rebuild and run
+     to see the change. Keep it small and achievable.
+
+  8. Optional: open a pull request to share the change with the upstream repo.
+     Only do this if the student wants to and the change is a genuine, sensible
+     improvement (not a throwaway experiment). Walk them through:
+     - Fork the repo: `gh repo fork fayazara/opencode-stats --clone` (or fork
+       on github.com), and make sure their change is on a descriptively named
+       branch.
+     - Commit the change with a clear message and push the branch to their fork.
+     - Open the PR with `gh pr create --web` against
+       `fayazara/opencode-stats:main`. Help them write a concise title and a
+       body that explains what changed and why.
+     - Have the student share the PR URL. Confirm it points at a PR in the
+       fayazara/opencode-stats repo.
+     Remind them that maintainers may or may not merge it, and that opening a
+     thoughtful PR is valuable either way. If they would rather not open a PR,
+     that is completely fine and does not affect completion.
+
+  Verify completion by confirming a successful xcodebuild of OpenCode Stats,
+  ideally after the student made and rebuilt at least one change. The optional
+  pull request is a bonus, not a requirement.
+---
+
+import AgentPrompt from '../../components/AgentPrompt.astro'
+
+So far you've used OpenCode to build and deploy web apps, edit files and videos, run AI models, and automate your browser. You can also use OpenCode to build native macOS apps with Swift and Xcode. You'll start with an existing open-source app created by open-source developer [Fayaz Ahmed](https://github.com/fayazara), building it from source, running it, and making a change, to get a sense of how the app development process works. Once you've been through the flow, you can optionally start a new app of your own from scratch. A skill teaches OpenCode the native patterns it needs along the way.
+
+The app is [OpenCode Stats](https://github.com/fayazara/opencode-stats) by Fayaz Ahmed, a native macOS menu bar app that shows your own OpenCode usage stats: cost, sessions, tokens, tools, and per-project breakdowns, all read from the local OpenCode database. It's fitting: you'll use OpenCode to build an app about OpenCode.
+
+<figure class="text-center my-8">
+  <img src="/images/opencode-stats-screenshot.jpg" alt="The OpenCode Stats app showing usage statistics including cost, sessions, token breakdown, and per-project costs" class="rounded-lg mx-auto" />
+  <figcaption class="mt-2 text-sm text-gray-500 dark:text-stone-400">
+    Track your usage with the OpenCode Stats app
+  </figcaption>
+</figure>
+
+<AgentPrompt title="Build native Mac apps" prompt='Let&#39;s work on the "Build native Mac apps" exercise together!' />
+
+## Prerequisites
+
+This exercise is macOS only. Building a native Mac app needs a Mac and Apple's developer tools.
+
+There are two separate things people often confuse:
+
+- **Command Line Tools** give you `git`, `clang`, and the Swift compiler. OpenCode will install them for you from your session with `xcode-select --install`.
+- **Full Xcode** is the large app from the Mac App Store that includes `xcodebuild` and the macOS SDK. You need it to build an actual `.app`. Command Line Tools alone are not enough for this project.
+
+OpenCode Stats targets **macOS 15.6+** and builds with **Xcode 26 or newer** (stable, no beta needed). The agent will check what you have with `xcodebuild -version` and walk you through installing Xcode if it's missing.
+
+## The skill
+
+You'll install [`macos-app-skills`](https://github.com/fayazara/macos-app-skills), a collection of agent skills for building native macOS apps in SwiftUI and AppKit:
+
+```
+npx skills add fayazara/macos-app-skills -g -y
+```
+
+The `-g` flag installs the skill globally (for all your projects) and `-y` skips the interactive prompts, so it installs in one shot. It bundles skills for building from the command line (`build`), native macOS patterns for web developers (`macos-patterns`), settings windows, Sparkle auto-updates, notch overlays, and release pipelines. These encode the hard-won patterns that AI agents usually get wrong, so OpenCode builds and edits the app correctly instead of guessing.
+
+Skills load at startup, so **quit and reopen OpenCode Desktop** after installing.
+
+## How the build works
+
+A native Mac app isn't a web project: there's no dev server and no `npm run dev`. "Running it" means compiling an actual `.app` and launching it. OpenCode Stats is an Xcode project, so the agent uses the [`build` skill](https://github.com/fayazara/macos-app-skills) to compile it with `xcodebuild` from your session, then opens the result.
+
+A few things are worth knowing before you start, so the output makes sense:
+
+- **`xcodebuild`** is Xcode's command-line build tool. The agent points it at the `OpenCode Stats.xcodeproj` and the "OpenCode Stats" scheme. The first build is slower than later ones, since Xcode has to resolve the project's dependencies before it can compile.
+- **Code signing** is macOS's way of stamping an app with a developer identity. The project ships with the author's signing settings, which won't match your machine, so the agent either swaps in your own or turns signing off for a local build. The `build` skill knows how to handle this, so a build failure here is expected and recoverable, not a dead end.
+- **It's a menu bar app.** There's no window when it launches. You'll find its icon in the menu bar at the top of the screen and click it to open the popover.
+
+The app reads your real usage from the local OpenCode database (`~/.local/share/opencode/opencode.db`), so the numbers you see are your own. If you've never run OpenCode on this machine, the stats will be empty until you do.
+
+## What you'll do
+
+- Set up Apple's developer tools by installing Xcode and the Command Line Tools, with the agent checking what you already have.
+- Install the `macos-app-skills` skill, then restart OpenCode Desktop so it loads.
+- Clone the OpenCode Stats repository from GitHub onto your machine.
+- Build the app from source with `xcodebuild`.
+- Run the app and find its icon in your menu bar.
+- Make a small change, like tweaking the menu bar label or the popover, then rebuild to see it.
+- Optionally open a pull request to share your change with the upstream repo.
+
+## Share your work
+
+Once your change is working, you can offer it back to the project. The agent will help you fork the repo, push your change to a branch, and open a pull request against [`fayazara/opencode-stats`](https://github.com/fayazara/opencode-stats) using the `gh` CLI from the [Use Git and GitHub](/exercises/use-git-and-github) exercise. Whether or not the maintainer merges it, a thoughtful PR is a real open-source contribution. This step is optional, skip it if you'd rather keep your change local.
+
+## Build your own
+
+Building someone else's app teaches you the flow: set up the tools, build, run, change, repeat. Once that clicks, you can point OpenCode at a brand-new app of your own. It doesn't have to be a menu bar app, it can be any kind of macOS app: a regular windowed app, a document-based app, a settings-driven utility, whatever you want to make. Describe the app you have in mind and let OpenCode scaffold it from scratch.
+
+You can also explore the rest of [Fayaz's open-source projects](https://github.com/fayazara/fayazara), like [Kaze](https://github.com/fayazara/Kaze) (local speech-to-text) or [Screendrop](https://github.com/fayazara/Screendrop) (screenshots and recording), and build any of them the same way.
