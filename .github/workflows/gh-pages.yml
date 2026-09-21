@@ -19,6 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        with:
+          # 新 repo 尚未開通過 Pages 時自動開通，免去手動到 Settings 開
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: 'site'
