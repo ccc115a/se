@@ -1,0 +1,9 @@
+services:
+  dev-vm:
+    build: .
+    container_name: my-dev-vm
+    restart: always
+    volumes:
+      # 將 Mac 的共享目錄掛載至 Container 內的 /ccc
+      - /Users/Shared/ccc:/ccc
+    working_dir: /ccc

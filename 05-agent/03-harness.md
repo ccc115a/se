@@ -11,6 +11,11 @@ opencode 如何做 harness -- 用 https://github.com/agnusdei1207/opencode-orche
     * Hermes Agent —— 持續運作的個人自主代理 
         * 1. 不只是寫程式 2. 持續存在,不是 session 制 3. 自我改進的技能系統 4. 可以指揮其他 agent 5. 內建排程
 
+## Pi Agent
+
+* https://pi.dev/
+
+
 ### hermes agent
 
 * https://github.com/NousResearch/hermes-agent
