@@ -185,3 +185,71 @@ docker run --rm -p 19000:9000 <img>   # 單獨測試某個 image
 
 ![](./_img/screen1.png)
 ![](./_img/screen2.png)
+
+
+## 7. 附錄：frontend 開多個容器平行服務
+
+### 7.1 frontend 本身幾乎不用改
+
+它用的是 `expose` 而非 `ports`，開 N 個也不會搶 host port；
+`server.js` 也是無狀態的（靜態檔 + `/health`、`/frontend-info`，
+回傳的 `hostname` 不同正好可用來驗證負載分散）。啟動方式：
+
+```bash
+docker compose up -d --scale frontend=3
+docker compose ps   # 看到 3 個 frontend
+```
+
+### 7.2 必改：`nginx/nginx.conf`
+
+原本 `upstream { server frontend:3000; }` 在 nginx 啟動時只解析一次，
+直接 `--scale` 的話流量不會真正分散到新副本（甚至該容器掛掉會 502）。
+要讓 nginx 每次請求都重新問 Docker 內建 DNS（`127.0.0.11`）：
+
+```nginx
+resolver 127.0.0.11 valid=10s ipv6=off;
+set $frontend_upstream frontend;
+
+server {
+    listen 80;
+    location / {
+        proxy_pass http://$frontend_upstream:3000;  # 經由變數才會每次重解析
+        ...
+    }
+    location = /health {
+        proxy_pass http://$frontend_upstream:3000/health;
+    }
+    location = /frontend-info {
+        proxy_pass http://$frontend_upstream:3000/frontend-info;
+    }
+    ...
+}
+```
+
+原理：`proxy_pass` 後面接變數時，nginx 會在每個 request 時重新做 DNS 查詢，
+而 Docker DNS 對一個 service name 會輪流回傳多個 replica 的 IP，
+達到 round-robin 分散。
+
+### 7.3 選配：給 frontend 加 `healthcheck`
+
+方便 `docker compose ps` 看出哪個副本異常（`docker-compose.yml`）：
+
+```yaml
+frontend:
+  healthcheck:
+    test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)process.exit(1)})"]
+    interval: 10s
+    retries: 3
+```
+
+### 7.4 驗證
+
+```bash
+docker compose build nginx && docker compose up -d --scale frontend=3
+for i in $(seq 1 6); do curl -s http://localhost/frontend-info | grep hostname; done
+# 應看到 3 種不同 hostname 輪流出現
+```
+
+注意：如果以後前端有了本機狀態（session、記憶體快取），
+多副本還要考慮 sticky session（`ip_hash`，但與上面的變數式寫法互斥）
+或把狀態外移到 redis/db；目前這個純靜態前端沒有此問題。
