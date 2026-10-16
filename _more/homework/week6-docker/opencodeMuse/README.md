@@ -179,3 +179,9 @@ docker run --rm -p 19000:9000 <img>   # 單獨測試某個 image
 - API 加上單元測試與 CI（GitHub Actions 建置 + `compose up` 煙霧測試）。
 - Rust 改用 `cargo-chef` 做更正確的依賴層快取。
 - 加上 Prometheus + Grafana 監控容器狀態。
+
+
+## 執行結果截圖
+
+![](./_img/screen1.png)
+![](./_img/screen2.png)
