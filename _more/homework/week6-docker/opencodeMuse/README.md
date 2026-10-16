@@ -186,6 +186,7 @@ docker run --rm -p 19000:9000 <img>   # 單獨測試某個 image
 ![](./_img/screen1.png)
 ![](./_img/screen2.png)
 
+## 問題： 假如 frontend/ 需要開很多個 容器來平行服務，需要什麼修改嗎？
 
 ## 7. 附錄：frontend 開多個容器平行服務
 
