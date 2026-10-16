@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker 微服務展示</title>
+<style>
+:root{--bg:#e6e9e6;--panel:#f7f8f6;--ink:#17252e;--mute:#5d6b73;--teal:#0e6b6b;--orange:#e8590c;--ok:#2f8f4e;--bad:#c0392b;--line:#c9cfcb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:960px;margin:0 auto;padding:32px 20px 64px}
+h1{font-size:2rem;margin:0 0 4px;letter-spacing:.02em}
+.sub{color:var(--mute);margin:0 0 28px}
+h2{font-size:1.1rem;margin:0 0 12px}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.box{background:var(--teal);color:#fff;padding:14px 12px 12px;border-radius:2px;position:relative;
+  background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.14) 0 2px,transparent 2px 14px)}
+.box:nth-child(2){background-color:var(--orange)}
+.box:nth-child(3){background-color:#35546b}
+.box:nth-child(4){background-color:#7a5a2b}
+.box b{display:block;font-size:1.05rem}
+.box span{font-size:.85rem;opacity:.9}
+.box i{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;background:#aaa}
+.box.ok i{background:#7dffa8}.box.down i{background:#ff7a6b}
+section{background:var(--panel);border:1px solid var(--line);padding:20px;margin-bottom:20px}
+input,button{font:inherit;padding:8px 10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+input:focus,button:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
+button{background:var(--ink);color:#fff;border-color:var(--ink);cursor:pointer}
+button:hover{background:#2b3f4b}
+.form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.form input[name=body]{flex:1;min-width:200px}
+ul{list-style:none;margin:0;padding:0}
+li{padding:8px 0;border-top:1px solid var(--line)}
+li small{color:var(--mute);margin-left:8px}
+pre{background:#fff;border:1px solid var(--line);padding:10px;margin:12px 0 0;overflow-x:auto;font-size:.9rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.row{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Docker 微服務展示</h1>
+  <p class="sub">一個網址進來，nginx 依路徑把請求轉給 Node.js、Python、Rust，資料存在 PostgreSQL。</p>
+
+  <div class="row" id="status">
+    <div class="box" data-svc="node"><i></i><b>Node.js</b><span>檢查中…</span></div>
+    <div class="box" data-svc="python"><i></i><b>Python</b><span>檢查中…</span></div>
+    <div class="box" data-svc="rust"><i></i><b>Rust</b><span>檢查中…</span></div>
+    <div class="box" data-svc="node-db"><i></i><b>PostgreSQL</b><span>檢查中…</span></div>
+  </div>
+
+  <section>
+    <h2>留言板（Node.js → PostgreSQL）</h2>
+    <div class="form">
+      <input name="author" placeholder="名字" maxlength="40" value="guest" aria-label="名字">
+      <input name="body" placeholder="寫點什麼…" maxlength="280" aria-label="留言">
+      <button id="send">送出留言</button>
+    </div>
+    <ul id="msgs"></ul>
+  </section>
+
+  <div class="cols">
+    <section>
+      <h2>留言統計（Python）</h2>
+      <button id="stats">重新計算</button>
+      <pre id="stats-out">尚未計算</pre>
+    </section>
+    <section>
+      <h2>質數運算（Rust）</h2>
+      <div class="form">
+        <input id="limit" type="number" value="5000000" min="2" max="50000000" aria-label="上限">
+        <button id="calc">計算質數個數</button>
+      </div>
+      <pre id="rust-out">尚未計算</pre>
+    </section>
+  </div>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const j = async (url, opt) => { const r = await fetch(url, opt); if (!r.ok) throw new Error(r.status); return r.json(); };
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function mark(svc, ok, text){
+  const b = document.querySelector(`[data-svc="${svc}"]`);
+  b.className = "box " + (ok ? "ok" : "down");
+  b.querySelector("span").textContent = text;
+}
+async function health(){
+  for (const s of ["node","python","rust"]) {
+    try {
+      const d = await j(`/api/${s}/health`);
+      mark(s, true, d.runtime);
+      if (s === "node") mark("node-db", d.db === "ok", d.db === "ok" ? "連線正常" : "無法連線");
+    } catch { mark(s, false, "無法連線"); if (s === "node") mark("node-db", false, "未知"); }
+  }
+}
+async function loadMsgs(){
+  try {
+    const rows = await j("/api/node/messages");
+    $("#msgs").innerHTML = rows.map(m =>
+      `<li><b>${esc(m.author)}</b>：${esc(m.body)}<small>${new Date(m.created_at).toLocaleString("zh-TW")}</small></li>`).join("");
+  } catch { $("#msgs").innerHTML = "<li>讀取留言失敗，請確認 node 與 db 容器正在執行。</li>"; }
+}
+$("#send").onclick = async () => {
+  const body = $("[name=body]").value.trim();
+  if (!body) return $("[name=body]").focus();
+  await j("/api/node/messages", { method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ author: $("[name=author]").value, body }) });
+  $("[name=body]").value = "";
+  loadMsgs();
+};
+$("#stats").onclick = async () => {
+  try { $("#stats-out").textContent = JSON.stringify(await j("/api/python/stats"), null, 2); }
+  catch { $("#stats-out").textContent = "Python 服務無回應"; }
+};
+$("#calc").onclick = async () => {
+  $("#rust-out").textContent = "計算中…";
+  try { $("#rust-out").textContent = JSON.stringify(await j(`/api/rust/primes?limit=${$("#limit").value}`), null, 2); }
+  catch { $("#rust-out").textContent = "Rust 服務無回應"; }
+};
+health(); loadMsgs(); $("#stats").click();
+</script>
+</body>
+</html>

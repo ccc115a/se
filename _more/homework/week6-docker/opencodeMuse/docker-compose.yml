@@ -1,0 +1,83 @@
+services:
+  # ---------- 反向代理 (唯一對外窗口 :80) ----------
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      frontend:
+        condition: service_started
+      api:
+        condition: service_healthy
+      sysinfo:
+        condition: service_started
+    networks:
+      - appnet
+    restart: unless-stopped
+
+  # ---------- 前端 (Node.js) ----------
+  frontend:
+    build: ./frontend
+    environment:
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - appnet
+    restart: unless-stopped
+
+  # ---------- 後端 API (Python FastAPI) ----------
+  api:
+    build: ./backend
+    environment:
+      - DATABASE_URL=postgresql://demo:demo123@db:5432/demo
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - appnet
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ---------- 系統資訊微服務 (Rust) ----------
+  sysinfo:
+    build: ./rust-sysinfo
+    expose:
+      - "9000"
+    networks:
+      - appnet
+    restart: unless-stopped
+
+  # ---------- 資料庫 (PostgreSQL) ----------
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo123
+      - POSTGRES_DB=demo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - appnet
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U demo -d demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata: # DB 持久化，容器刪除資料仍在
+
+networks:
+  appnet:
+    driver: bridge

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Docker 微服務展示系統</title>
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --accent:#38bdf8; --green:#22c55e; --red:#ef4444; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "Noto Sans TC", "Microsoft JhengHei", sans-serif; background:var(--bg); color:#e2e8f0; }
+  header { padding:32px 24px; text-align:center; background:linear-gradient(135deg,#0ea5e9,#6366f1); color:white; }
+  header h1 { margin:0 0 8px; font-size:28px; }
+  header p { margin:0; opacity:.9; }
+  main { max-width:1080px; margin:0 auto; padding:24px; display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); }
+  .card { background:var(--card); border-radius:12px; padding:20px; border:1px solid #334155; }
+  .card h2 { margin:0 0 12px; font-size:18px; color:var(--accent); }
+  .badge { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px; font-weight:700; }
+  .ok { background:#052e16; color:#4ade80; border:1px solid #16a34a; }
+  .bad { background:#450a0a; color:#fca5a5; border:1px solid #dc2626; }
+  button { background:var(--accent); border:none; color:#082f49; font-weight:700; padding:8px 14px; border-radius:8px; cursor:pointer; margin:4px 4px 4px 0; }
+  button:hover { filter:brightness(1.1); }
+  input[type=text] { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #475569; background:#0f172a; color:#e2e8f0; }
+  pre { background:#020617; border-radius:8px; padding:12px; overflow:auto; font-size:12px; max-height:260px; border:1px solid #334155; }
+  .arch { grid-column:1/-1; text-align:center; font-family:monospace; background:#020617; border:1px dashed #38bdf8; }
+  footer { text-align:center; padding:20px; color:#94a3b8; font-size:13px; }
+  code { background:#020617; padding:2px 6px; border-radius:6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🐳 Docker 微服務展示系統</h1>
+  <p>nginx reverse proxy + Node.js 前端 + Python API + Rust sysinfo + PostgreSQL</p>
+  <p style="margin-top:8px;font-size:13px">對外只暴露 <code>:80</code>（nginx），內部服務互相透過 service name 通訊</p>
+</header>
+
+<main>
+  <div class="card arch">
+    <h2>🏗️ 架構圖</h2>
+<pre>Browser ── :80 ─▶ [ nginx ] ── / ──────▶ [ frontend :3000  (Node.js) ]
+                       ├── /api/ ───▶ [ api :8000      (Python FastAPI) ] ─▶ [ db :5432 (PostgreSQL) ]
+                       └── /sys/ ───▶ [ sysinfo :9000  (Rust Axum)    ]</pre>
+  </div>
+
+  <div class="card">
+    <h2>🟢 服務健康狀態</h2>
+    <div id="health">載入中…</div>
+    <button onclick="checkHealth()">重新檢查</button>
+    <pre id="health-raw"></pre>
+  </div>
+
+  <div class="card">
+    <h2>🐍 Python API + PostgreSQL</h2>
+    <button onclick="apiHello()">GET /api/hello</button>
+    <button onclick="dbCheck()">GET /api/db-check</button>
+    <button onclick="addVisit()">POST /api/visits (+1)</button>
+    <button onclick="getVisits()">GET /api/visits</button>
+    <pre id="api-out">按按鈕測試 Python API…</pre>
+  </div>
+
+  <div class="card">
+    <h2>🦀 Rust sysinfo 微服務</h2>
+    <button onclick="sysInfo()">GET /sys/info</button>
+    <button onclick="frontendInfo()">Node /frontend-info (經 nginx)</button>
+    <pre id="sys-out">按按鈕測試 Rust 微服務…</pre>
+  </div>
+
+  <div class="card">
+    <h2>💬 留言板 (寫入 PostgreSQL)</h2>
+    <input id="msg-input" type="text" maxlength="500" placeholder="輸入留言後按送出…" />
+    <div style="margin-top:8px">
+      <button onclick="sendMsg()">送出留言</button>
+      <button onclick="loadMsgs()">重新整理</button>
+    </div>
+    <pre id="msg-out">載入中…</pre>
+  </div>
+
+  <div class="card">
+    <h2>🧰 展示用的 Docker 知識</h2>
+    <ul style="font-size:14px;line-height:1.8">
+      <li>此頁由 <code>frontend</code> (Node) 提供，經 <code>nginx</code> 反向代理</li>
+      <li>按鈕呼叫 <code>/api/*</code> → nginx → <code>api</code> (Python) → <code>db</code></li>
+      <li><code>/sys/*</code> → nginx → <code>sysinfo</code> (Rust)</li>
+      <li>DB 資料放在 named volume <code>pgdata</code>，重啟不遺失</li>
+    </ul>
+  </div>
+</main>
+
+<footer>docker-hw6 · Dockerfile + docker-compose.yml · <span id="ts"></span></footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+$("ts").textContent = new Date().toLocaleString();
+
+async function jget(url) {
+  const r = await fetch(url);
+  const t = await r.text();
+  try { return JSON.parse(t); } catch { return t; }
+}
+async function checkHealth() {
+  const targets = {
+    "nginx /health (node 經代理)": "/health",
+    "python /api/hello": "/api/hello",
+    "python /api/db-check": "/api/db-check",
+    "rust /sys/info": "/sys/info",
+  };
+  let html = "";
+  let raw = {};
+  for (const [name, url] of Object.entries(targets)) {
+    try {
+      const data = await jget(url);
+      raw[url] = data;
+      html += `<div>✅ ${name} <span class="badge ok">UP</span></div>`;
+    } catch (e) {
+      raw[url] = String(e);
+      html += `<div>❌ ${name} <span class="badge bad">DOWN</span></div>`;
+    }
+  }
+  $("health").innerHTML = html;
+  $("health-raw").textContent = JSON.stringify(raw, null, 2);
+}
+async function apiHello() { $("api-out").textContent = JSON.stringify(await jget("/api/hello"), null, 2); }
+async function dbCheck() { $("api-out").textContent = JSON.stringify(await jget("/api/db-check"), null, 2); }
+async function getVisits() { $("api-out").textContent = JSON.stringify(await jget("/api/visits"), null, 2); }
+async function addVisit() {
+  const r = await fetch("/api/visits", { method: "POST" });
+  $("api-out").textContent = JSON.stringify(await r.json(), null, 2);
+}
+async function sysInfo() { $("sys-out").textContent = JSON.stringify(await jget("/sys/info"), null, 2); }
+async function frontendInfo() { $("sys-out").textContent = JSON.stringify(await jget("/frontend-info"), null, 2); }
+async function loadMsgs() { $("msg-out").textContent = JSON.stringify(await jget("/api/messages"), null, 2); }
+async function sendMsg() {
+  const v = $("msg-input").value.trim();
+  if (!v) return alert("請輸入內容");
+  const r = await fetch("/api/messages", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: v }),
+  });
+  $("msg-input").value = "";
+  await loadMsgs();
+}
+checkHealth();
+loadMsgs();
+fetch("/api/visits", { method: "POST" }).then(() => getVisits()).catch(()=>{});
+</script>
+</body>
+</html>
