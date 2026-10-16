@@ -13,18 +13,22 @@ DATABASE_URL = os.getenv(
     "postgresql://demo:demo123@db:5432/demo",
 )
 
-DDL = """
-CREATE TABLE IF NOT EXISTS visits (
-    id SERIAL PRIMARY KEY,
-    path TEXT NOT NULL DEFAULT '/',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-CREATE TABLE IF NOT EXISTS messages (
-    id SERIAL PRIMARY KEY,
-    content TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-"""
+DDL_STATEMENTS = [
+    """
+    CREATE TABLE IF NOT EXISTS visits (
+        id SERIAL PRIMARY KEY,
+        path TEXT NOT NULL DEFAULT '/',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+    """,
+]
 
 
 def get_conn():
@@ -39,7 +43,8 @@ def init_db(retries: int = 10):
         try:
             with get_conn() as conn:
                 with conn.cursor() as cur:
-                    cur.execute(DDL)
+                    for stmt in DDL_STATEMENTS:
+                        cur.execute(stmt)
                     conn.commit()
             return
         except Exception as e:  # db not ready yet
@@ -54,7 +59,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="demo-api (python)")
+app = FastAPI(title="demo-api (python)", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
